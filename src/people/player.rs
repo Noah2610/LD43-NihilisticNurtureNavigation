@@ -9,6 +9,7 @@ use noframe::entity::prelude::*;
 use noframe::deltatime::Deltatime;
 
 use animation::Animation;
+use super::AnimState;
 use settings::player::*;
 
 #[derive(PartialEq)]
@@ -24,26 +25,39 @@ pub struct Player {
   velocity:     Point,
   max_velocity: Point,
   has_moved:    Vec<Axis>,
-  animation:    Animation,
+  idle_anim:    Animation,
+  walk_anim:    Animation,
+  jump_anim:    Animation,
+  fall_anim:    Animation,
+  anim_state:   AnimState,
   dt:           Deltatime
 }
 
 impl Player {
   pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
-    let image_filepaths: Vec<String> = vec![
+    let img_filepaths_idle: Vec<String> = vec![ ::join_str(IMAGES, "child1_1.png") ];
+    let img_interval_ms_idle = vec![ 250 ];
+    let img_filepaths_walk: Vec<String> = vec![
       ::join_str(IMAGES, "child1_1.png"),
       ::join_str(IMAGES, "child1_2.png"),
       ::join_str(IMAGES, "child1_3.png"),
       ::join_str(IMAGES, "child1_4.png")
     ];
-    let image_update_intervals_ms = vec![
+    let img_interval_ms_walk = vec![
       250,
       250,
       250,
       250
     ];
+    let img_filepaths_jump: Vec<String> = vec![ ::join_str(IMAGES, "child1_1.png") ];
+    let img_interval_ms_jump = vec![ 250 ];
+    let img_filepaths_fall: Vec<String> = vec![ ::join_str(IMAGES, "child1_1.png") ];
+    let img_interval_ms_fall = vec![ 250 ];
 
-    let animation = Animation::new(ctx, image_filepaths, image_update_intervals_ms);
+    let idle_anim = Animation::new(ctx, img_filepaths_idle, img_interval_ms_idle);
+    let walk_anim = Animation::new(ctx, img_filepaths_walk, img_interval_ms_walk);
+    let jump_anim = Animation::new(ctx, img_filepaths_jump, img_interval_ms_jump);
+    let fall_anim = Animation::new(ctx, img_filepaths_fall, img_interval_ms_fall);
 
     Self {
       point,
@@ -52,7 +66,11 @@ impl Player {
       velocity: Point::new(0.0, 0.0),
       max_velocity: Point::new(MAX_SPEED, MAX_JUMP_SPEED),
       has_moved: Vec::new(),
-      animation,
+      idle_anim,
+      walk_anim,
+      jump_anim,
+      fall_anim,
+      anim_state: AnimState::Idle,
       dt: Deltatime::new()
     }
   }
@@ -75,7 +93,7 @@ impl Player {
         &controls::JUMP => {
           if !self.has_moved(Axis::Y) {
             self.moved_on_axis(Axis::Y);
-            Some(Point::new( 0.0, SPEED_INCREASE ))
+            Some(Point::new( 0.0, -SPEED_INCREASE ))
           } else { None }
         }
         _ => None
@@ -96,7 +114,7 @@ impl Player {
   }
 
   fn handle_velocity(&mut self) {
-    let decr = SPEED_DECREASE; //* self.dt.secs();
+    let decr = SPEED_DECREASE; self.dt.secs();
     let decr_vel = Point::new(
       if !self.has_moved(Axis::X) {
         decr
@@ -127,18 +145,39 @@ impl Mask for Player {
 
 impl Entity for Player {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+    self.anim_state = match self.velocity.as_tup() {
+      (x, y) if y <  0.0 => AnimState::Jump,
+      (x, y) if y >  0.0 => AnimState::Fall,
+      (x, y) if x != 0.0 => AnimState::Walk,
+      _                  => AnimState::Idle
+    };
     self.handle_velocity();
-    self.animation.update()?;
+    match self.anim_state {
+      AnimState::Idle => &mut self.idle_anim,
+      AnimState::Walk => &mut self.walk_anim,
+      AnimState::Jump => &mut self.jump_anim,
+      AnimState::Fall => &mut self.fall_anim
+    } .update()?;
     self.dt.update();
     Ok(())
   }
 
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
-    self.animation.draw(ctx, &self.point, &self.size)
+    match self.anim_state {
+      AnimState::Idle => &self.idle_anim,
+      AnimState::Walk => &self.walk_anim,
+      AnimState::Jump => &self.jump_anim,
+      AnimState::Fall => &self.fall_anim
+    } .draw(ctx, &self.point, &self.size)
   }
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
-    self.animation.draw_offset(ctx, &self.point, &self.size, offset)
+    match self.anim_state {
+      AnimState::Idle => &self.idle_anim,
+      AnimState::Walk => &self.walk_anim,
+      AnimState::Jump => &self.jump_anim,
+      AnimState::Fall => &self.fall_anim
+    } .draw_offset(ctx, &self.point, &self.size, offset)
   }
 }
 

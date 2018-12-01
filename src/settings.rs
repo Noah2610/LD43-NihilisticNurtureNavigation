@@ -34,6 +34,14 @@ pub mod player {
   }
 }
 
+pub mod child {
+  pub const IMAGES: &str = "/images/children/";
+  pub const SPEED_INCREASE: f32 = 50.0;
+  pub const SPEED_DECREASE: f32 = 50.0;
+  pub const MAX_SPEED: f32 = 100.0;
+  pub const MAX_JUMP_SPEED: f32 = 200.0;
+}
+
 pub mod wall {
   pub const IMAGES: &str = "/images/walls/";
 }

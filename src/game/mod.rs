@@ -45,7 +45,7 @@ impl GameState {
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.level = Some(Level::new(ctx, "tiles", self.window_size.clone())?);
+    self.level = Some(Level::new(ctx, "dev")?);
     Ok(())
   }
 }
