@@ -1,3 +1,5 @@
+mod player_animations;
+
 use ggez::{
   GameResult,
   Context,
@@ -8,8 +10,8 @@ use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
 use noframe::deltatime::Deltatime;
 
-use animation::Animation;
 use super::AnimState;
+use self::player_animations::PlayerAnimations;
 use settings::player::*;
 
 #[derive(PartialEq)]
@@ -25,39 +27,14 @@ pub struct Player {
   velocity:     Point,
   max_velocity: Point,
   has_moved:    Vec<Axis>,
-  idle_anim:    Animation,
-  walk_anim:    Animation,
-  jump_anim:    Animation,
-  fall_anim:    Animation,
+  animations:   PlayerAnimations,
   anim_state:   AnimState,
   dt:           Deltatime
 }
 
 impl Player {
   pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
-    let img_filepaths_idle: Vec<String> = vec![ ::join_str(IMAGES, "child1_1.png") ];
-    let img_interval_ms_idle = vec![ 250 ];
-    let img_filepaths_walk: Vec<String> = vec![
-      ::join_str(IMAGES, "child1_1.png"),
-      ::join_str(IMAGES, "child1_2.png"),
-      ::join_str(IMAGES, "child1_3.png"),
-      ::join_str(IMAGES, "child1_4.png")
-    ];
-    let img_interval_ms_walk = vec![
-      250,
-      250,
-      250,
-      250
-    ];
-    let img_filepaths_jump: Vec<String> = vec![ ::join_str(IMAGES, "child1_1.png") ];
-    let img_interval_ms_jump = vec![ 250 ];
-    let img_filepaths_fall: Vec<String> = vec![ ::join_str(IMAGES, "child1_1.png") ];
-    let img_interval_ms_fall = vec![ 250 ];
-
-    let idle_anim = Animation::new(ctx, img_filepaths_idle, img_interval_ms_idle);
-    let walk_anim = Animation::new(ctx, img_filepaths_walk, img_interval_ms_walk);
-    let jump_anim = Animation::new(ctx, img_filepaths_jump, img_interval_ms_jump);
-    let fall_anim = Animation::new(ctx, img_filepaths_fall, img_interval_ms_fall);
+    let animations = PlayerAnimations::new(ctx);
 
     Self {
       point,
@@ -66,10 +43,7 @@ impl Player {
       velocity: Point::new(0.0, 0.0),
       max_velocity: Point::new(MAX_SPEED, MAX_JUMP_SPEED),
       has_moved: Vec::new(),
-      idle_anim,
-      walk_anim,
-      jump_anim,
-      fall_anim,
+      animations,
       anim_state: AnimState::Idle,
       dt: Deltatime::new()
     }
@@ -152,32 +126,19 @@ impl Entity for Player {
       _                  => AnimState::Idle
     };
     self.handle_velocity();
-    match self.anim_state {
-      AnimState::Idle => &mut self.idle_anim,
-      AnimState::Walk => &mut self.walk_anim,
-      AnimState::Jump => &mut self.jump_anim,
-      AnimState::Fall => &mut self.fall_anim
-    } .update()?;
+
+    self.animations.handle_state(&self.anim_state)?;
+
     self.dt.update();
     Ok(())
   }
 
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
-    match self.anim_state {
-      AnimState::Idle => &self.idle_anim,
-      AnimState::Walk => &self.walk_anim,
-      AnimState::Jump => &self.jump_anim,
-      AnimState::Fall => &self.fall_anim
-    } .draw(ctx, &self.point, &self.size)
+    self.animations.get_by_state(&self.anim_state).draw(ctx, &self.point, &self.size)
   }
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
-    match self.anim_state {
-      AnimState::Idle => &self.idle_anim,
-      AnimState::Walk => &self.walk_anim,
-      AnimState::Jump => &self.jump_anim,
-      AnimState::Fall => &self.fall_anim
-    } .draw_offset(ctx, &self.point, &self.size, offset)
+    self.animations.get_by_state(&self.anim_state).draw_offset(ctx, &self.point, &self.size, offset)
   }
 }
 
