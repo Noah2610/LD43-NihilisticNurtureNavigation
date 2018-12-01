@@ -50,13 +50,13 @@ pub mod player {
   }
 
   pub fn new_jump_animation(ctx: &mut Context) -> Animation {
-    let filepaths_jump: Vec<String> = vec![ ::join_str(IMAGES, "child1_4.png") ];
+    let filepaths_jump: Vec<String> = vec![ ::join_str(IMAGES, "child_1_left_4.png") ];
     let interval_ms_jump = vec![ 250 ];
     Animation::new(ctx, filepaths_jump, interval_ms_jump)
   }
 
   pub fn new_fall_animation(ctx: &mut Context) -> Animation {
-    let filepaths_fall: Vec<String> = vec![ ::join_str(IMAGES, "child1_3.png") ];
+    let filepaths_fall: Vec<String> = vec![ ::join_str(IMAGES, "child_1_left_3.png") ];
     let interval_ms_fall = vec![ 250 ];
     Animation::new(ctx, filepaths_fall, interval_ms_fall)
   }
