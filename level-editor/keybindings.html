@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Keyboard Shortcuts - StealthAction</title>
+    <script type="text/javascript" src="./lib/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="./css/keybindings.css" />
+  </head>
+  <body>
+
+    <div id="content">
+
+      <div id="table_wrapper">
+        <table>
+          <tr>
+            <th id="th_shortcut">Key Combination</th>
+            <th id="th_description">Description</th>
+          </tr>
+
+          <tr>
+            <td class="shortcut">Escape</td>
+            <td class="description">Clear current key combination.</td>
+          </tr>
+
+          <tr>
+            <td class="shortcut">h/l/k/j, &lt;left/right/up/down&gt;</td>
+            <td class="description">Move block highlight one cell to the left/right/up/down, respectively.</td>
+          </tr>
+
+          <tr>
+            <td id="key__row_start" class="shortcut"></td>
+            <td class="description">Move block highlight to beginning of row.</td>
+          </tr>
+          <tr>
+            <td id="key__row_end" class="shortcut"></td>
+            <td class="description">Move block highlight to end of row.</td>
+          </tr>
+          <tr>
+            <td id="key__row_top" class="shortcut"></td>
+            <td class="description">Move block highlight to top row.</td>
+          </tr>
+          <tr>
+            <td id="key__row_bottom" class="shortcut"></td>
+            <td class="description">Move block highlight to bottom row.</td>
+          </tr>
+          <tr>
+            <td id="key__row_center" class="shortcut"></td>
+            <td class="description">Move block highlight to center row.</td>
+          </tr>
+          <tr>
+            <td id="key__center" class="shortcut"></td>
+            <td class="description">Move block highlight to center of grid.</td>
+          </tr>
+
+          <tr>
+            <td id="key__place_block" class="shortcut"></td>
+            <td class="description">Place highlighted block.</td>
+          </tr>
+          <tr>
+            <td id="key__remove_block" class="shortcut"></td>
+            <td class="description">Remove block at top-left position of highlighted block.</td>
+          </tr>
+
+          <tr>
+            <td id="key__toggle_panel" class="shortcut"></td>
+            <td class="description">Toggle panel.</td>
+          </tr>
+          <tr>
+            <td id="key__toggle_borders" class="shortcut"></td>
+            <td class="description">Toggle grid borders.</td>
+          </tr>
+
+          <tr>
+            <td id="key__next_block" class="shortcut"></td>
+            <td class="description">Select next block.</td>
+          </tr>
+          <tr>
+            <td id="key__prev_block" class="shortcut"></td>
+            <td class="description">Select previous block.</td>
+          </tr>
+
+          <tr>
+            <td id="key__switch_block_size" class="shortcut"></td>
+            <td class="description">Switch placeable block sizes; w -&gt; h, h -&gt; w</td>
+          </tr>
+          <tr>
+            <td id="key__switch_block_offset" class="shortcut"></td>
+            <td class="description">Switch placeable block offsets; x -&gt; y, y -&gt; x</td>
+          </tr>
+
+          <tr>
+            <td id="key__increase_box_size__w" class="shortcut"></td>
+            <td class="description">Increase grid cell width (+8px).</td>
+          </tr>
+          <tr>
+            <td id="key__increase_box_size__h" class="shortcut"></td>
+            <td class="description">Increase grid cell height (+8px).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_box_size__w" class="shortcut"></td>
+            <td class="description">Decrease grid cell width (-8px).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_box_size__h" class="shortcut"></td>
+            <td class="description">Decrease grid cell height (-8px).</td>
+          </tr>
+          <tr>
+            <td id="key__increase_box_size__W" class="shortcut"></td>
+            <td class="description">Increase grid cell width (+32px).</td>
+          </tr>
+          <tr>
+            <td id="key__increase_box_size__H" class="shortcut"></td>
+            <td class="description">Increase grid cell height (+32px).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_box_size__W" class="shortcut"></td>
+            <td class="description">Decrease grid cell width (-32px).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_box_size__H" class="shortcut"></td>
+            <td class="description">Decrease grid cell height (-32px).</td>
+          </tr>
+
+          <tr>
+            <td id="key__increase_block_size__w" class="shortcut"></td>
+            <td class="description">Increase placeable block width (+1/4 of current cell width).</td>
+          </tr>
+          <tr>
+            <td id="key__increase_block_size__h" class="shortcut"></td>
+            <td class="description">Increase placeable block height (+1/4 of current cell height).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_block_size__w" class="shortcut"></td>
+            <td class="description">Decrease placeable block width (-1/4 of current cell width).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_block_size__h" class="shortcut"></td>
+            <td class="description">Decrease placeable block height (-1/4 of current cell height).</td>
+          </tr>
+          <tr>
+            <td id="key__increase_block_size__W" class="shortcut"></td>
+            <td class="description">Increase placeable block width (+ current cell width).</td>
+          </tr>
+          <tr>
+            <td id="key__increase_block_size__H" class="shortcut"></td>
+            <td class="description">Increase placeable block height (+ current cell height).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_block_size__W" class="shortcut"></td>
+            <td class="description">Decrease placeable block width (- current cell width).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_block_size__H" class="shortcut"></td>
+            <td class="description">Decrease placeable block height (- current cell height).</td>
+          </tr>
+
+          <tr>
+            <td id="key__increase_block_offset__x" class="shortcut"></td>
+            <td class="description">Increase placeable block offset X (+1/4 of current cell width).</td>
+          </tr>
+          <tr>
+            <td id="key__increase_block_offset__y" class="shortcut"></td>
+            <td class="description">Increase placeable block offset Y (+1/4 of current cell height).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_block_offset__x" class="shortcut"></td>
+            <td class="description">Decrease placeable block offset X (-1/4 of current cell width).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_block_offset__y" class="shortcut"></td>
+            <td class="description">Decrease placeable block offset Y (-1/4 of current cell height).</td>
+          </tr>
+          <tr>
+            <td id="key__increase_block_offset__X" class="shortcut"></td>
+            <td class="description">Increase placeable block offset X (+ current cell width).</td>
+          </tr>
+          <tr>
+            <td id="key__increase_block_offset__Y" class="shortcut"></td>
+            <td class="description">Increase placeable block offset Y (+ current cell height).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_block_offset__X" class="shortcut"></td>
+            <td class="description">Decrease placeable block offset X (- current cell width).</td>
+          </tr>
+          <tr>
+            <td id="key__decrease_block_offset__Y" class="shortcut"></td>
+            <td class="description">Decrease placeable block offset Y (- current cell height).</td>
+          </tr>
+
+          <tr>
+            <td id="key__reset__box_size" class="shortcut"></td>
+            <td class="description">Reset cell sizes to default (32x32).</td>
+          </tr>
+          <tr>
+            <td id="key__reset__block_size" class="shortcut"></td>
+            <td class="description">Reset placeable block sizes to current cell sizes.</td>
+          </tr>
+          <tr>
+            <td id="key__reset__block_offset" class="shortcut"></td>
+            <td class="description">Reset placeable block offsets to default (0,0).</td>
+          </tr>
+          <tr>
+            <td id="key__reset__all" class="shortcut"></td>
+            <td class="description">Reset all sizes and offsets.</td>
+          </tr>
+
+          <tr>
+            <td id="key__load_level" class="shortcut"></td>
+            <td class="description">Load a room json file into the level-editor.</td>
+          </tr>
+          <tr>
+            <td id="key__save_level" class="shortcut"></td>
+            <td class="description">Save and download the room as a json file.</td>
+          </tr>
+
+        </table>
+      </div>
+
+
+      <div id="extra_wrapper">
+        <div class="extra">
+          These vim-like keyboard shortcuts are used by <b>consequtively pressing the keys</b> shown to the left.
+        </div>
+        <div class="extra">
+          Commas, in the table to the left, separate variants of the same shortcut.
+        </div>
+        <div class="extra">
+          You can use <b>number multipliers</b> (like in vim) by entering a number before (or during <font size="2px">(side-effect)</font>) a key combination; this will execute the shortcut <i>n</i> amount of times, consequetively.
+        </div>
+        <div class="extra">
+          On the Level-Editor page, in the bottom left corner you can see your keystrokes.
+        </div>
+        <div class="extra">
+          If you want to load a room into the Level-Editor by hitting the keyboard shortcut ('O'), you will probably need to allow pop-ups for the page.
+        </div>
+
+        <div class="extra" style="font-size: 16px;">
+          All keybindings are defined here: <a href="./keybindings.json">keybindings.json</a>
+        </div>
+      </div>
+
+    </div>
+
+    <script type="text/javascript" src="./js/keybindings_list.js"></script>
+  </body>
+</html>

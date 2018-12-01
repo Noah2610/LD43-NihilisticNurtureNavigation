@@ -20,9 +20,11 @@ use noframe::camera::Camera;
 use noframe::deltatime::Deltatime;
 
 use settings::game::*;
+use settings::res;
 use level::Level;
 
 pub struct GameState {
+  window_size:   Size,
   window_rect:   Rect,
   input_manager: InputManager,
   level:         Option<Level>,
@@ -33,12 +35,18 @@ pub struct GameState {
 impl GameState {
   pub fn new(window_size: Size) -> GameResult<Self> {
     Ok(Self {
-      window_rect:   Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft),
+      window_size:   window_size.clone(),
+      window_rect:   Rect::new(Point::new(0.0, 0.0), window_size, Origin::TopLeft),
       input_manager: InputManager::new(),
       level:         None,
       running:       true,
       last_update:   Instant::now()
     })
+  }
+
+  pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.level = Some(Level::new(ctx, "tiles", self.window_size.clone())?);
+    Ok(())
   }
 }
 

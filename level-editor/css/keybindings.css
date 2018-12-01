@@ -1,0 +1,50 @@
+#table_wrapper {
+  float: left;
+  display: inline-block;
+}
+
+table {
+  border: 1px solid black;
+  padding: 16px;
+}
+
+td {
+  border-bottom: 1px dotted black;
+  padding: 6px;
+}
+
+th {
+  border-bottom: 1px solid black;
+}
+
+#th_shortcut {
+  border-right: 1px solid black;
+}
+
+#th_description {
+}
+
+.shortcut {
+  text-align: center;
+  border-right: 1px dotted black;
+  font-size: 16px;
+  padding: 6px 32px;
+}
+
+.description {
+  font-size: 14px;
+}
+
+
+#extra_wrapper {
+  float: left;
+  width: 640px;
+  margin-left: 128px;
+  padding-bottom: 128px;
+}
+
+.extra {
+  margin-top: 32px;
+  text-align: left;
+  font-size: 20px;
+}

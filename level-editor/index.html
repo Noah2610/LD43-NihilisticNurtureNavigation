@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Level Editor - noframe demo topdown</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script type="text/javascript" src="./lib/jquery-3.2.1.min.js"></script>
+  </head>
+  <body>
+
+    <a target="_blank" id="download_level" style="display: none;"></a>
+    <div id="key_display"></div>
+
+    <div id="grid_wrapper">
+      <span class="grid__box" id="grid__block__highlight" data-x="0" data-y="0"></span>
+      <div id="blocks">
+      </div>
+      <div id="grid">
+      </div>
+    </div>
+
+
+    <div id="panel">
+      <input type="button" id="panel__toggle_panel" value="&gt;" title="Toggle panel"></input>
+
+      <div id="panel__settings">
+        <h3>LD42 - Level Editor</h3>
+
+        <p>
+        Modified version of a Level Editor for a previous project.
+        </p>
+
+        <div class="panel__group">
+          <a target="_blank" href="./keybindings.html">List of keyboard shortcuts</a>
+        </div>
+
+        <div class="panel__group">
+          <strong>Load Level</strong>
+          <input id="load_level" type="file"></input>
+        </div>
+
+        <div class="panel__group" id="panel__room_size">
+          <strong>Room size</strong>
+          <div>
+            w: <input type="text" id="panel__room_size__w"></input>
+          </div>
+          <div>
+            h: <input type="text" id="panel__room_size__h"></input>
+          </div>
+        </div>
+
+        <div class="panel__group" id="panel__block_selector">
+          <strong>Block</strong><br />
+          <select id="panel__block_selector__select">
+          </select>
+        </div>
+
+        <div class="panel__group" id="panel__grid_size">
+          <strong>Cell Size</strong>
+          <span class="panel__shortcut">shortcut: <span class="panel__shortcut__key">d</span></span><br />
+          <div>
+            w: <input type="text" id="panel__box_size__w"></input>
+          </div>
+          <div>
+            h: <input type="text" id="panel__box_size__h"></input>
+          </div>
+        </div>
+
+        <div class="panel__group" id="panel__block_size">
+          <strong>Block size</strong>
+          <span class="panel__shortcut">shortcut: <span class="panel__shortcut__key">s</span></span><br />
+          <div>
+            w: <input type="text" id="panel__block_size__w"></input>
+          </div>
+          <div>
+            h: <input type="text" id="panel__block_size__h"></input>
+          </div>
+        </div>
+
+        <div class="panel__group" id="panel__block_offset">
+          <strong>Block offset</strong>
+          <span class="panel__shortcut">shortcut: <span class="panel__shortcut__key">a</span></span><br />
+          <div>
+            x: <input type="text" id="panel__block_offset__x"></input>
+          </div>
+          <div>
+            y: <input type="text" id="panel__block_offset__y"></input>
+          </div>
+        </div>
+
+        <div class="panel__group" id="panel__block_animation">
+          <strong>Animation</strong>
+          <div>
+            Files:
+            <small><em>(List of comma-separated filenames)</em></small><br />
+            <textarea class="panel__textarea" id="panel__block_animation__files" rows="2" placeholder="block_1.png, block_2.png, block_3.png"></textarea>
+          </div>
+          <div>
+            Intervals:
+            <small><em>(List of comma-separated integers or floating-point numbers, in seconds)</em></small><br />
+            <textarea class="panel__textarea" id="panel__block_animation__intervals" rows="2" placeholder="1, 0.5, 0.25675"></textarea>
+          </div>
+        </div>
+
+        <div class="panel__group">
+          <strong>Additional JSON</strong><br />
+          <small><em><strong>CAREFUL:</strong> Only add correct, error-free JSON.</em></small>
+          <textarea class="panel__textarea" id="panel__additional_json" rows="4" placeholder='{ "key": "value", "objects": [ "object_one", "object_two" ] }'></textarea>
+        </div>
+
+        <input type="button" id="save_btn" value="Save Level" />
+        <input type="text" id="level_name" placeholder="Level Name" />
+      </div>
+    </div>
+
+    <script type="text/javascript" src="./js/settings.js"></script>
+    <script type="text/javascript" src="./js/main.js"></script>
+    <script type="text/javascript" src="./js/grid.js"></script>
+    <script type="text/javascript" src="./js/panel.js"></script>
+    <script type="text/javascript" src="./js/keybindings.js"></script>
+  </body>
+</html>

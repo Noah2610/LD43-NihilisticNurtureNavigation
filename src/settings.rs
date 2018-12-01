@@ -14,9 +14,26 @@ pub mod game {
   pub const UPDATE_INTERVAL_MS: u64 = (1.0 / FPS * 1000.0) as u64;
 }
 
-pub mod controls {
-  use ggez::event::Keycode;
-  pub const LEFT:  Keycode = Keycode::A;
-  pub const RIGHT: Keycode = Keycode::D;
-  pub const JUMP:  Keycode = Keycode::W;
+pub mod res {
+  pub const IMAGES: &str = "/images/";
+  pub const LEVELS: &str = "resources/levels/";
+}
+
+pub mod player {
+  pub const IMAGES: &str = "/images/player/";
+  pub const SPEED_INCREASE: f32 = 50.0;
+  pub const SPEED_DECREASE: f32 = 50.0;
+  pub const MAX_SPEED: f32 = 100.0;
+  pub const MAX_JUMP_SPEED: f32 = 200.0;
+
+  pub mod controls {
+    use ggez::event::Keycode;
+    pub const LEFT:  Keycode = Keycode::A;
+    pub const RIGHT: Keycode = Keycode::D;
+    pub const JUMP:  Keycode = Keycode::W;
+  }
+}
+
+pub mod wall {
+  pub const IMAGES: &str = "/images/walls/";
 }

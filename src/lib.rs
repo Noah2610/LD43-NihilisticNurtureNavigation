@@ -43,6 +43,11 @@ pub fn run() -> GameResult<()> {
 
   graphics::set_background_color(&mut ctx, BG_COLOR.into());
   let mut state = GameState::new(WINDOW_SIZE)?;
-  event::run(&mut ctx, &mut state)?;
-  return Ok(());
+  state.init(&mut ctx)?;
+  return event::run(&mut ctx, &mut state);
+}
+
+
+pub fn join_str<'a>(str_one: &'a str, str_two: &'a str) -> String {
+  format!("{}{}", str_one, str_two)
 }

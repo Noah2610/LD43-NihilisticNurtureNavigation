@@ -1,0 +1,127 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+br {
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* Grid */
+#grid_wrapper {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  font-size: 0;
+  box-shadow: inset 0px 0px 0px 2px #000;
+}
+
+#grid {
+}
+
+.grid__box {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  box-shadow: inset 0px 0px 0px 1px #000;
+}
+
+#grid__block__highlight {
+  position: absolute;
+  opacity: 0.75;
+  z-index: 20;
+}
+
+.block {
+  position: absolute;
+  z-index: 10;
+}
+
+
+/* Panel */
+#panel {
+  position: fixed;
+  display: inline-block;
+  right: 0;
+  top: 0;
+  background-color: #eeeeee;
+  border: 2px solid black;
+  padding: 8px;
+  overflow-y: scroll;
+  height: 95%;
+  z-index: 100;
+}
+
+#panel__settings {
+  display: block;
+  width: 360px;
+}
+
+.panel__group {
+  padding-bottom: 16px;
+}
+
+#panel__block_selector__select {
+  background-color: #ffffff;
+  font-weight: bold;
+}
+
+.panel__block_selector__select__option {
+  font-weight: bold;
+}
+
+#panel__toggle_panel {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  float: right;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #203db0;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  color: #203db0;
+  background-color: #cccccc;
+}
+
+.panel__shortcut {
+  font-size: 12px;
+  font-style: italic;
+}
+.panel__shortcut__key {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+
+/* Textarea with calculated level-data json */
+#level_data {
+  display: block;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* Key combinations display */
+#key_display {
+  position: fixed;
+  bottom: 32px;
+  left: 32px;
+  width: auto;
+  min-width: 20px;
+  height: 32px;
+  padding: 0 6px;
+  line-height: 28px;
+  border: 1px solid black;
+  text-align: center;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.panel__textarea {
+  width: 100%;
+}

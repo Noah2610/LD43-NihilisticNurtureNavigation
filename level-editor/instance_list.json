@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Wall",
+    "color": "#000000"
+  },
+  {
+    "name": "Player",
+    "color": "#ff0000"
+  },
+  {
+    "name": "Child",
+    "color": "#994444"
+  }
+]
