@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+
+echo "Running build script..."
+
+function get_root_dir {
+  if [ -f "$PROJECT_ROOT/../Cargo.toml" ]; then
+    echo "$( cd $PROJECT_ROOT/..; pwd )"
+  else
+    echo "$PROJECT_ROOT"
+  fi
+}
+
+PROJECT_ROOT="$( cd $(dirname "$0")/..; pwd )"
+DIR_TO_COPY="$PROJECT_ROOT/resources"
+ROOT="$( get_root_dir )"
+
+if cargo build "$@" && [ -d "$DIR_TO_COPY" ]; then
+  [ -d "$ROOT/target/debug" ]   && cp -r "$DIR_TO_COPY" "$ROOT/target/debug"
+  [ -d "$ROOT/target/release" ] && cp -r "$DIR_TO_COPY" "$ROOT/target/release"
+  true
+fi
