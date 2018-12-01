@@ -42,7 +42,7 @@ pub fn run() -> GameResult<()> {
   }
 
   graphics::set_background_color(&mut ctx, BG_COLOR.into());
-  let mut state = GameState::new(WINDOW_SIZE)?;
+  let mut state = GameState::new(&mut ctx, WINDOW_SIZE)?;
   state.init(&mut ctx)?;
   return event::run(&mut ctx, &mut state);
 }

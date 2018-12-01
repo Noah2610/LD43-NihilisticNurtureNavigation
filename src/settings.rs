@@ -17,6 +17,7 @@ pub mod game {
 pub mod res {
   pub const IMAGES: &str = "/images/";
   pub const LEVELS: &str = "resources/levels/";
+  pub const AUDIO:  &str = "/audio/";
 }
 
 pub mod player {

@@ -7,7 +7,8 @@ use ggez::{
   event::{
     self,
     Keycode
-  }
+  },
+  audio
 };
 
 use noframe::geo::prelude::*;
@@ -29,23 +30,30 @@ pub struct GameState {
   input_manager: InputManager,
   level:         Option<Level>,
   running:       bool,
-  last_update:   Instant
+  last_update:   Instant,
+
+  // TODO tmp
+  song:          audio::Source
 }
 
 impl GameState {
-  pub fn new(window_size: Size) -> GameResult<Self> {
+  pub fn new(ctx: &mut Context, window_size: Size) -> GameResult<Self> {
     Ok(Self {
       window_size:   window_size.clone(),
       window_rect:   Rect::new(Point::new(0.0, 0.0), window_size, Origin::TopLeft),
       input_manager: InputManager::new(),
       level:         None,
       running:       true,
-      last_update:   Instant::now()
+      last_update:   Instant::now(),
+
+      // TODO tmp
+      song:          audio::Source::new(ctx, ::join_str(res::AUDIO, &"title_edit.wav"))?
     })
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.level = Some(Level::new(ctx, "dev")?);
+    self.level = Some(Level::new(ctx, "plane")?);
+    self.song.play();
     Ok(())
   }
 }

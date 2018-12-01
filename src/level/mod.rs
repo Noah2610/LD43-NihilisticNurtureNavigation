@@ -66,7 +66,7 @@ impl Level {
         },
         "Child" => {
           let err_msg = "Couldn't load level JSON data: Child";
-          children.push(Child::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)))
+          // children.push(Child::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)))
         },
         "Wall" => {
           let err_msg = "Couldn't load level JSON data: Wall";
@@ -127,6 +127,9 @@ impl Level {
     );
     if &new_pos != self.player.point() {
       self.player.point_mut().set(&new_pos);
+      self.camera.move_to(
+        &Point::combine(vec![&self.window_rect.center().mult_axes_by(-1.0), &self.player.center()])
+      );
     }
     self.player.update(ctx)
   }
