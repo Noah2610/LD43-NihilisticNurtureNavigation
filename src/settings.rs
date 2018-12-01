@@ -22,7 +22,8 @@ pub mod res {
 pub mod player {
   pub const IMAGES: &str = "/images/player/";
   pub const SPEED_INCREASE: f32 = 50.0;
-  pub const SPEED_DECREASE: f32 = 50.0;
+  pub const SPEED_DECREASE_X: f32 = 50.0;
+  pub const SPEED_DECREASE_Y: f32 = 50.0;
   pub const MAX_SPEED: f32 = 100.0;
   pub const MAX_JUMP_SPEED: f32 = 200.0;
 
@@ -36,9 +37,10 @@ pub mod player {
 
 pub mod child {
   pub const IMAGES: &str = "/images/children/";
-  pub const SPEED_INCREASE: f32 = 50.0;
-  pub const SPEED_DECREASE: f32 = 50.0;
-  pub const MAX_SPEED: f32 = 100.0;
+  pub const SPEED_INCREASE: f32 = 10.0;
+  pub const SPEED_DECREASE_X: f32 = 20.0;
+  pub const SPEED_DECREASE_Y: f32 = 20.0;
+  pub const MAX_SPEED: f32 = 80.0;
   pub const MAX_JUMP_SPEED: f32 = 200.0;
 }
 

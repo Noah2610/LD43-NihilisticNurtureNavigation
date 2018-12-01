@@ -1,5 +1,3 @@
-mod player_animations;
-
 use ggez::{
   GameResult,
   Context,
@@ -10,15 +8,10 @@ use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
 use noframe::deltatime::Deltatime;
 
+use super::Axis;
 use super::AnimState;
-use self::player_animations::PlayerAnimations;
+use super::person_animations::PersonAnimations;
 use settings::player::*;
-
-#[derive(PartialEq)]
-enum Axis {
-  X,
-  Y
-}
 
 pub struct Player {
   point:        Point,
@@ -27,25 +20,23 @@ pub struct Player {
   velocity:     Point,
   max_velocity: Point,
   has_moved:    Vec<Axis>,
-  animations:   PlayerAnimations,
+  animations:   PersonAnimations,
   anim_state:   AnimState,
   dt:           Deltatime
 }
 
 impl Player {
   pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
-    let animations = PlayerAnimations::new(ctx);
-
     Self {
       point,
       size,
-      origin: Origin::TopLeft,
-      velocity: Point::new(0.0, 0.0),
+      origin:       Origin::TopLeft,
+      velocity:     Point::new(0.0, 0.0),
       max_velocity: Point::new(MAX_SPEED, MAX_JUMP_SPEED),
-      has_moved: Vec::new(),
-      animations,
-      anim_state: AnimState::Idle,
-      dt: Deltatime::new()
+      has_moved:    Vec::new(),
+      animations:   PersonAnimations::new_player_animations(ctx),
+      anim_state:   AnimState::Idle,
+      dt:           Deltatime::new()
     }
   }
 
@@ -88,13 +79,12 @@ impl Player {
   }
 
   fn handle_velocity(&mut self) {
-    let decr = SPEED_DECREASE; self.dt.secs();
     let decr_vel = Point::new(
       if !self.has_moved(Axis::X) {
-        decr
+        SPEED_DECREASE_X
       } else { 0.0 },
       if !self.has_moved(Axis::Y) {
-        decr
+        SPEED_DECREASE_Y
       } else { 0.0 }
     );
     self.decrease_velocity(&decr_vel);
@@ -125,10 +115,9 @@ impl Entity for Player {
       (x, y) if x != 0.0 => AnimState::Walk,
       _                  => AnimState::Idle
     };
-    self.handle_velocity();
-
     self.animations.handle_state(&self.anim_state)?;
 
+    self.handle_velocity();
     self.dt.update();
     Ok(())
   }

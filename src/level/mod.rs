@@ -13,8 +13,8 @@ use noframe::entity::traits::movement::Movement;
 use noframe::geo::prelude::*;
 
 use settings::res;
-use people::player::Player;
-use people::children::Child;
+use persons::player::Player;
+use persons::children::Child;
 use wall::Wall;
 
 pub struct Level {
@@ -105,7 +105,17 @@ impl Level {
   }
 
   fn update_children(&mut self, ctx: &mut Context) -> GameResult<()> {
-    for child in &mut self.children {
+    for i in 0 .. self.children.len() {
+      let new_pos = {
+        let child = &self.children[i];
+        child.get_move_while(
+          |rect| !self.walls.iter().any( |wall| rect.intersects_round(wall) )
+        )
+      };
+      let child = &mut self.children[i];
+      if &new_pos != child.point() {
+        child.point_mut().set(&new_pos);
+      }
       child.update(ctx)?;
     }
     Ok(())

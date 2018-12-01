@@ -6,7 +6,7 @@ extern crate noframe;
 mod settings;
 mod game;
 mod wall;
-mod people;
+mod persons;
 mod level;
 mod animation;
 
