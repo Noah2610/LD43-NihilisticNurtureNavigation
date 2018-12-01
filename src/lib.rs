@@ -9,6 +9,7 @@ mod wall;
 mod player;
 mod children;
 mod level;
+mod animation;
 
 use std::env;
 use std::path;

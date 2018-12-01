@@ -17,8 +17,8 @@ pub struct Wall {
 }
 
 impl Wall {
-  pub fn new(ctx: &mut Context, point: Point, size: Size, image_filenames: Vec<&str>) -> Self {
-    let image_filepath = &::join_str(IMAGES, image_filenames[0]);
+  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
+    let image_filepath = &::join_str(IMAGES, "tile1.png");
     let image = Image::new(ctx, image_filepath).expect(
       &format!("Couldn't load image for wall: {}", image_filepath)
     );
@@ -56,8 +56,7 @@ impl Mask for Wall {
 impl Entity for Wall {
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
     let dest_point = graphics::Point2::from(self.point());
-    graphics::draw(ctx, &self.image, dest_point, 0.0)?;
-    Ok(())
+    graphics::draw(ctx, &self.image, dest_point, 0.0)
   }
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
@@ -65,7 +64,6 @@ impl Entity for Wall {
       &Point::combine(vec![self.point(), offset])
     );
     let param = graphics::DrawParam { dest: dest_point, scale: graphics::Point2::from(&self.scale()) , .. Default::default() };
-    graphics::draw_ex(ctx, &self.image, param)?;
-    Ok(())
+    graphics::draw_ex(ctx, &self.image, param)
   }
 }

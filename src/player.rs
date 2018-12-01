@@ -1,7 +1,6 @@
 use ggez::{
   GameResult,
   Context,
-  graphics::{ self, Image },
   event::Keycode
 };
 
@@ -9,6 +8,7 @@ use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
 use noframe::deltatime::Deltatime;
 
+use animation::Animation;
 use settings::player::*;
 
 #[derive(PartialEq)]
@@ -21,27 +21,38 @@ pub struct Player {
   point:        Point,
   size:         Size,
   origin:       Origin,
-  image:        Image,
   velocity:     Point,
   max_velocity: Point,
   has_moved:    Vec<Axis>,
+  animation:    Animation,
   dt:           Deltatime
 }
 
 impl Player {
-  pub fn new(ctx: &mut Context, point: Point, size: Size, image_filename: &str) -> Self {
-    let image_filepath = &::join_str(IMAGES, image_filename);
-    let image = Image::new(ctx, image_filepath).expect(
-      &format!("Couldn't load image for player: {}", image_filepath)
-    );
+  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
+    let image_filepaths: Vec<String> = vec![
+      ::join_str(IMAGES, "child1_1.png"),
+      ::join_str(IMAGES, "child1_2.png"),
+      ::join_str(IMAGES, "child1_3.png"),
+      ::join_str(IMAGES, "child1_4.png")
+    ];
+    let image_update_intervals_ms = vec![
+      250,
+      250,
+      250,
+      250
+    ];
+
+    let animation = Animation::new(ctx, image_filepaths, image_update_intervals_ms);
+
     Self {
       point,
       size,
       origin: Origin::TopLeft,
-      image,
       velocity: Point::new(0.0, 0.0),
       max_velocity: Point::new(MAX_SPEED, MAX_JUMP_SPEED),
       has_moved: Vec::new(),
+      animation,
       dt: Deltatime::new()
     }
   }
@@ -117,22 +128,17 @@ impl Mask for Player {
 impl Entity for Player {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     self.handle_velocity();
+    self.animation.update()?;
     self.dt.update();
     Ok(())
   }
 
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
-    let dest_point = graphics::Point2::from(self.point());
-    graphics::draw(ctx, &self.image, dest_point, 0.0)?;
-    Ok(())
+    self.animation.draw(ctx, &self.point, &self.size)
   }
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
-    let dest_point = graphics::Point2::from(
-      &Point::combine(vec![self.point(), offset])
-    );
-    graphics::draw(ctx, &self.image, dest_point, 0.0)?;
-    Ok(())
+    self.animation.draw_offset(ctx, &self.point, &self.size, offset)
   }
 }
 

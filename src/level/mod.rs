@@ -57,15 +57,12 @@ impl Level {
       match data["type"].as_str().expect("Couldn't load level JSON data: type") {
         "Player" => {
           let err_msg = "Couldn't load level JSON data: Player";
-          let image_filename = data["images"][0].as_str().expect(err_msg);
-          player_opt = Some(Player::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg), image_filename));
+          player_opt = Some(Player::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)));
         },
         // "Child" => children.push(Child::new()),
         "Wall" => {
           let err_msg = "Couldn't load level JSON data: Wall";
-          let image_filenames = data["images"].members()
-            .map( |filename| filename.as_str().expect(err_msg) ).collect::<Vec<&str>>();
-          walls.push(Wall::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg), image_filenames));
+          walls.push(Wall::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)));
         }
         _ => {}
       }

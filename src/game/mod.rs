@@ -71,7 +71,8 @@ impl event::EventHandler for GameState {
   }
 
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-    if !self.running || Instant::now() - self.last_update < Duration::from_millis(UPDATE_INTERVAL_MS) {
+    let now = Instant::now();
+    if !self.running || now - self.last_update < Duration::from_millis(UPDATE_INTERVAL_MS) {
       return Ok(());
     }
 
@@ -80,7 +81,7 @@ impl event::EventHandler for GameState {
       level.update(_ctx)?;
     }
 
-    self.last_update = Instant::now();
+    self.last_update = now;
     return Ok(());
   }
 
