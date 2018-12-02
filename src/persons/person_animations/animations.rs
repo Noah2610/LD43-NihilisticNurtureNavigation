@@ -56,8 +56,14 @@ pub mod player {
   }
 
   pub fn new_fall_animation(ctx: &mut Context) -> Animation {
-    let filepaths_fall: Vec<String> = vec![ ::join_str(IMAGES, "child_1_left_3.png") ];
-    let interval_ms_fall = vec![ 250 ];
+    let filepaths_fall: Vec<String> = vec![
+      ::join_str(IMAGES, "child_1_falling_1.png"),
+      //::join_str(IMAGES, "child_1_left_4.png"),
+    ];
+    let interval_ms_fall = vec![
+      250,
+      250
+    ];
     Animation::new(ctx, filepaths_fall, interval_ms_fall)
   }
 }

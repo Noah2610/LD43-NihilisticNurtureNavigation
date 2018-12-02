@@ -110,10 +110,10 @@ impl Mask for Player {
 impl Entity for Player {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     self.anim_state = match self.velocity.as_tup() {
-      (x, y) if y <  0.0 => AnimState::Jump,
-      (x, y) if y >  0.0 => AnimState::Fall,
-      (x, y) if x != 0.0 => AnimState::Walk,
-      _                  => AnimState::Idle
+      (_x, y) if y <  0.0 => AnimState::Jump,
+      (_x, y) if y >  0.0 => AnimState::Fall,
+      (x, _y) if x != 0.0 => AnimState::Walk,
+      _                   => AnimState::Idle
     };
     self.animations.handle_state(&self.anim_state)?;
 
