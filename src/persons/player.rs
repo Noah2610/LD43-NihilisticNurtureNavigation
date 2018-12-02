@@ -10,19 +10,23 @@ use noframe::deltatime::Deltatime;
 
 use super::Axis;
 use super::AnimState;
+use super::WalkDirection;
 use super::person_animations::PersonAnimations;
+use animation::Facing;
 use settings::player::*;
 
 pub struct Player {
-  point:        Point,
-  size:         Size,
-  origin:       Origin,
-  velocity:     Point,
-  max_velocity: Point,
-  has_moved:    Vec<Axis>,
-  animations:   PersonAnimations,
-  anim_state:   AnimState,
-  dt:           Deltatime
+  point:          Point,
+  size:           Size,
+  origin:         Origin,
+  velocity:       Point,
+  max_velocity:   Point,
+  has_moved:      Vec<Axis>,
+  animations:     PersonAnimations,
+  anim_state:     AnimState,
+  walk_direction: WalkDirection,
+  facing:         Facing,
+  dt:             Deltatime
 }
 
 impl Player {
@@ -30,13 +34,15 @@ impl Player {
     Self {
       point,
       size,
-      origin:       Origin::TopLeft,
-      velocity:     Point::new(0.0, 0.0),
-      max_velocity: Point::new(MAX_SPEED, MAX_JUMP_SPEED),
-      has_moved:    Vec::new(),
-      animations:   PersonAnimations::new_player_animations(ctx),
-      anim_state:   AnimState::Idle,
-      dt:           Deltatime::new()
+      origin:         Origin::TopLeft,
+      velocity:       Point::new(0.0, 0.0),
+      max_velocity:   Point::new(MAX_SPEED, MAX_JUMP_SPEED),
+      has_moved:      Vec::new(),
+      animations:     PersonAnimations::new_player_animations(ctx),
+      anim_state:     AnimState::Idle,
+      walk_direction: WalkDirection::Still,
+      facing:         Facing::Right,
+      dt:             Deltatime::new()
     }
   }
 
@@ -90,6 +96,29 @@ impl Player {
     self.decrease_velocity(&decr_vel);
     self.has_moved.clear();
   }
+
+  fn handle_anim_state(&mut self) {
+    self.anim_state = match self.velocity.as_tup() {
+      (_x, y) if y <  0.0 => AnimState::Jump,
+      (_x, y) if y >  0.0 => AnimState::Fall,
+      (x, _y) if x != 0.0 => AnimState::Walk,
+      _                   => AnimState::Idle
+    };
+  }
+
+  fn handle_walk_direction(&mut self) {
+    self.walk_direction = match self.velocity.x {
+      x if x > 0.0 => {
+        self.facing = Facing::Right;
+        WalkDirection::Right
+      },
+      x if x < 0.0 => {
+        self.facing = Facing::Left;
+        WalkDirection::Left
+      },
+      _ => WalkDirection::Still,
+    };
+  }
 }
 
 impl Mask for Player {
@@ -109,25 +138,20 @@ impl Mask for Player {
 
 impl Entity for Player {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-    self.anim_state = match self.velocity.as_tup() {
-      (_x, y) if y <  0.0 => AnimState::Jump,
-      (_x, y) if y >  0.0 => AnimState::Fall,
-      (x, _y) if x != 0.0 => AnimState::Walk,
-      _                   => AnimState::Idle
-    };
+    self.handle_anim_state();
     self.animations.handle_state(&self.anim_state)?;
-
     self.handle_velocity();
+    self.handle_walk_direction();
     self.dt.update();
     Ok(())
   }
 
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
-    self.animations.get_by_state(&self.anim_state).draw(ctx, &self.point, &self.size)
+    self.animations.get_by_state(&self.anim_state).draw(ctx, &self.point, &self.size, &self.facing)
   }
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
-    self.animations.get_by_state(&self.anim_state).draw_offset(ctx, &self.point, &self.size, offset)
+    self.animations.get_by_state(&self.anim_state).draw_offset(ctx, &self.point, &self.size, &self.facing, offset)
   }
 }
 

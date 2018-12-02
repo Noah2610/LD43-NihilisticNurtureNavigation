@@ -52,7 +52,7 @@ impl GameState {
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.level = Some(Level::new(ctx, "plane")?);
+    self.level = Some(Level::new(ctx, "pits")?);
     self.song.play();
     Ok(())
   }

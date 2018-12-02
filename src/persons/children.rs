@@ -9,14 +9,10 @@ use noframe::deltatime::Deltatime;
 
 use super::Axis;
 use super::AnimState;
+use super::WalkDirection;
 use super::person_animations::PersonAnimations;
+use animation::Facing;
 use settings::child::*;
-
-enum WalkDirection {
-  Still,
-  Left,
-  Right
-}
 
 pub struct Child {
   point:          Point,
@@ -28,6 +24,7 @@ pub struct Child {
   animations:     PersonAnimations,
   anim_state:     AnimState,
   walk_direction: WalkDirection,
+  facing:         Facing,
   dt:             Deltatime
 }
 
@@ -43,6 +40,7 @@ impl Child {
       animations:     PersonAnimations::new_child_animations(ctx),
       anim_state:     AnimState::Idle,
       walk_direction: WalkDirection::Right,
+      facing:         Facing::Right,
       dt:             Deltatime::new()
     }
   }
@@ -83,6 +81,23 @@ impl Child {
   fn has_moved(&self, axis: Axis) -> bool {
     self.has_moved.iter().any( |a| &axis == a )
   }
+
+  fn handle_anim_state(&mut self) {
+    self.anim_state = match self.velocity.as_tup() {
+      (_x, y) if y <  0.0 => AnimState::Jump,
+      (_x, y) if y >  0.0 => AnimState::Fall,
+      (x, _y) if x != 0.0 => AnimState::Walk,
+      _                   => AnimState::Idle
+    };
+  }
+
+  fn handle_facing(&mut self) {
+    match self.walk_direction {
+      WalkDirection::Right => self.facing = Facing::Right,
+      WalkDirection::Left  => self.facing = Facing::Left,
+      WalkDirection::Still => ()
+    };
+  }
 }
 
 impl Mask for Child {
@@ -102,25 +117,21 @@ impl Mask for Child {
 
 impl Entity for Child {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-    self.anim_state = match self.velocity.as_tup() {
-      (x, y) if y <  0.0 => AnimState::Jump,
-      (x, y) if y >  0.0 => AnimState::Fall,
-      (x, y) if x != 0.0 => AnimState::Walk,
-      _                  => AnimState::Idle
-    };
+    self.handle_anim_state();
     self.animations.handle_state(&self.anim_state)?;
     self.handle_walk();
     self.handle_velocity();
+    self.handle_facing();
     self.dt.update();
     Ok(())
   }
 
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
-    self.animations.get_by_state(&self.anim_state).draw(ctx, &self.point, &self.size)
+    self.animations.get_by_state(&self.anim_state).draw(ctx, &self.point, &self.size, &self.facing)
   }
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
-    self.animations.get_by_state(&self.anim_state).draw_offset(ctx, &self.point, &self.size, offset)
+    self.animations.get_by_state(&self.anim_state).draw_offset(ctx, &self.point, &self.size, &self.facing, offset)
   }
 }
 

@@ -66,7 +66,7 @@ impl Level {
         },
         "Child" => {
           let err_msg = "Couldn't load level JSON data: Child";
-          // children.push(Child::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)))
+          children.push(Child::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)))
         },
         "Wall" => {
           let err_msg = "Couldn't load level JSON data: Wall";

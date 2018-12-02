@@ -8,6 +8,27 @@ use ggez::{
 
 use noframe::geo::prelude::*;
 
+pub enum Facing {
+  Left,
+  Right
+}
+
+impl Facing {
+  pub fn num(&self) -> i8 {
+    match self {
+      Facing::Right =>  1,
+      Facing::Left  => -1
+    }
+  }
+
+  pub fn offset_for_draw_param(&self) -> f32 {
+    match self {
+      Facing::Right => 0.0,
+      Facing::Left  => 1.0
+    }
+  }
+}
+
 pub struct Animation {
   images:                    Vec<Image>,
   image_index:               usize,
@@ -47,33 +68,35 @@ impl Animation {
     }
   }
 
-  pub fn draw(&self, ctx: &mut Context, point: &Point, size: &Size) -> GameResult<()>{
+  pub fn draw(&self, ctx: &mut Context, point: &Point, size: &Size, facing: &Facing) -> GameResult<()>{
     let image = self.current_image();
     let dest = graphics::Point2::from(point);
     let scale = Point::new(
-      size.w / image.width()  as NumType,
+      size.w / image.width()  as NumType * facing.num() as NumType,
       size.h / image.height() as NumType
     );
     let param = graphics::DrawParam {
       dest,
       scale: graphics::Point2::from(&scale),
+      offset: graphics::Point2::new(facing.offset_for_draw_param(), 0.0),
       .. Default::default()
     };
     graphics::draw_ex(ctx, image, param)
   }
 
-  pub fn draw_offset(&self, ctx: &mut Context, point: &Point, size: &Size, offset: &Point) -> GameResult<()> {
+  pub fn draw_offset(&self, ctx: &mut Context, point: &Point, size: &Size, facing: &Facing, offset: &Point) -> GameResult<()> {
     let image = self.current_image();
     let dest = graphics::Point2::from(
       &Point::combine(vec![point, offset])
     );
     let scale = Point::new(
-      size.w / image.width()  as NumType,
+      size.w / image.width()  as NumType * facing.num() as NumType,
       size.h / image.height() as NumType
     );
     let param = graphics::DrawParam {
       dest,
       scale: graphics::Point2::from(&scale),
+      offset: graphics::Point2::new(facing.offset_for_draw_param(), 0.0),
       .. Default::default()
     };
     graphics::draw_ex(ctx, image, param)

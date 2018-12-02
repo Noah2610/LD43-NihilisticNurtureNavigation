@@ -2,7 +2,7 @@ pub mod player;
 pub mod children;
 mod person_animations;
 
-pub enum AnimState {
+enum AnimState {
   Walk,
   Idle,
   Jump,
@@ -13,4 +13,10 @@ pub enum AnimState {
 enum Axis {
   X,
   Y
+}
+
+enum WalkDirection {
+  Still,
+  Left,
+  Right
 }
