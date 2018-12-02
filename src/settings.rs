@@ -36,7 +36,7 @@ pub mod player {
     use ggez::event::Keycode;
     pub const LEFT:  Keycode = Keycode::A;
     pub const RIGHT: Keycode = Keycode::D;
-    pub const JUMP:  Keycode = Keycode::W;
+    pub const JUMP:  Keycode = Keycode::Space;
   }
 }
 
