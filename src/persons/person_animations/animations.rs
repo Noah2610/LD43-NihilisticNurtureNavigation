@@ -7,16 +7,12 @@ pub mod player {
 
   pub fn new_idle_animation(ctx: &mut Context) -> Animation {
     let filepaths_idle: Vec<String> = vec![
-      ::join_str(child::IMAGES, "child_1_left_1.png"),
-      ::join_str(child::IMAGES, "child_1_idle_1.png"),
-      ::join_str(child::IMAGES, "child_1_idle_2.png"),
-      ::join_str(child::IMAGES, "child_1_idle_1.png"),
+      ::join_str(IMAGES, "player_idle_1.png"),
+      ::join_str(IMAGES, "player_idle_2.png"),
     ];
     let update_intervals_ms_idle = vec![
-      150,
-      150,
-      150,
-      150,
+      250,
+      250,
     ];
     Animation::new(ctx, filepaths_idle, update_intervals_ms_idle)
   }

@@ -38,6 +38,8 @@ pub struct GameState {
 
 impl GameState {
   pub fn new(ctx: &mut Context, window_size: Size) -> GameResult<Self> {
+    let mut song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"title.wav"))?;
+    song.set_repeat(true);
     Ok(Self {
       window_size:   window_size.clone(),
       window_rect:   Rect::new(Point::new(0.0, 0.0), window_size, Origin::TopLeft),
@@ -47,7 +49,7 @@ impl GameState {
       last_update:   Instant::now(),
 
       // TODO tmp
-      song:          audio::Source::new(ctx, ::join_str(res::AUDIO, &"title_edit.wav"))?
+      song:          song
     })
   }
 
