@@ -45,10 +45,19 @@ pub mod child {
   pub const SPEED_INCREASE: f32 = 10.0;
   pub const SPEED_DECREASE_X: f32 = 20.0;
   pub const SPEED_DECREASE_Y: f32 = 20.0;
-  pub const MAX_SPEED: f32 = 80.0;
-  pub const MAX_JUMP_SPEED: f32 = 200.0;
+  pub const MAX_VELOCITY_X: f32 = 80.0;
+  pub const MAX_VELOCITY_Y: f32 = 1000.0;
+  pub const GRAVITY_INCREASE: f32 = 20.0;
 }
 
 pub mod wall {
   pub const IMAGES: &str = "/images/walls/";
+}
+
+pub mod interactables {
+  pub const IMAGES: &str = "/images/interactables/";
+
+  pub mod jump_pad {
+    pub const JUMP_SPEED: f32 = 1000.0;
+  }
 }

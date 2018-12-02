@@ -9,6 +9,7 @@ mod persons;
 mod level;
 mod animation;
 mod gravity;
+mod interactables;
 
 use std::env;
 use std::path;
@@ -22,6 +23,7 @@ use ggez::{
 use settings::meta::*;
 use settings::game::*;
 use game::GameState;
+use interactables::Interactable;
 
 pub fn run() -> GameResult<()> {
   let mut ctx = ggez::ContextBuilder::new(

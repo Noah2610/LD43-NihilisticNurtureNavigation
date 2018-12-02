@@ -1,4 +1,3 @@
-
 pub mod player {
   use ggez::Context;
   use animation::Animation;
@@ -123,11 +122,9 @@ pub mod child {
 
   pub fn new_fall_animation(ctx: &mut Context) -> Animation {
     let filepaths: Vec<String> = vec![
-      ::join_str(IMAGES, "child_1_left_4.png"),
-      ::join_str(IMAGES, "child_1_right_4.png")
+      ::join_str(IMAGES, "child_1_falling_1.png")
     ];
     let update_intervals_ms = vec![
-      100,
       100
     ];
     Animation::new(ctx, filepaths, update_intervals_ms)

@@ -10,5 +10,9 @@
   {
     "name": "Child",
     "color": "#994444"
+  },
+  {
+    "name": "JumpPadInteractable",
+    "color": "#dd1d1d"
   }
 ]

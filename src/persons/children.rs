@@ -8,24 +8,27 @@ use noframe::entity::prelude::*;
 use noframe::deltatime::Deltatime;
 
 use settings::child::*;
+use super::Person;
 use super::Axis;
 use super::AnimState;
 use super::WalkDirection;
 use super::person_animations::PersonAnimations;
 use animation::Facing;
+use gravity::Gravity;
 
 pub struct Child {
-  point:          Point,
-  size:           Size,
-  origin:         Origin,
-  velocity:       Point,
-  max_velocity:   Point,
-  has_moved:      Vec<Axis>,
-  animations:     PersonAnimations,
-  anim_state:     AnimState,
-  walk_direction: WalkDirection,
-  facing:         Facing,
-  dt:             Deltatime
+  point:            Point,
+  size:             Size,
+  origin:           Origin,
+  velocity:         Point,
+  max_velocity:     Point,
+  has_moved:        Vec<Axis>,
+  animations:       PersonAnimations,
+  anim_state:       AnimState,
+  walk_direction:   WalkDirection,
+  facing:           Facing,
+  gravity_increase: Point,
+  dt:               Deltatime
 }
 
 impl Child {
@@ -33,15 +36,16 @@ impl Child {
     Self {
       point,
       size,
-      origin:         Origin::TopLeft,
-      velocity:       Point::new(0.0, 0.0),
-      max_velocity:   Point::new(MAX_SPEED, MAX_JUMP_SPEED),
-      has_moved:      Vec::new(),
-      animations:     PersonAnimations::new_child_animations(ctx),
-      anim_state:     AnimState::Idle,
-      walk_direction: WalkDirection::Right,
-      facing:         Facing::Right,
-      dt:             Deltatime::new()
+      origin:           Origin::TopLeft,
+      velocity:         Point::new(0.0, 0.0),
+      max_velocity:     Point::new(MAX_VELOCITY_X, MAX_VELOCITY_Y),
+      has_moved:        Vec::new(),
+      animations:       PersonAnimations::new_child_animations(ctx),
+      anim_state:       AnimState::Idle,
+      walk_direction:   WalkDirection::Right,
+      facing:           Facing::Right,
+      gravity_increase: Point::new(0.0, GRAVITY_INCREASE),
+      dt:               Deltatime::new()
     }
   }
 
@@ -64,7 +68,7 @@ impl Child {
       if !self.has_moved(Axis::X) {
         SPEED_DECREASE_X
       } else { 0.0 },
-      if !self.has_moved(Axis::Y) {
+      if false && !self.has_moved(Axis::Y) {  // TODO I don't think we need to decrease y velocity automatically
         SPEED_DECREASE_Y
       } else { 0.0 }
     );
@@ -118,10 +122,11 @@ impl Mask for Child {
 impl Entity for Child {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     self.handle_anim_state();
-    self.animations.handle_state(&self.anim_state)?;
+    self.animations.get_by_state_mut(&self.anim_state).update()?;
     self.handle_walk();
     self.handle_decrease_velocity();
     self.handle_facing();
+    self.update_gravity();
     self.dt.update();
     Ok(())
   }
@@ -150,4 +155,12 @@ impl Velocity for Child {
   }
 }
 
-impl Movement for Child { }
+impl Movement for Child {}
+
+impl Gravity for Child {
+  fn gravity_increase(&self) -> &Point {
+    &self.gravity_increase
+  }
+}
+
+impl Person for Child {}

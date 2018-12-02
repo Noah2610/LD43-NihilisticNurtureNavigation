@@ -2,6 +2,8 @@ pub mod player;
 pub mod children;
 mod person_animations;
 
+use noframe::entity::prelude::*;
+
 enum AnimState {
   Walk,
   Idle,
@@ -20,3 +22,5 @@ enum WalkDirection {
   Left,
   Right
 }
+
+pub trait Person: Entity + Velocity {}

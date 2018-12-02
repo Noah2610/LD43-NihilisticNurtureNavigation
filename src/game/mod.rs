@@ -23,6 +23,7 @@ use noframe::deltatime::Deltatime;
 use settings::game::*;
 use settings::res;
 use level::Level;
+use interactables::Interactable;
 
 pub struct GameState {
   window_size:   Size,
@@ -54,7 +55,7 @@ impl GameState {
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.level = Some(Level::new(ctx, "pits")?);
+    self.level = Some(Level::new(ctx, "jump_pad")?);
     self.song.play();
     Ok(())
   }

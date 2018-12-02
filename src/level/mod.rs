@@ -16,6 +16,19 @@ use settings::res;
 use persons::player::Player;
 use persons::children::Child;
 use wall::Wall;
+use interactables::prelude::*;
+
+struct InteractablesContainer {
+  pub jump_pads: Vec<JumpPad>
+}
+
+impl InteractablesContainer {
+  pub fn new() -> Self {
+    Self {
+      jump_pads: Vec::new()
+    }
+  }
+}
 
 pub struct Level {
   window_rect:   Rect,
@@ -24,7 +37,7 @@ pub struct Level {
   player:        Player,
   children:      Vec<Child>,
   walls:         Vec<Wall>,
-  //interactables: Vec<T>
+  interactables: InteractablesContainer,
   dt:            Deltatime
 }
 
@@ -44,9 +57,11 @@ impl Level {
       let err_msg = "Couldn't load level JSON data: size (root)";
       Size::new(data["size"]["w"].as_f32().expect(err_msg), data["size"]["h"].as_f32().expect(err_msg))
     } else { panic!("Level JSON size (root) attribute not present") };
+
     let mut player_opt = None;
     let mut children = Vec::new();
     let mut walls = Vec::new();
+    let mut interactables = InteractablesContainer::new();
 
     data["instances"].members().for_each( |data| {
       let point_opt = if data.has_key("position") {
@@ -63,14 +78,24 @@ impl Level {
           let err_msg = "Couldn't load level JSON data: Player";
           player_opt = Some(Player::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)));
         },
+
         "Child" => {
           let err_msg = "Couldn't load level JSON data: Child";
           children.push(Child::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)))
         },
+
         "Wall" => {
           let err_msg = "Couldn't load level JSON data: Wall";
           walls.push(Wall::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)));
         }
+
+        "JumpPadInteractable" => {
+          let err_msg = "Couldn't load level JSON data: Interactable JumpPad";
+          interactables.jump_pads.push(
+            JumpPad::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg))
+          );
+        }
+
         _ => {}
       }
     });
@@ -88,6 +113,7 @@ impl Level {
       player,
       children,
       walls,
+      interactables,
       dt:          Deltatime::new()
     })
   }
@@ -109,9 +135,25 @@ impl Level {
   }
 
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.update_interactables(ctx)?;
     self.update_children(ctx)?;
     self.update_player(ctx)?;
     self.dt.update();
+    Ok(())
+  }
+
+  fn update_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
+    for jump_pad in &mut self.interactables.jump_pads {
+      if jump_pad.intersects(&self.player) {
+        jump_pad.trigger(&mut self.player);
+      }
+      for child in &mut self.children {
+        if jump_pad.intersects(child) {
+          jump_pad.trigger(child);
+        }
+      }
+      jump_pad.update(ctx)?;
+    }
     Ok(())
   }
 
@@ -124,6 +166,12 @@ impl Level {
         )
       };
       let child = &mut self.children[i];
+      if child.velocity().x != 0.0 && new_pos.x == child.point().x {
+        child.set_velocity_x(0.0);
+      }
+      if child.velocity().y != 0.0 && new_pos.y == child.point().y {
+        child.set_velocity_y(0.0);
+      }
       if &new_pos != child.point() {
         child.point_mut().set(&new_pos);
       }
@@ -153,12 +201,35 @@ impl Level {
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.draw_walls(ctx)?;
+    self.draw_interactables(ctx)?;
+    self.draw_children(ctx)?;
+    self.draw_player(ctx)?;
+    Ok(())
+  }
+
+  fn draw_walls(&mut self, ctx: &mut Context) -> GameResult<()> {
     for wall in &self.walls {
       self.camera.draw(ctx, wall)?;
     }
+    Ok(())
+  }
+
+  fn draw_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
+    for jump_pad in &mut self.interactables.jump_pads {
+      self.camera.draw(ctx, jump_pad)?;
+    }
+    Ok(())
+  }
+
+  fn draw_children(&mut self, ctx: &mut Context) -> GameResult<()> {
     for child in &self.children {
       self.camera.draw(ctx, child)?;
     }
+    Ok(())
+  }
+
+  fn draw_player(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.camera.draw(ctx, &self.player)
   }
 }

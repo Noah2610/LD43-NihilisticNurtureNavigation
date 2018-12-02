@@ -36,15 +36,6 @@ impl PersonAnimations {
     }
   }
 
-  pub fn handle_state(&mut self, state: &AnimState) -> GameResult<()> {
-    match state {
-      AnimState::Idle => &mut self.idle_anim,
-      AnimState::Walk => &mut self.walk_anim,
-      AnimState::Jump => &mut self.jump_anim,
-      AnimState::Fall => &mut self.fall_anim
-    } .update()
-  }
-
   pub fn get_by_state(&self, state: &AnimState) -> &Animation {
     match state {
       AnimState::Idle => &self.idle_anim,

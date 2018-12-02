@@ -21,6 +21,10 @@ impl Facing {
     }
   }
 
+  pub fn default() -> Self {
+    Facing::Right
+  }
+
   pub fn offset_for_draw_param(&self) -> f32 {
     match self {
       Facing::Right => 0.0,

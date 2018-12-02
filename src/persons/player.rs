@@ -9,6 +9,7 @@ use noframe::entity::prelude::*;
 use noframe::deltatime::Deltatime;
 
 use settings::player::*;
+use super::Person;
 use super::Axis;
 use super::AnimState;
 use super::WalkDirection;
@@ -145,11 +146,6 @@ impl Player {
       _ => WalkDirection::Still,
     };
   }
-
-  fn handle_gravity(&mut self) {
-    // TODO check jump state
-    self.update_gravity();
-  }
 }
 
 impl Mask for Player {
@@ -170,10 +166,10 @@ impl Mask for Player {
 impl Entity for Player {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     self.handle_anim_state();
-    self.animations.handle_state(&self.anim_state)?;
+    self.animations.get_by_state_mut(&self.anim_state).update()?;
     self.handle_decrease_velocity();
     self.handle_walk_direction();
-    self.handle_gravity();
+    self.update_gravity();
     self.dt.update();
     Ok(())
   }
@@ -202,10 +198,12 @@ impl Velocity for Player {
   }
 }
 
-impl Movement for Player { }
+impl Movement for Player {}
 
 impl Gravity for Player {
   fn gravity_increase(&self) -> &Point {
     &self.gravity_increase
   }
 }
+
+impl Person for Player {}
