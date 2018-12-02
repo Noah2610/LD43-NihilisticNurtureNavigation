@@ -4,7 +4,7 @@ version = "0.1.0"
 dependencies = [
  "ggez 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "json 0.11.13 (registry+https://github.com/rust-lang/crates.io-index)",
- "noframe 0.0.0",
+ "noframe 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -660,7 +660,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "noframe"
-version = "0.0.0"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "ggez 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -1385,6 +1386,7 @@ dependencies = [
 "checksum msdos_time 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "aad9dfe950c057b1bfe9c1f2aa51583a8468ef2a5baba2ebbe06d775efeb7729"
 "checksum nalgebra 0.14.4 (registry+https://github.com/rust-lang/crates.io-index)" = "3f73409a1a0876d9d7be16a7fb8fd7e0658df54098210c93a17d2d5e8ca7afe4"
 "checksum nodrop 0.1.13 (registry+https://github.com/rust-lang/crates.io-index)" = "2f9667ddcc6cc8a43afc9b7917599d7216aa09c463919ea32c59ed6cac8bc945"
+"checksum noframe 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "8b42e840a92ab808355222c912339944c4889f919873d49eb7efd607e09d798d"
 "checksum nom 3.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "05aec50c70fd288702bcd93284a8444607f3292dbdf2a30de5ea5dcdbe72287b"
 "checksum num 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)" = "4703ad64153382334aa8db57c637364c322d3372e097840c72000dabdcf6156e"
 "checksum num-complex 0.1.43 (registry+https://github.com/rust-lang/crates.io-index)" = "b288631d7878aaf59442cffd36910ea604ecd7745c36054328595114001c9656"
