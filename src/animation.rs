@@ -37,6 +37,7 @@ pub struct Animation {
   images:                    Vec<Image>,
   image_index:               usize,
   image_update_intervals_ms: Vec<u64>,
+  times_played:              u32,
   last_update:               Instant,
 }
 
@@ -50,8 +51,18 @@ impl Animation {
       images,
       image_index: 0,
       image_update_intervals_ms,
+      times_played: 0,
       last_update: Instant::now()
     }
+  }
+
+  pub fn played(&self) -> u32 {
+    self.times_played
+  }
+
+  pub fn reset(&mut self) {
+    self.image_index = 0;
+    self.times_played = 0;
   }
 
   pub fn update(&mut self) -> GameResult<()> {
@@ -66,6 +77,7 @@ impl Animation {
 
   fn next_image(&mut self) {
     if self.image_index >= self.images.len() - 1 {
+      self.times_played += 1;
       self.image_index = 0;
     } else {
       self.image_index += 1;

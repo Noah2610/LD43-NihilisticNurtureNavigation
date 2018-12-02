@@ -14,7 +14,8 @@ use super::animations::jump_pad;
 use persons::Person;
 
 enum State {
-  Main
+  Main,
+  Trigger
 }
 
 struct JumpPadAnimations {
@@ -49,6 +50,20 @@ impl JumpPad {
       animations: JumpPadAnimations::new(ctx)
     }
   }
+
+  fn animation(&self) -> &Animation {
+    match self.state {
+      State::Main    => &self.animations.main,
+      State::Trigger => &self.animations.trigger
+    }
+  }
+
+  fn animation_mut(&mut self) -> &mut Animation {
+    match self.state {
+      State::Main    => &mut self.animations.main,
+      State::Trigger => &mut self.animations.trigger
+    }
+  }
 }
 
 impl Mask for JumpPad {
@@ -59,17 +74,30 @@ impl Mask for JumpPad {
 }
 
 impl Entity for JumpPad {
+  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if let State::Trigger = self.state {
+      if self.animations.trigger.played() >= 2 {
+        self.animations.trigger.reset();
+        self.state = State::Main;
+      }
+    }
+    self.animation_mut().update();
+    Ok(())
+  }
+
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
-    self.animations.main.draw(ctx, self.point(), self.size(), &Facing::default())
+    self.animation().draw(ctx, self.point(), self.size(), &Facing::default())
   }
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
-    self.animations.main.draw_offset(ctx, self.point(), self.size(), &Facing::default(), offset)
+    self.animation().draw_offset(ctx, self.point(), self.size(), &Facing::default(), offset)
   }
 }
 
 impl Interactable for JumpPad {
   fn trigger<T: Person>(&mut self, person: &mut T) {
+    self.state = State::Trigger;
+    self.animations.trigger.reset();
     person.add_velocity(&Point::new(0.0, -JUMP_SPEED));
   }
 }
