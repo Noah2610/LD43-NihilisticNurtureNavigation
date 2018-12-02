@@ -55,7 +55,7 @@ impl GameState {
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.level = Some(Level::new(ctx, "jump_pad")?);
+    self.level = Some(Level::new(ctx, "interactables")?);
     self.song.play();
     Ok(())
   }

@@ -14,5 +14,9 @@
   {
     "name": "JumpPadInteractable",
     "color": "#dd1d1d"
+  },
+  {
+    "name": "SwitchInteractable",
+    "color": "#252ab8"
   }
 ]

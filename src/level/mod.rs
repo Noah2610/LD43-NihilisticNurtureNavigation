@@ -19,13 +19,15 @@ use wall::Wall;
 use interactables::prelude::*;
 
 struct InteractablesContainer {
-  pub jump_pads: Vec<JumpPad>
+  pub jump_pads: Vec<JumpPad>,
+  pub switches:  Vec<Switch>
 }
 
 impl InteractablesContainer {
   pub fn new() -> Self {
     Self {
-      jump_pads: Vec::new()
+      jump_pads: Vec::new(),
+      switches:  Vec::new()
     }
   }
 }
@@ -96,6 +98,13 @@ impl Level {
           );
         }
 
+        "SwitchInteractable" => {
+          let err_msg = "Couldn't load level JSON data: Interactable Switch";
+          interactables.switches.push(
+            Switch::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg))
+          );
+        }
+
         _ => {}
       }
     });
@@ -153,6 +162,17 @@ impl Level {
         }
       }
       jump_pad.update(ctx)?;
+    }
+    for switch in &mut self.interactables.switches {
+      if switch.intersects(&self.player) {
+        switch.trigger(&mut self.player);
+      }
+      for child in &mut self.children {
+        if switch.intersects(child) {
+          switch.trigger(child);
+        }
+      }
+      switch.update(ctx)?;
     }
     Ok(())
   }
@@ -218,6 +238,9 @@ impl Level {
   fn draw_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
     for jump_pad in &mut self.interactables.jump_pads {
       self.camera.draw(ctx, jump_pad)?;
+    }
+    for switch in &mut self.interactables.switches {
+      self.camera.draw(ctx, switch)?;
     }
     Ok(())
   }

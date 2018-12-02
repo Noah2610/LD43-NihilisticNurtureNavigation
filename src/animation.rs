@@ -63,6 +63,7 @@ impl Animation {
   pub fn reset(&mut self) {
     self.image_index = 0;
     self.times_played = 0;
+    self.last_update = Instant::now();
   }
 
   pub fn update(&mut self) -> GameResult<()> {

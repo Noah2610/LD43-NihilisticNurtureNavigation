@@ -61,4 +61,6 @@ pub mod interactables {
   pub mod jump_pad {
     pub const JUMP_SPEED: f32 = 1000.0;
   }
+
+  pub mod switch {}
 }
