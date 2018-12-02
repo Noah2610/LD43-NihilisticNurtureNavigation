@@ -1,3 +1,4 @@
+extern crate rand;
 extern crate json;
 extern crate ggez;
 extern crate noframe;
@@ -10,6 +11,7 @@ mod level;
 mod animation;
 mod gravity;
 mod interactables;
+mod id_generator;
 
 use std::env;
 use std::path;

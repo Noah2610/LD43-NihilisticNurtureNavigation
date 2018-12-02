@@ -52,7 +52,7 @@ impl Switch {
       point,
       size,
       origin:       Origin::TopLeft,
-      state:        State::Off,
+      state:        State::On,
       animations:   SwitchAnimations::new(ctx),
     }
   }

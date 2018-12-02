@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>", "hoichael", "williwiderstand"]
 
 [dependencies]
+rand = "0.6.1"
 json = "0.11.13"
 ggez = "0.4.4"
 noframe = { path = "/home/noah/Projects/Rust/ggez/noframe-workspace/noframe" }

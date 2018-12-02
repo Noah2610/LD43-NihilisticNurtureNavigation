@@ -54,14 +54,14 @@ pub mod player {
     let filepaths_fall: Vec<String> = vec![
       ::join_str(IMAGES, "player_falling_1.png"),
       ::join_str(IMAGES, "player_falling_2.png"),
-      ::join_str(IMAGES, "player_falling_1.png"),
-      ::join_str(IMAGES, "player_falling_3.png"),
+      // ::join_str(IMAGES, "player_falling_1.png"),
+      // ::join_str(IMAGES, "player_falling_3.png"),
     ];
     let interval_ms_fall = vec![
-      50,
-      50,
-      50,
-      50
+      200,
+      200,
+      // 200,
+      // 200
     ];
     Animation::new(ctx, filepaths_fall, interval_ms_fall)
   }
@@ -86,29 +86,41 @@ pub mod child {
 
   pub fn new_walk_animation(ctx: &mut Context) -> Animation {
     let filepaths_walk: Vec<String> = vec![
-      ::join_str(IMAGES, "child_1_left_1.png"),
-      ::join_str(IMAGES, "child_1_left_2.png"),
-      ::join_str(IMAGES, "child_1_left_3.png"),
-      ::join_str(IMAGES, "child_1_left_4.png"),
-      ::join_str(IMAGES, "child_1_left_5.png"),
-      ::join_str(IMAGES, "child_1_right_1.png"),
-      ::join_str(IMAGES, "child_1_right_2.png"),
-      ::join_str(IMAGES, "child_1_right_3.png"),
-      ::join_str(IMAGES, "child_1_right_4.png"),
-      ::join_str(IMAGES, "child_1_right_5.png")
+      ::join_str(IMAGES, "child_2_1.png"),
+      ::join_str(IMAGES, "child_2_2.png"),
+      ::join_str(IMAGES, "child_2_1.png"),
+      ::join_str(IMAGES, "child_2_3.png")
     ];
     let update_intervals_ms_walk = vec![
       80,
       80,
       80,
-      80,
-      80,
-      80,
-      80,
-      80,
-      80,
       80
     ];
+    // let filepaths_walk: Vec<String> = vec![
+    //   ::join_str(IMAGES, "child_1_left_1.png"),
+    //   ::join_str(IMAGES, "child_1_left_2.png"),
+    //   ::join_str(IMAGES, "child_1_left_3.png"),
+    //   ::join_str(IMAGES, "child_1_left_4.png"),
+    //   ::join_str(IMAGES, "child_1_left_5.png"),
+    //   ::join_str(IMAGES, "child_1_right_1.png"),
+    //   ::join_str(IMAGES, "child_1_right_2.png"),
+    //   ::join_str(IMAGES, "child_1_right_3.png"),
+    //   ::join_str(IMAGES, "child_1_right_4.png"),
+    //   ::join_str(IMAGES, "child_1_right_5.png")
+    // ];
+    // let update_intervals_ms_walk = vec![
+    //   80,
+    //   80,
+    //   80,
+    //   80,
+    //   80,
+    //   80,
+    //   80,
+    //   80,
+    //   80,
+    //   80
+    // ];
     Animation::new(ctx, filepaths_walk, update_intervals_ms_walk)
   }
 

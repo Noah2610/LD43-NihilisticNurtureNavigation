@@ -44,7 +44,7 @@ pub struct Level {
 }
 
 impl Level {
-  pub fn new(ctx: &mut Context, level_name: &str) -> GameResult<Self> {
+  pub fn new(ctx: &mut Context, window_size: Size, level_name: &str) -> GameResult<Self> {
     let level_name = &::join_str(level_name, ".json");
     let level_filepath = &::join_str(res::LEVELS, level_name);
     let mut level_file = File::open(level_filepath)?;
@@ -117,7 +117,7 @@ impl Level {
 
     Ok(Level {
       window_rect: Rect::new(Point::new(0.0, 0.0), size.clone(), Origin::TopLeft),
-      camera:      Camera::new(),
+      camera:      Camera::new(window_size),
       camera_rect: Rect::new(Point::new(0.0, 0.0), size, Origin::TopLeft),
       player,
       children,
@@ -214,8 +214,11 @@ impl Level {
     if &new_pos != self.player.point() {
       self.player.point_mut().set(&new_pos);
       self.camera.move_to(
-        &Point::combine(vec![&self.window_rect.center().mult_axes_by(-1.0), &self.player.center()])
+        &self.player.center()
       );
+      // self.camera.move_to(
+      //   &Point::combine(vec![&self.window_rect.center().mult_axes_by(-1.0), &self.player.center()])
+      // );
     }
     self.player.update(ctx)
   }
