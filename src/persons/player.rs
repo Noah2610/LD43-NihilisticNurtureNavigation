@@ -8,25 +8,28 @@ use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
 use noframe::deltatime::Deltatime;
 
+use settings::player::*;
 use super::Axis;
 use super::AnimState;
 use super::WalkDirection;
 use super::person_animations::PersonAnimations;
 use animation::Facing;
-use settings::player::*;
+use gravity::Gravity;
 
 pub struct Player {
-  point:          Point,
-  size:           Size,
-  origin:         Origin,
-  velocity:       Point,
-  max_velocity:   Point,
-  has_moved:      Vec<Axis>,
-  animations:     PersonAnimations,
-  anim_state:     AnimState,
-  walk_direction: WalkDirection,
-  facing:         Facing,
-  dt:             Deltatime
+  point:            Point,
+  size:             Size,
+  origin:           Origin,
+  velocity:         Point,
+  max_velocity:     Point,
+  has_moved:        Vec<Axis>,
+  animations:       PersonAnimations,
+  anim_state:       AnimState,
+  walk_direction:   WalkDirection,
+  facing:           Facing,
+  gravity_increase: Point,
+  is_jumping:       bool,
+  dt:               Deltatime
 }
 
 impl Player {
@@ -34,15 +37,17 @@ impl Player {
     Self {
       point,
       size,
-      origin:         Origin::TopLeft,
-      velocity:       Point::new(0.0, 0.0),
-      max_velocity:   Point::new(MAX_SPEED, MAX_JUMP_SPEED),
-      has_moved:      Vec::new(),
-      animations:     PersonAnimations::new_player_animations(ctx),
-      anim_state:     AnimState::Idle,
-      walk_direction: WalkDirection::Still,
-      facing:         Facing::Right,
-      dt:             Deltatime::new()
+      origin:           Origin::TopLeft,
+      velocity:         Point::new(0.0, 0.0),
+      max_velocity:     Point::new(MAX_VELOCITY_X, MAX_VELOCITY_Y),
+      has_moved:        Vec::new(),
+      animations:       PersonAnimations::new_player_animations(ctx),
+      anim_state:       AnimState::Idle,
+      walk_direction:   WalkDirection::Still,
+      facing:           Facing::Right,
+      gravity_increase: Point::new(0.0, GRAVITY_INCREASE),
+      is_jumping:       false,
+      dt:               Deltatime::new()
     }
   }
 
@@ -61,17 +66,38 @@ impl Player {
             Some(Point::new( SPEED_INCREASE, 0.0 ))
           } else { None }
         }
-        &controls::JUMP => {
-          if !self.has_moved(Axis::Y) {
-            self.moved_on_axis(Axis::Y);
-            Some(Point::new( 0.0, -SPEED_INCREASE ))
-          } else { None }
-        }
         _ => None
       } {
         self.add_velocity(&point);
       }
     }
+  }
+
+  pub fn key_down(&mut self, keycode: &Keycode) {
+    if let &controls::JUMP = keycode {
+      self.jump();
+    }
+  }
+
+  pub fn key_up(&mut self, keycode: &Keycode) {
+    if let &controls::JUMP = keycode {
+      if self.is_jumping && self.velocity.y < 0.0 {
+        self.add_velocity(&Point::new(0.0, JUMP_KILL_VELOCITY));
+        if self.velocity.y > 0.0 {
+          self.set_velocity_y(0.0);
+        }
+      }
+    }
+  }
+
+  fn jump(&mut self) {
+    if self.is_jumping { return; }
+    self.is_jumping = true;
+    self.add_velocity(&Point::new(0.0, -JUMP_SPEED));
+  }
+
+  pub fn stop_jumping(&mut self) {
+    self.is_jumping = false;
   }
 
   fn moved_on_axis(&mut self, axis: Axis) {
@@ -84,12 +110,12 @@ impl Player {
     self.has_moved.iter().any( |a| &axis == a )
   }
 
-  fn handle_velocity(&mut self) {
+  fn handle_decrease_velocity(&mut self) {
     let decr_vel = Point::new(
       if !self.has_moved(Axis::X) {
         SPEED_DECREASE_X
       } else { 0.0 },
-      if !self.has_moved(Axis::Y) {
+      if false && !self.has_moved(Axis::Y) {  // TODO I don't think we need to decrease y velocity automatically
         SPEED_DECREASE_Y
       } else { 0.0 }
     );
@@ -119,6 +145,11 @@ impl Player {
       _ => WalkDirection::Still,
     };
   }
+
+  fn handle_gravity(&mut self) {
+    // TODO check jump state
+    self.update_gravity();
+  }
 }
 
 impl Mask for Player {
@@ -140,8 +171,9 @@ impl Entity for Player {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     self.handle_anim_state();
     self.animations.handle_state(&self.anim_state)?;
-    self.handle_velocity();
+    self.handle_decrease_velocity();
     self.handle_walk_direction();
+    self.handle_gravity();
     self.dt.update();
     Ok(())
   }
@@ -171,3 +203,9 @@ impl Velocity for Player {
 }
 
 impl Movement for Player { }
+
+impl Gravity for Player {
+  fn gravity_increase(&self) -> &Point {
+    &self.gravity_increase
+  }
+}

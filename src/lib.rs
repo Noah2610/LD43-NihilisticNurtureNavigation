@@ -1,4 +1,3 @@
-#[macro_use]
 extern crate json;
 extern crate ggez;
 extern crate noframe;
@@ -9,6 +8,7 @@ mod wall;
 mod persons;
 mod level;
 mod animation;
+mod gravity;
 
 use std::env;
 use std::path;

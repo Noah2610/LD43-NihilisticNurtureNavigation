@@ -7,12 +7,12 @@ use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
 use noframe::deltatime::Deltatime;
 
+use settings::child::*;
 use super::Axis;
 use super::AnimState;
 use super::WalkDirection;
 use super::person_animations::PersonAnimations;
 use animation::Facing;
-use settings::child::*;
 
 pub struct Child {
   point:          Point,
@@ -59,7 +59,7 @@ impl Child {
     };
   }
 
-  fn handle_velocity(&mut self) {
+  fn handle_decrease_velocity(&mut self) {
     let decr_vel = Point::new(
       if !self.has_moved(Axis::X) {
         SPEED_DECREASE_X
@@ -120,7 +120,7 @@ impl Entity for Child {
     self.handle_anim_state();
     self.animations.handle_state(&self.anim_state)?;
     self.handle_walk();
-    self.handle_velocity();
+    self.handle_decrease_velocity();
     self.handle_facing();
     self.dt.update();
     Ok(())

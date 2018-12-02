@@ -9,7 +9,7 @@ use ggez::{
 use noframe::deltatime::Deltatime;
 use noframe::camera::Camera;
 use noframe::entity::Entity;
-use noframe::entity::traits::movement::Movement;
+use noframe::entity::prelude::*;
 use noframe::geo::prelude::*;
 
 use settings::res;
@@ -32,7 +32,6 @@ impl Level {
   pub fn new(ctx: &mut Context, level_name: &str) -> GameResult<Self> {
     let level_name = &::join_str(level_name, ".json");
     let level_filepath = &::join_str(res::LEVELS, level_name);
-    println!("{}", level_filepath);
     let mut level_file = File::open(level_filepath)?;
     let mut json_raw = String::new();
     level_file.read_to_string(&mut json_raw)?;
@@ -97,6 +96,18 @@ impl Level {
     self.player.keys_pressed(keycodes);
   }
 
+  pub fn keys_down(&mut self, keycodes: &Vec<Keycode>) {
+    for key in keycodes {
+      self.player.key_down(key);
+    }
+  }
+
+  pub fn keys_up(&mut self, keycodes: &Vec<Keycode>) {
+    for key in keycodes {
+      self.player.key_up(key);
+    }
+  }
+
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.update_children(ctx)?;
     self.update_player(ctx)?;
@@ -125,6 +136,13 @@ impl Level {
     let new_pos = self.player.get_move_while(
       |rect| !self.walls.iter().any( |wall| rect.intersects_round(wall) )
     );
+    if self.player.velocity().x != 0.0 && new_pos.x == self.player.point().x {
+      self.player.set_velocity_x(0.0);
+    }
+    if self.player.velocity().y != 0.0 && new_pos.y == self.player.point().y {
+      self.player.set_velocity_y(0.0);
+      self.player.stop_jumping();
+    }
     if &new_pos != self.player.point() {
       self.player.point_mut().set(&new_pos);
       self.camera.move_to(

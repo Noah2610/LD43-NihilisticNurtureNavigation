@@ -85,9 +85,13 @@ impl event::EventHandler for GameState {
     }
 
     if let Some(ref mut level) = self.level {
-      level.keys_pressed(self.input_manager.keys());
+      level.keys_pressed(self.input_manager.keys_pressed());
+      level.keys_down(self.input_manager.keys_down());
+      level.keys_up(self.input_manager.keys_up());
       level.update(_ctx)?;
     }
+
+    self.input_manager.update();
 
     self.last_update = now;
     return Ok(());

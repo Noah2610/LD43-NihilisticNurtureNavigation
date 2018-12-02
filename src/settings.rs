@@ -25,8 +25,12 @@ pub mod player {
   pub const SPEED_INCREASE: f32 = 50.0;
   pub const SPEED_DECREASE_X: f32 = 50.0;
   pub const SPEED_DECREASE_Y: f32 = 50.0;
-  pub const MAX_SPEED: f32 = 100.0;
-  pub const MAX_JUMP_SPEED: f32 = 200.0;
+  pub const MAX_VELOCITY_X: f32 = 100.0;
+  pub const MAX_VELOCITY_Y: f32 = 1000.0;
+  pub const JUMP_SPEED: f32 = 500.0;
+  pub const JUMP_KILL_VELOCITY: f32 = 250.0;
+  //pub const MAX_JUMP_SPEED: f32 = 200.0;
+  pub const GRAVITY_INCREASE: f32 = 20.0;
 
   pub mod controls {
     use ggez::event::Keycode;
