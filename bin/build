@@ -12,10 +12,17 @@ function get_root_dir {
 
 PROJECT_ROOT="$( cd $(dirname "$0")/..; pwd )"
 DIR_TO_COPY="$PROJECT_ROOT/resources"
+SDL2_DLL="$PROJECT_ROOT/SDL2.dll"
 ROOT="$( get_root_dir )"
 
 if cargo build "$@" && [ -d "$DIR_TO_COPY" ]; then
-  [ -d "$ROOT/target/debug" ]   && cp -r "$DIR_TO_COPY" "$ROOT/target/debug"
-  [ -d "$ROOT/target/release" ] && cp -r "$DIR_TO_COPY" "$ROOT/target/release"
+  if [ -d "$ROOT/target/debug" ]; then
+    cp -r "$DIR_TO_COPY" "$ROOT/target/debug"
+    [ -f "$SDL2_DLL" ] && cp "$SDL2_DLL" "$ROOT/target/debug"
+  fi
+  if [ -d "$ROOT/target/release" ]; then
+    cp -r "$DIR_TO_COPY" "$ROOT/target/release"
+    [ -f "$SDL2_DLL" ] && cp "$SDL2_DLL" "$ROOT/target/release"
+  fi
   true
 fi
