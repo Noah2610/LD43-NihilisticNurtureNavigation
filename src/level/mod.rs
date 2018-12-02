@@ -17,6 +17,7 @@ use persons::player::Player;
 use persons::children::Child;
 use wall::Wall;
 use interactables::prelude::*;
+use persons::children::ChildType;
 
 struct InteractablesContainer {
   pub jump_pads: Vec<JumpPad>,
@@ -81,9 +82,15 @@ impl Level {
           player_opt = Some(Player::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)));
         },
 
+        //"Child-Larry" => {
         "Child" => {
           let err_msg = "Couldn't load level JSON data: Child";
-          children.push(Child::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)))
+          children.push(Child::new(
+              ctx,
+              point_opt.expect(err_msg),
+              size_opt.expect(err_msg),
+              ChildType::Larry
+          ));
         },
 
         "Wall" => {
@@ -91,6 +98,7 @@ impl Level {
           walls.push(Wall::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)));
         }
 
+        // "Interactable-JumpPad" => {
         "JumpPadInteractable" => {
           let err_msg = "Couldn't load level JSON data: Interactable JumpPad";
           interactables.jump_pads.push(
@@ -98,6 +106,7 @@ impl Level {
           );
         }
 
+        // "Interactable-Switch" => {
         "SwitchInteractable" => {
           let err_msg = "Couldn't load level JSON data: Interactable Switch";
           interactables.switches.push(
@@ -204,6 +213,7 @@ impl Level {
     let new_pos = self.player.get_move_while(
       |rect| !self.walls.iter().any( |wall| rect.intersects_round(wall) )
     );
+
     if self.player.velocity().x != 0.0 && new_pos.x == self.player.point().x {
       self.player.set_velocity_x(0.0);
     }

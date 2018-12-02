@@ -1,3 +1,7 @@
+mod larry;
+mod thing;
+//mod bloat;
+
 use ggez::{
   GameResult,
   Context
@@ -16,6 +20,12 @@ use super::person_animations::PersonAnimations;
 use animation::Facing;
 use gravity::Gravity;
 
+pub enum ChildType {
+  Larry,
+  Thing,
+  Bloat
+}
+
 pub struct Child {
   point:            Point,
   size:             Size,
@@ -28,11 +38,12 @@ pub struct Child {
   walk_direction:   WalkDirection,
   facing:           Facing,
   gravity_increase: Point,
+  child_type:       ChildType,
   dt:               Deltatime
 }
 
 impl Child {
-  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
+  pub fn new(ctx: &mut Context, point: Point, size: Size, child_type: ChildType) -> Self {
     Self {
       point,
       size,
@@ -43,8 +54,9 @@ impl Child {
       animations:       PersonAnimations::new_child_animations(ctx),
       anim_state:       AnimState::Idle,
       walk_direction:   WalkDirection::Right,
-      facing:           Facing::Right,
+      facing:           Facing::default(),
       gravity_increase: Point::new(0.0, GRAVITY_INCREASE),
+      child_type,
       dt:               Deltatime::new()
     }
   }

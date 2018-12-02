@@ -24,11 +24,10 @@ pub mod res {
 pub mod player {
   pub const IMAGES: &str = "/images/player/";
   // pub const SPEED_INCREASE: f32 = 50.0;
-  pub const SPEED_INCREASE: f32 = 20.0;
+  pub const SPEED_INCREASE: f32 = 50.0;
   pub const SPEED_DECREASE_X: f32 = 50.0;
   pub const SPEED_DECREASE_Y: f32 = 50.0;
-  // pub const MAX_VELOCITY_X: f32 = 100.0;
-  pub const MAX_VELOCITY_X: f32 = 500.0;
+  pub const MAX_VELOCITY_X: f32 = 150.0;
   pub const MAX_VELOCITY_Y: f32 = 1000.0;
   pub const JUMP_SPEED: f32 = 500.0;
   pub const JUMP_KILL_VELOCITY: f32 = 250.0;
