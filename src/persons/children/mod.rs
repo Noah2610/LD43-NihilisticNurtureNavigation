@@ -196,6 +196,9 @@ impl Person for Child {
   fn solidify(&mut self) {
     self.solid = true;
   }
+  fn unsolidify(&mut self) {
+    self.solid = false;
+  }
 }
 
 impl IdGenerator for Child {

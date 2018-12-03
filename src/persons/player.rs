@@ -58,7 +58,6 @@ impl Player {
   }
 
   pub fn keys_pressed(&mut self, keycodes: &Vec<Keycode>) {
-    if self.is_solid() { return; }
     for keycode in keycodes {
       if let Some(point) = match keycode {
         &controls::LEFT => {
@@ -81,14 +80,12 @@ impl Player {
   }
 
   pub fn key_down(&mut self, keycode: &Keycode) {
-    if self.is_solid() { return; }
     if let &controls::JUMP = keycode {
       self.jump();
     }
   }
 
   pub fn key_up(&mut self, keycode: &Keycode) {
-    if self.is_solid() { return; }
     if let &controls::JUMP = keycode {
       if self.is_jumping && self.velocity.y < 0.0 {
         self.add_velocity(&Point::new(0.0, JUMP_KILL_VELOCITY));
@@ -220,6 +217,9 @@ impl Person for Player {
   }
   fn solidify(&mut self) {
     self.solid = true;
+  }
+  fn unsolidify(&mut self) {
+    self.solid = false;
   }
 }
 

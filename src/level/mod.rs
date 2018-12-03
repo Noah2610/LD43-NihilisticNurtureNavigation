@@ -320,8 +320,10 @@ impl Level {
       door.update(ctx)?;
     }
 
+    let mut player_in_solidifier = false;
     for solidifier in &mut self.interactables.solidifiers {
       if solidifier.intersects(&self.player) {
+        player_in_solidifier = true;
         solidifier.trigger_once(&mut self.player);
       }
       for child in &mut self.children {
@@ -329,6 +331,9 @@ impl Level {
           solidifier.trigger_once(child);
         }
       }
+    }
+    if !player_in_solidifier {
+      self.player.unsolidify();
     }
     Ok(())
   }
