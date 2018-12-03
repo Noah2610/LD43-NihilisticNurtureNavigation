@@ -12,7 +12,7 @@ use animation::Facing;
 use super::Interactable;
 use super::animations::switch;
 use persons::Person;
-use id_generator::IdType;
+use id_generator::prelude::*;
 
 enum State {
   On,
@@ -29,35 +29,50 @@ struct SwitchAnimations {
 }
 
 impl SwitchAnimations {
-  pub fn new(ctx: &mut Context) -> Self {
+  pub fn new(ctx: &mut Context, color: &str) -> Self {
     Self {
-      on:          switch::new_on_animation(ctx),
-      off:         switch::new_off_animation(ctx),
-      turning_on:  switch::new_turning_on_animation(ctx),
-      turning_off: switch::new_turning_off_animation(ctx)
+      on:          switch::new_on_animation(ctx, color),
+      off:         switch::new_off_animation(ctx, color),
+      turning_on:  switch::new_turning_on_animation(ctx, color),
+      turning_off: switch::new_turning_off_animation(ctx, color)
     }
   }
 }
 
 pub struct Switch {
-  point:            Point,
-  size:             Size,
-  origin:           Origin,
-  state:            State,
-  animations:       SwitchAnimations,
-  intersected:      Vec<IdType>
+  point:                 Point,
+  size:                  Size,
+  origin:                Origin,
+  state:                 State,
+  animations:            SwitchAnimations,
+  intersected:           Vec<IdType>,
+  id:                    IdType,
+  triggers:              Vec<IdType>,
+  trigger_interactables: bool
 }
 
 impl Switch {
-  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
+  pub fn new(ctx: &mut Context, point: Point, size: Size, id: IdType, color: &str, triggers: Vec<IdType>) -> Self {
     Self {
       point,
       size,
-      origin:       Origin::TopLeft,
-      state:        State::Off,
-      animations:   SwitchAnimations::new(ctx),
-      intersected:  Vec::new()
+      origin:                Origin::TopLeft,
+      state:                 State::Off,
+      animations:            SwitchAnimations::new(ctx, color),
+      intersected:           Vec::new(),
+      id,
+      triggers,
+      trigger_interactables: false
     }
+  }
+
+  pub fn get_interactables_to_trigger(&self) -> Vec<IdType> {
+    if !self.trigger_interactables { return vec![]; }
+    self.triggers.clone()
+  }
+
+  pub fn interactables_triggered(&mut self) {
+    self.trigger_interactables = false;
   }
 
   fn animation(&self) -> &Animation {
@@ -121,6 +136,15 @@ impl Entity for Switch {
   }
 }
 
+impl IdGenerator for Switch {
+  fn id(&self) -> IdType {
+    self.id
+  }
+  fn set_id(&mut self, id: IdType) {
+    self.id = id;
+  }
+}
+
 impl Interactable for Switch {
   fn get_intersected(&self) -> &Vec<IdType> {
     &self.intersected
@@ -138,5 +162,6 @@ impl Interactable for Switch {
       State::Off => self.state = State::TurningOn,
       _          => ()
     };
+    self.trigger_interactables = true;
   }
 }

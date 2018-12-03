@@ -12,7 +12,7 @@ use animation::Facing;
 use super::Interactable;
 use super::animations::jump_pad;
 use persons::Person;
-use id_generator::IdType;
+use id_generator::prelude::*;
 
 enum State {
   Main,
@@ -25,10 +25,10 @@ struct JumpPadAnimations {
 }
 
 impl JumpPadAnimations {
-  pub fn new(ctx: &mut Context) -> Self {
+  pub fn new(ctx: &mut Context, color: &str) -> Self {
     Self {
-      main:    jump_pad::new_main_animation(ctx),
-      trigger: jump_pad::new_trigger_animation(ctx),
+      main:    jump_pad::new_main_animation(ctx, color),
+      trigger: jump_pad::new_trigger_animation(ctx, color),
     }
   }
 }
@@ -39,18 +39,20 @@ pub struct JumpPad {
   origin:      Origin,
   state:       State,
   animations:  JumpPadAnimations,
-  intersected: Vec<IdType>
+  intersected: Vec<IdType>,
+  id:          IdType
 }
 
 impl JumpPad {
-  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
+  pub fn new(ctx: &mut Context, point: Point, size: Size, id: IdType, color: &str) -> Self {
     Self {
       point,
       size,
       origin:      Origin::TopLeft,
       state:       State::Main,
-      animations:  JumpPadAnimations::new(ctx),
-      intersected: Vec::new()
+      animations:  JumpPadAnimations::new(ctx, color),
+      intersected: Vec::new(),
+      id
     }
   }
 
@@ -94,6 +96,15 @@ impl Entity for JumpPad {
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
     self.animation().draw_offset(ctx, self.point(), self.size(), &Facing::default(), offset)
+  }
+}
+
+impl IdGenerator for JumpPad {
+  fn id(&self) -> IdType {
+    self.id
+  }
+  fn set_id(&mut self, id: IdType) {
+    self.id = id;
   }
 }
 

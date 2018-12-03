@@ -1,27 +1,26 @@
-# Player
+# Interactables
+## JumpPad
 ```json
 {
-  "image": "IMAGE_FILENAME.png"
+  "id":    0,
+  "color": "red"
 }
 ```
 
-# Interactables
-```
+## Switch
+```json
 {
-  "state": "STATE"
+  "id":       0,
+  "color":    "red",
+  "triggers": [ 1, 2, 3 ]
 }
 ```
 
-Depending on the _type_ of Interactable, the `STATE` is different:
-
-## JumpPad States
-Does not need to be specified.
-
-## Switch States
-Does not need to be specified.
-
-## Door States
-- `Open`
-- `Closed`
-- `Opening`
-- `Closing`
+## Door
+```json
+{
+  "id":    0,
+  "color": "red",
+  "state": "Open|Closed|Opening|Closing"
+}
+```

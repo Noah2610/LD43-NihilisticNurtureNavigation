@@ -12,7 +12,7 @@ use animation::Facing;
 use super::Interactable;
 use super::animations::door;
 use persons::Person;
-use id_generator::IdType;
+use id_generator::prelude::*;
 
 #[derive(PartialEq)]
 pub enum State {
@@ -30,12 +30,12 @@ struct DoorAnimations {
 }
 
 impl DoorAnimations {
-  pub fn new(ctx: &mut Context) -> Self {
+  pub fn new(ctx: &mut Context, color: &str) -> Self {
     Self {
-      open:    door::new_open_animation(ctx),
-      closed:  door::new_closed_animation(ctx),
-      opening: door::new_opening_animation(ctx),
-      closing: door::new_closing_animation(ctx),
+      open:    door::new_open_animation(ctx, color),
+      closed:  door::new_closed_animation(ctx, color),
+      opening: door::new_opening_animation(ctx, color),
+      closing: door::new_closing_animation(ctx, color),
     }
   }
 }
@@ -46,18 +46,20 @@ pub struct Door {
   origin:      Origin,
   state:       State,
   animations:  DoorAnimations,
-  intersected: Vec<IdType>
+  intersected: Vec<IdType>,
+  id:          IdType
 }
 
 impl Door {
-  pub fn new(ctx: &mut Context, point: Point, size: Size, state: State) -> Self {
+  pub fn new(ctx: &mut Context, point: Point, size: Size, id: IdType, color: &str, state: State) -> Self {
     Self {
       point,
       size,
       origin:      Origin::TopLeft,
       state,
-      animations:  DoorAnimations::new(ctx),
-      intersected: Vec::new()
+      animations:  DoorAnimations::new(ctx, color),
+      intersected: Vec::new(),
+      id
     }
   }
 
@@ -103,7 +105,7 @@ impl Entity for Door {
           self.animation_mut().reset();
           self.state = State::Closed;
         },
-        _              => ()
+        _ => ()
       };
     }
     self.animation_mut().update();
@@ -119,6 +121,15 @@ impl Entity for Door {
   }
 }
 
+impl IdGenerator for Door {
+  fn id(&self) -> IdType {
+    self.id
+  }
+  fn set_id(&mut self, id: IdType) {
+    self.id = id;
+  }
+}
+
 impl Interactable for Door {
   fn get_intersected(&self) -> &Vec<IdType> {
     &self.intersected
@@ -130,7 +141,7 @@ impl Interactable for Door {
     self.intersected.remove(index);
   }
 
-  fn trigger<T: Person>(&mut self, person: &mut T) {
+  fn trigger<T: Person>(&mut self, _person: &mut T) {
     match self.state {
       State::Open   => self.state = State::Closing,
       State::Closed => self.state = State::Opening,

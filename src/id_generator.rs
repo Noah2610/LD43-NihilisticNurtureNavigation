@@ -1,18 +1,18 @@
 //! Stupid simple "ID Generator" (picks a random number between 0 and a lot)
 
 pub mod prelude {
-  pub use std::u64;
+  pub use std::u32;
   pub use super::{ IdGenerator, IdType, generate_id };
 }
 
-use std::u64;
+use std::u32;
 
 use rand::Rng;
 
-pub type IdType = u64;
+pub type IdType = u32;
 
 pub fn generate_id() -> IdType {
-  rand::thread_rng().gen_range(u64::MIN, u64::MAX)
+  rand::thread_rng().gen_range(u32::MIN, u32::MAX)
 }
 
 pub trait IdGenerator {
@@ -20,7 +20,7 @@ pub trait IdGenerator {
   fn set_id(&mut self, id: IdType);
 
   fn generate_id(&mut self) {
-    self.set_id(rand::thread_rng().gen_range(u64::MIN, u64::MAX));
+    self.set_id(rand::thread_rng().gen_range(100_u32, u32::MAX));
   }
 
   fn is<T: IdGenerator>(&self, other: &T) -> bool {

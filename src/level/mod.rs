@@ -18,6 +18,7 @@ use persons::children::Child;
 use wall::Wall;
 use interactables::prelude::*;
 use persons::children::ChildType;
+use id_generator::prelude::*;
 
 struct InteractablesContainer {
   pub jump_pads: Vec<JumpPad>,
@@ -81,11 +82,24 @@ impl Level {
         let err_msg = "Couldn't load level JSON data: size";
         Some(Size::new(data["size"]["w"].as_f32().expect(err_msg), data["size"]["h"].as_f32().expect(err_msg)))
       } else { None };
-      let state_opt = if data.has_key("additional") {
-        if data["additional"].has_key("state") {
-          Some(data["additional"]["state"].as_str().expect("Couldn't load level JSON data: state"))
-        } else { None }
-      } else { None };
+      let ( state_opt, id_opt, color_opt, triggers_opt ) = if data.has_key("additional") {
+        (
+          if data["additional"].has_key("state") {
+            Some( data["additional"]["state"].as_str().expect("Couldn't load level JSON data: state") )
+          } else { None },
+          if data["additional"].has_key("id") {
+            Some( data["additional"]["id"].as_u32().expect("Couldn't load level JSON data: id") )
+          } else { None },
+          if data["additional"].has_key("color") {
+            Some( data["additional"]["color"].as_str().expect("Couldn't load level JSON data: color") )
+          } else { None },
+          if data["additional"].has_key("triggers") {
+            Some( data["additional"]["triggers"].members()
+                  .map( |id| id.as_u32().expect("Couldn't load level JSON data: triggers id") )
+                  .collect::<Vec<IdType>>() )
+          } else { None }
+        )
+      } else { ( None, None, None, None ) };
 
       match data["type"].as_str().expect("Couldn't load level JSON data: type") {
         "Player" => {
@@ -113,7 +127,13 @@ impl Level {
         "JumpPadInteractable" => {
           let err_msg = "Couldn't load level JSON data: Interactable JumpPad";
           interactables.jump_pads.push(
-            JumpPad::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg))
+            JumpPad::new(
+              ctx,
+              point_opt.expect(err_msg),
+              size_opt.expect(err_msg),
+              id_opt.expect(err_msg),
+              color_opt.expect(err_msg)
+            )
           );
         }
 
@@ -121,7 +141,14 @@ impl Level {
         "SwitchInteractable" => {
           let err_msg = "Couldn't load level JSON data: Interactable Switch";
           interactables.switches.push(
-            Switch::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg))
+            Switch::new(
+              ctx,
+              point_opt.expect(err_msg),
+              size_opt.expect(err_msg),
+              id_opt.expect(err_msg),
+              color_opt.expect(err_msg),
+              triggers_opt.expect(err_msg)
+            )
           );
         }
 
@@ -136,7 +163,14 @@ impl Level {
             _         => panic!("Interactable Door: Invalid state: {}", state_opt.unwrap())
           };
           interactables.doors.push(
-            Door::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg), state)
+            Door::new(
+              ctx,
+              point_opt.expect(err_msg),
+              size_opt.expect(err_msg),
+              id_opt.expect(err_msg),
+              color_opt.expect(err_msg),
+              state
+            )
           );
         }
 
@@ -203,26 +237,44 @@ impl Level {
           jump_pad.update(ctx)?;
         }
 
-        for switch in &mut self.interactables.switches {
-          if switch.intersects(&self.player) {
-            switch.trigger_once(&mut self.player);
-          } else {
-            switch.set_intersected(&self.player, false);
-          }
-          for child in &mut self.children {
-            if switch.intersects(child) {
-              switch.trigger_once(child);
+        let mut door_ids_to_trigger: Vec<IdType> = Vec::new();
+
+        for i in 0 .. self.interactables.switches.len() {
+        // for switch in &mut self.interactables.switches {
+          {
+            let mut switch = &mut self.interactables.switches[i];
+            if switch.intersects(&self.player) {
+              switch.trigger_once(&mut self.player);
             } else {
-              switch.set_intersected(&*child, false);
+              switch.set_intersected(&self.player, false);
             }
+            for child in &mut self.children {
+              if switch.intersects(child) {
+                switch.trigger_once(child);
+              } else {
+                switch.set_intersected(&*child, false);
+              }
+            }
+            switch.update(ctx)?;
           }
-          switch.update(ctx)?;
+          {
+            let switch = &self.interactables.switches[i];
+            door_ids_to_trigger.append(&mut switch.get_interactables_to_trigger());
+          }
+          self.interactables.switches[i].interactables_triggered();
         }
 
         for door in &mut self.interactables.doors {
+          if door_ids_to_trigger.contains(&door.id()) {
+            door.trigger(&mut self.player);
+          }
           door.update(ctx)?;
         }
         Ok(())
+      }
+
+      fn get_door_by_id_mut(&mut self, id: IdType) -> Option<&mut Door> {
+        self.interactables.doors.iter_mut().find( |ref door| door.has_id(id) )
       }
 
       fn update_children(&mut self, ctx: &mut Context) -> GameResult<()> {
