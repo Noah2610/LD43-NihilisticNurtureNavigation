@@ -163,22 +163,30 @@ impl Level {
   fn update_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
     for jump_pad in &mut self.interactables.jump_pads {
       if jump_pad.intersects(&self.player) {
-        jump_pad.trigger(&mut self.player);
+        jump_pad.trigger_once(&mut self.player);
+      } else {
+        jump_pad.set_intersected(&self.player, false);
       }
       for child in &mut self.children {
         if jump_pad.intersects(child) {
-          jump_pad.trigger(child);
+          jump_pad.trigger_once(child);
+        } else {
+          jump_pad.set_intersected(&*child, false);
         }
       }
       jump_pad.update(ctx)?;
     }
     for switch in &mut self.interactables.switches {
       if switch.intersects(&self.player) {
-        switch.trigger(&mut self.player);
+        switch.trigger_once(&mut self.player);
+      } else {
+        switch.set_intersected(&self.player, false);
       }
       for child in &mut self.children {
         if switch.intersects(child) {
-          switch.trigger(child);
+          switch.trigger_once(child);
+        } else {
+          switch.set_intersected(&*child, false);
         }
       }
       switch.update(ctx)?;

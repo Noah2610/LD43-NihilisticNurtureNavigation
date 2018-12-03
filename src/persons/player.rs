@@ -16,6 +16,7 @@ use super::WalkDirection;
 use super::person_animations::PersonAnimations;
 use animation::Facing;
 use gravity::Gravity;
+use id_generator::prelude::*;
 
 pub struct Player {
   point:            Point,
@@ -30,6 +31,7 @@ pub struct Player {
   facing:           Facing,
   gravity_increase: Point,
   is_jumping:       bool,
+  id:               IdType,
   dt:               Deltatime
 }
 
@@ -48,6 +50,7 @@ impl Player {
       facing:           Facing::Right,
       gravity_increase: Point::new(0.0, GRAVITY_INCREASE),
       is_jumping:       false,
+      id:               generate_id(),
       dt:               Deltatime::new()
     }
   }
@@ -207,3 +210,12 @@ impl Gravity for Player {
 }
 
 impl Person for Player {}
+
+impl IdGenerator for Player {
+  fn id(&self) -> IdType {
+    self.id
+  }
+  fn set_id(&mut self, id: IdType) {
+    self.id = id;
+  }
+}

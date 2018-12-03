@@ -12,6 +12,7 @@ use animation::Facing;
 use super::Interactable;
 use super::animations::jump_pad;
 use persons::Person;
+use id_generator::IdType;
 
 enum State {
   Main,
@@ -33,11 +34,12 @@ impl JumpPadAnimations {
 }
 
 pub struct JumpPad {
-  point:      Point,
-  size:       Size,
-  origin:     Origin,
-  state:      State,
-  animations: JumpPadAnimations
+  point:       Point,
+  size:        Size,
+  origin:      Origin,
+  state:       State,
+  animations:  JumpPadAnimations,
+  intersected: Vec<IdType>
 }
 
 impl JumpPad {
@@ -45,9 +47,10 @@ impl JumpPad {
     Self {
       point,
       size,
-      origin:     Origin::TopLeft,
-      state:      State::Main,
-      animations: JumpPadAnimations::new(ctx)
+      origin:      Origin::TopLeft,
+      state:       State::Main,
+      animations:  JumpPadAnimations::new(ctx),
+      intersected: Vec::new()
     }
   }
 
@@ -95,9 +98,19 @@ impl Entity for JumpPad {
 }
 
 impl Interactable for JumpPad {
+  fn get_intersected(&self) -> &Vec<IdType> {
+    &self.intersected
+  }
+  fn add_intersected(&mut self, id: IdType) {
+    self.intersected.push(id);
+  }
+  fn rm_intersected_at(&mut self, index: usize) {
+    self.intersected.remove(index);
+  }
+
   fn trigger<T: Person>(&mut self, person: &mut T) {
     self.state = State::Trigger;
     self.animations.trigger.reset();
-    person.add_velocity(&Point::new(0.0, -JUMP_SPEED));
+    person.set_velocity_y(-JUMP_SPEED);
   }
 }

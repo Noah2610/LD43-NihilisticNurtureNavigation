@@ -19,6 +19,7 @@ use super::WalkDirection;
 use super::person_animations::PersonAnimations;
 use animation::Facing;
 use gravity::Gravity;
+use id_generator::prelude::*;
 
 pub enum ChildType {
   Larry,
@@ -39,6 +40,7 @@ pub struct Child {
   facing:           Facing,
   gravity_increase: Point,
   child_type:       ChildType,
+  id:               IdType,
   dt:               Deltatime
 }
 
@@ -57,6 +59,7 @@ impl Child {
       facing:           Facing::default(),
       gravity_increase: Point::new(0.0, GRAVITY_INCREASE),
       child_type,
+      id:               generate_id(),
       dt:               Deltatime::new()
     }
   }
@@ -176,3 +179,12 @@ impl Gravity for Child {
 }
 
 impl Person for Child {}
+
+impl IdGenerator for Child {
+  fn id(&self) -> IdType {
+    self.id
+  }
+  fn set_id(&mut self, id: IdType) {
+    self.id = id;
+  }
+}

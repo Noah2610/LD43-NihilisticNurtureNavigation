@@ -12,6 +12,7 @@ use animation::Facing;
 use super::Interactable;
 use super::animations::switch;
 use persons::Person;
+use id_generator::IdType;
 
 enum State {
   On,
@@ -44,6 +45,7 @@ pub struct Switch {
   origin:           Origin,
   state:            State,
   animations:       SwitchAnimations,
+  intersected:      Vec<IdType>
 }
 
 impl Switch {
@@ -54,6 +56,7 @@ impl Switch {
       origin:       Origin::TopLeft,
       state:        State::On,
       animations:   SwitchAnimations::new(ctx),
+      intersected:  Vec::new()
     }
   }
 
@@ -110,6 +113,16 @@ impl Entity for Switch {
 }
 
 impl Interactable for Switch {
+  fn get_intersected(&self) -> &Vec<IdType> {
+    &self.intersected
+  }
+  fn add_intersected(&mut self, id: IdType) {
+    self.intersected.push(id);
+  }
+  fn rm_intersected_at(&mut self, index: usize) {
+    self.intersected.remove(index);
+  }
+
   fn trigger<T: Person>(&mut self, person: &mut T) {
     match &self.state {
       State::On  => self.state = State::TurningOff,

@@ -3,6 +3,7 @@ pub mod children;
 mod person_animations;
 
 use noframe::entity::prelude::*;
+use id_generator::IdGenerator;
 
 enum AnimState {
   Walk,
@@ -23,4 +24,4 @@ enum WalkDirection {
   Right
 }
 
-pub trait Person: Entity + Velocity {}
+pub trait Person: Entity + Velocity + IdGenerator {}
