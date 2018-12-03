@@ -95,7 +95,7 @@ impl Mask for Door {
 
 impl Entity for Door {
   fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-    if self.animation().played() > 1 {
+    if self.animation().played() > 0 {
       match self.state {
         State::Opening => {
           self.animation_mut().reset();

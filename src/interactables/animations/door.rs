@@ -26,17 +26,29 @@ pub fn new_closed_animation(ctx: &mut Context, color: &str) -> Animation {
 pub fn new_opening_animation(ctx: &mut Context, color: &str) -> Animation {
   Animation::new(ctx,
                  vec![
-                 MISSING_IMAGE.to_string(),
+                 format!("{}{}{}.png", IMAGES, "door_3_", color),
+                 format!("{}{}{}.png", IMAGES, "door_3_", color),
+                 format!("{}{}{}.png", IMAGES, "door_2_", color),
+                 format!("{}{}{}.png", IMAGES, "door_1_", color),
                  ], vec![
-                 1000
+                 25,
+                 25,
+                 25,
+                 25
                  ])
 }
 
 pub fn new_closing_animation(ctx: &mut Context, color: &str) -> Animation {
   Animation::new(ctx,
                  vec![
-                 MISSING_IMAGE.to_string(),
+                 format!("{}{}{}.png", IMAGES, "door_1_", color),
+                 format!("{}{}{}.png", IMAGES, "door_1_", color),
+                 format!("{}{}{}.png", IMAGES, "door_3_", color),
+                 format!("{}{}{}.png", IMAGES, "door_2_", color),
                  ], vec![
-                 1000
+                 25,
+                 25,
+                 25,
+                 25
                  ])
 }
