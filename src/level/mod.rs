@@ -355,9 +355,9 @@ impl Level {
 
       pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         self.draw_walls(ctx)?;
-        self.draw_interactables(ctx)?;
         self.draw_children(ctx)?;
         self.draw_player(ctx)?;
+        self.draw_interactables(ctx)?;
         Ok(())
       }
 

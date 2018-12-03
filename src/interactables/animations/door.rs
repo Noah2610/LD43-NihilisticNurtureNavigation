@@ -6,7 +6,7 @@ use settings::res::MISSING_IMAGE;
 pub fn new_open_animation(ctx: &mut Context, color: &str) -> Animation {
   Animation::new(ctx,
                  vec![
-                 MISSING_IMAGE.to_string(),
+                 format!("{}{}{}.png", IMAGES, "door_open_", color)
                  ],
                  vec![
                  1000
