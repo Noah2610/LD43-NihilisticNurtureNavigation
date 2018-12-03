@@ -1,0 +1,1 @@
+{"size":{"w":960,"h":540},"instances":[{"type":"Wall","position":{"x":320,"y":224},"size":{"w":32,"h":32},"additional":{"foo":"bar"}},{"type":"Wall","position":{"x":128,"y":288},"size":{"w":32,"h":32},"additional":{"foo":"bar"}},{"type":"Wall","position":{"x":192,"y":384},"size":{"w":32,"h":32},"additional":{"foo":"bar"}}]}

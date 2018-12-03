@@ -4,7 +4,7 @@ pub mod meta {
   pub const NAME:         &str = "Nihilistic Nurture Navigation";
   pub const WINDOW_TITLE: &str = NAME;
   pub const AUTHORS:      &str = "noahro, hoichael, williwiderstand";
-  pub const WINDOW_SIZE:  Size = Size { w: 960.0, h: 540.0 };
+  pub const WINDOW_SIZE:  Size = Size { w: 1280.0, h: 720.0 };
 }
 
 pub mod game {

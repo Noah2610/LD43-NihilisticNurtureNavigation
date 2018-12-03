@@ -6,8 +6,8 @@ pub mod door;
 
 pub mod prelude {
   pub use super::Interactable;
-  pub use super::jump_pad::JumpPad;
-  pub use super::switch::Switch;
+  pub use super::jump_pad::{ JumpPad, self };
+  pub use super::switch::{ Switch, self };
   pub use super::door::{ Door, self };
 }
 

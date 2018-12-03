@@ -39,8 +39,11 @@ function init_panel(panel) {
           settings.room_size.h = parseInt(val);
           break;
         case 'panel__additional_json':
-          console.log(val);
-          settings.additional_json = parse_json(val);
+          if (val && !val.match(/^\s*$/)) {
+            settings.additional_json = parse_json(val);
+          } else {
+            settings.additional_json = "";
+          }
           break;
       }
 
@@ -157,6 +160,8 @@ function load_level(data) {
     block.css("height", h);
     block.css("background-color", color);
     block.data("instance", type);
+    if (instance.additional)
+      block.data("additional", JSON.stringify(instance.additional));
 
     block_wrapper.append(block);
   });

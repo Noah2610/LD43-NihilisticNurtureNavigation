@@ -81,6 +81,11 @@ impl Level {
         let err_msg = "Couldn't load level JSON data: size";
         Some(Size::new(data["size"]["w"].as_f32().expect(err_msg), data["size"]["h"].as_f32().expect(err_msg)))
       } else { None };
+      let state_opt = if data.has_key("additional") {
+        if data["additional"].has_key("state") {
+          Some(data["additional"]["state"].as_str().expect("Couldn't load level JSON data: state"))
+        } else { None }
+      } else { None };
 
       match data["type"].as_str().expect("Couldn't load level JSON data: type") {
         "Player" => {
@@ -123,8 +128,15 @@ impl Level {
         // "Interactable-Door" => {
         "DoorInteractable" => {
           let err_msg = "Couldn't load level JSON data: Interactable Door";
+          let state = match state_opt.expect("Couldn't load level JSON data: Interactable Door must have State") {
+            "Open"    => door::State::Open,
+            "Closed"  => door::State::Closed,
+            "Opening" => door::State::Opening,
+            "Closing" => door::State::Closing,
+            _         => panic!("Interactable Door: Invalid state: {}", state_opt.unwrap())
+          };
           interactables.doors.push(
-            Door::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg), door::State::Closed)
+            Door::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg), state)
           );
         }
 

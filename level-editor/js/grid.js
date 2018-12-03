@@ -76,6 +76,10 @@ function place_highlight(highlight = $('#grid__block__highlight')) {
   block.data('instance',        current_block());
   block.data('files',           animation.files);
   block.data('intervals',       animation.intervals);
+  var additional = settings.additional_json;
+  console.log(additional);
+  if (additional && Object.keys(additional).length > 0)
+    block.data('additional',    JSON.stringify(additional));
 
   block_wrapper.append(block);
 }

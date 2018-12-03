@@ -54,7 +54,7 @@ impl Switch {
       point,
       size,
       origin:       Origin::TopLeft,
-      state:        State::On,
+      state:        State::Off,
       animations:   SwitchAnimations::new(ctx),
       intersected:  Vec::new()
     }

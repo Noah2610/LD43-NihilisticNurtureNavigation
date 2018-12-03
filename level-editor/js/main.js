@@ -4,7 +4,6 @@ function deep_copy(o) {
   const gdcc = "__getDeepCircularCopy__";
   if (o !== Object(o)) {
     return o; // primitive value
-
   }
 
   var set = gdcc in o,
@@ -12,7 +11,6 @@ function deep_copy(o) {
     result;
   if (set && typeof cache == "function") {
     return cache();
-
   }
   // else
   o[gdcc] = function() { return result;  }; // overwrite
@@ -91,17 +89,19 @@ function save_level() {
       var filenames = parse_filenames(b.data('files'));
       if (filenames)
         bdata.images = filenames;
+      if (b.data('additional') && !b.data('additional').match(/^\s*$/))
+        bdata.additional = JSON.parse(b.data('additional'))
       blocks.push(bdata);
     }
   });
 
-  const data = Object.assign({}, {
+  const data = {
     size: {
       w: settings.room_size.w,
       h: settings.room_size.h
     },
     instances: blocks
-  }, settings.additional_json);
+  };
   const data_string = JSON.stringify(data);
   // Copy level data to clipboard
   copy_to_clipboard(data_string);
