@@ -8,7 +8,15 @@
     "color": "#ff0000"
   },
   {
-    "name": "Child",
+    "name": "LarryChild",
+    "color": "#994444"
+  },
+  {
+    "name": "ThingChild",
+    "color": "#994444"
+  },
+  {
+    "name": "BloatChild",
     "color": "#994444"
   },
   {

@@ -44,7 +44,9 @@ pub fn new_walk_animation(ctx: &mut Context) -> Animation {
 }
 
 pub fn new_jump_animation(ctx: &mut Context) -> Animation {
-  let filepaths_jump: Vec<String> = vec![ ::join_str(child::IMAGES, "child_1_left_4.png") ];
+  let filepaths_jump: Vec<String> = vec![
+    ::join_str(IMAGES, "player_falling_2.png")
+  ];
   let interval_ms_jump = vec![ 250 ];
   Animation::new(ctx, filepaths_jump, interval_ms_jump)
 }

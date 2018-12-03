@@ -77,6 +77,14 @@ impl Animation {
   }
 
   fn next_image(&mut self) {
+    self.image_index += 1;
+    if self.image_index >= self.images.len() {
+      self.times_played += 1;
+      self.image_index = 0;
+    }
+
+    return;
+
     if self.image_index >= self.images.len() - 1 {
       self.times_played += 1;
       self.image_index = 0;

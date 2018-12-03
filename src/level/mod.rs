@@ -68,6 +68,7 @@ impl Level {
       Size::new(data["size"]["w"].as_f32().expect(err_msg), data["size"]["h"].as_f32().expect(err_msg))
     } else { panic!("Level JSON size (root) attribute not present") };
 
+    let mut current_child = 0;
     let mut player_opt = None;
     let mut children = Vec::new();
     let mut walls = Vec::new();
@@ -107,7 +108,6 @@ impl Level {
           player_opt = Some(Player::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)));
         },
 
-        //"Child-Larry" => {
         "Child" => {
           let err_msg = "Couldn't load level JSON data: Child";
           children.push(Child::new(
@@ -118,12 +118,39 @@ impl Level {
           ));
         },
 
+        "LarryChild" => {
+          let err_msg = "Couldn't load level JSON data: Child Larry";
+          children.push(Child::new(
+              ctx,
+              point_opt.expect(err_msg),
+              size_opt.expect(err_msg),
+              ChildType::Larry
+          ));
+        },
+        "ThingChild" => {
+          let err_msg = "Couldn't load level JSON data: Child Thing";
+          children.push(Child::new(
+              ctx,
+              point_opt.expect(err_msg),
+              size_opt.expect(err_msg),
+              ChildType::Thing
+          ));
+        },
+        "BloatChild" => {
+          let err_msg = "Couldn't load level JSON data: Child Bloat";
+          children.push(Child::new(
+              ctx,
+              point_opt.expect(err_msg),
+              size_opt.expect(err_msg),
+              ChildType::Bloat
+          ));
+        },
+
         "Wall" => {
           let err_msg = "Couldn't load level JSON data: Wall";
           walls.push(Wall::new(ctx, point_opt.expect(err_msg), size_opt.expect(err_msg)));
         }
 
-        // "Interactable-JumpPad" => {
         "JumpPadInteractable" => {
           let err_msg = "Couldn't load level JSON data: Interactable JumpPad";
           interactables.jump_pads.push(

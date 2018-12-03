@@ -5,10 +5,11 @@ use ggez::{
   Context,
 };
 
+use settings::player::*;
 use animation::Animation;
 use super::AnimState;
 use self::animations::{ player, child };
-use settings::player::*;
+use persons::children::ChildType;
 
 pub struct PersonAnimations {
   idle_anim:    Animation,
@@ -27,12 +28,12 @@ impl PersonAnimations {
     }
   }
 
-  pub fn new_child_animations(ctx: &mut Context) -> Self {
+  pub fn new_child_animations(ctx: &mut Context, child_type: &ChildType) -> Self {
     Self {
-      idle_anim:    child::new_idle_animation(ctx),
-      walk_anim:    child::new_walk_animation(ctx),
-      jump_anim:    child::new_jump_animation(ctx),
-      fall_anim:    child::new_fall_animation(ctx)
+      idle_anim:    child::new_idle_animation(ctx, child_type),
+      walk_anim:    child::new_walk_animation(ctx, child_type),
+      jump_anim:    child::new_jump_animation(ctx, child_type),
+      fall_anim:    child::new_fall_animation(ctx, child_type)
     }
   }
 

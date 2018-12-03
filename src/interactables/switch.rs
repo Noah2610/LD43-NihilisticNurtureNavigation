@@ -95,8 +95,10 @@ impl Switch {
 
   fn facing(&self) -> Facing {
     match self.state {
-      State::Off => Facing::Left,
-      _          => Facing::Right
+      State::On         => Facing::Right,
+      State::Off        => Facing::Left,
+      State::TurningOn  => Facing::Right,
+      State::TurningOff => Facing::Left,
     }
   }
 }
@@ -110,7 +112,7 @@ impl Mask for Switch {
 
 impl Entity for Switch {
   fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-    if self.animation().played() > 1 {
+    if self.animation().played() >= 1 {
       match self.state {
         State::TurningOn => {
           self.animation_mut().reset();

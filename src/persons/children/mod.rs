@@ -1,6 +1,6 @@
 mod larry;
 mod thing;
-//mod bloat;
+mod bloat;
 
 use ggez::{
   GameResult,
@@ -53,7 +53,7 @@ impl Child {
       velocity:         Point::new(0.0, 0.0),
       max_velocity:     Point::new(MAX_VELOCITY_X, MAX_VELOCITY_Y),
       has_moved:        Vec::new(),
-      animations:       PersonAnimations::new_child_animations(ctx),
+      animations:       PersonAnimations::new_child_animations(ctx, &child_type),
       anim_state:       AnimState::Idle,
       walk_direction:   WalkDirection::Right,
       facing:           Facing::default(),
