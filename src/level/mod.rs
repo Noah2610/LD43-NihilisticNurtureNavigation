@@ -267,7 +267,7 @@ impl Level {
         let mut door_ids_to_trigger: Vec<IdType> = Vec::new();
 
         for i in 0 .. self.interactables.switches.len() {
-        // for switch in &mut self.interactables.switches {
+          // for switch in &mut self.interactables.switches {
           {
             let mut switch = &mut self.interactables.switches[i];
             if switch.intersects(&self.player) {
@@ -298,97 +298,145 @@ impl Level {
           door.update(ctx)?;
         }
         Ok(())
-      }
+        }
 
-      fn get_door_by_id_mut(&mut self, id: IdType) -> Option<&mut Door> {
-        self.interactables.doors.iter_mut().find( |ref door| door.has_id(id) )
-      }
+        fn get_door_by_id_mut(&mut self, id: IdType) -> Option<&mut Door> {
+          self.interactables.doors.iter_mut().find( |ref door| door.has_id(id) )
+        }
 
-      fn update_children(&mut self, ctx: &mut Context) -> GameResult<()> {
-        for i in 0 .. self.children.len() {
-          let new_pos = {
-            let child = &self.children[i];
-            child.get_move_while( |rect| {
-              !self.walls.iter().any( |wall| rect.intersects_round(wall) ) &&
-                !self.interactables.solid_doors().iter().any( |&door| rect.intersects_round(door) )
-            })
-          };
-          let child = &mut self.children[i];
-          if child.velocity().x != 0.0 && new_pos.x == child.point().x {
-            child.set_velocity_x(0.0);
+        fn update_children(&mut self, ctx: &mut Context) -> GameResult<()> {
+          for i in 0 .. self.children.len() {
+            let new_pos = {
+              let child = &self.children[i];
+              child.get_move_while( |rect| {
+                let mut child_intersects_wall = false;
+                let mut rect_intersects_wall  = false;
+                let mut child_intersects_door = false;
+                let mut rect_intersects_door  = false;
+                self.walls.iter().for_each( |wall| {
+                  if child.intersects_round(wall) {
+                    child_intersects_wall = true;
+                  }
+                  if rect.intersects_round(wall) {
+                    rect_intersects_wall = true;
+                  }
+                  if child_intersects_wall && rect_intersects_wall { return; }
+                });
+                self.interactables.solid_doors().iter().for_each( |&door| {
+                  if child.intersects_round(door) {
+                    child_intersects_door = true;
+                  }
+                  if rect.intersects_round(door) {
+                    rect_intersects_door = true;
+                  }
+                  if child_intersects_door && rect_intersects_door { return; }
+                });
+
+                (child_intersects_wall || child_intersects_door) || (
+                  !rect_intersects_wall && !rect_intersects_door
+                )
+              })
+            };
+            let child = &mut self.children[i];
+            if child.velocity().x != 0.0 && new_pos.x == child.point().x {
+              child.set_velocity_x(0.0);
+            }
+            if child.velocity().y != 0.0 && new_pos.y == child.point().y {
+              child.set_velocity_y(0.0);
+            }
+            if &new_pos != child.point() {
+              child.point_mut().set(&new_pos);
+            }
+            child.update(ctx)?;
           }
-          if child.velocity().y != 0.0 && new_pos.y == child.point().y {
-            child.set_velocity_y(0.0);
+          Ok(())
+        }
+
+        fn update_player(&mut self, ctx: &mut Context) -> GameResult<()> {
+          let new_pos = self.player.get_move_while( |rect| {
+            let mut player_intersects_wall = false;
+            let mut rect_intersects_wall   = false;
+            let mut player_intersects_door = false;
+            let mut rect_intersects_door   = false;
+            self.walls.iter().for_each( |wall| {
+              if self.player.intersects_round(wall) {
+                player_intersects_wall = true;
+              }
+              if rect.intersects_round(wall) {
+                rect_intersects_wall = true;
+              }
+              if player_intersects_wall && rect_intersects_wall { return; }
+            });
+            self.interactables.solid_doors().iter().for_each( |&door| {
+              if self.player.intersects_round(door) {
+                player_intersects_door = true;
+              }
+              if rect.intersects_round(door) {
+                rect_intersects_door = true;
+              }
+              if player_intersects_door && rect_intersects_door { return; }
+            });
+
+            (player_intersects_wall || player_intersects_door) || (
+              !rect_intersects_wall && !rect_intersects_door
+            )
+          });
+
+          if self.player.velocity().x != 0.0 && new_pos.x == self.player.point().x {
+            self.player.set_velocity_x(0.0);
           }
-          if &new_pos != child.point() {
-            child.point_mut().set(&new_pos);
+          if self.player.velocity().y != 0.0 && new_pos.y == self.player.point().y {
+            self.player.set_velocity_y(0.0);
+            self.player.stop_jumping();
           }
-          child.update(ctx)?;
+          if &new_pos != self.player.point() {
+            self.player.point_mut().set(&new_pos);
+            self.camera.move_to(
+              &self.player.center()
+            );
+            // self.camera.move_to(
+            //   &Point::combine(vec![&self.window_rect.center().mult_axes_by(-1.0), &self.player.center()])
+            // );
+          }
+          self.player.update(ctx)
         }
-        Ok(())
-      }
 
-      fn update_player(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let new_pos = self.player.get_move_while( |rect| {
-          !self.walls.iter().any( |wall| rect.intersects_round(wall) ) &&
-            !self.interactables.solid_doors().iter().any( |&door| rect.intersects_round(door) )
-        });
+        pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+          self.draw_walls(ctx)?;
+          self.draw_children(ctx)?;
+          self.draw_player(ctx)?;
+          self.draw_interactables(ctx)?;
+          Ok(())
+        }
 
-        if self.player.velocity().x != 0.0 && new_pos.x == self.player.point().x {
-          self.player.set_velocity_x(0.0);
+        fn draw_walls(&mut self, ctx: &mut Context) -> GameResult<()> {
+          for wall in &self.walls {
+            self.camera.draw(ctx, wall)?;
+          }
+          Ok(())
         }
-        if self.player.velocity().y != 0.0 && new_pos.y == self.player.point().y {
-          self.player.set_velocity_y(0.0);
-          self.player.stop_jumping();
-        }
-        if &new_pos != self.player.point() {
-          self.player.point_mut().set(&new_pos);
-          self.camera.move_to(
-            &self.player.center()
-          );
-          // self.camera.move_to(
-          //   &Point::combine(vec![&self.window_rect.center().mult_axes_by(-1.0), &self.player.center()])
-          // );
-        }
-        self.player.update(ctx)
-      }
 
-      pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        self.draw_walls(ctx)?;
-        self.draw_children(ctx)?;
-        self.draw_player(ctx)?;
-        self.draw_interactables(ctx)?;
-        Ok(())
-      }
+        fn draw_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
+          for jump_pad in &mut self.interactables.jump_pads {
+            self.camera.draw(ctx, jump_pad)?;
+          }
+          for switch in &mut self.interactables.switches {
+            self.camera.draw(ctx, switch)?;
+          }
+          for door in &mut self.interactables.doors {
+            self.camera.draw(ctx, door)?;
+          }
+          Ok(())
+        }
 
-      fn draw_walls(&mut self, ctx: &mut Context) -> GameResult<()> {
-        for wall in &self.walls {
-          self.camera.draw(ctx, wall)?;
+        fn draw_children(&mut self, ctx: &mut Context) -> GameResult<()> {
+          for child in &self.children {
+            self.camera.draw(ctx, child)?;
+          }
+          Ok(())
         }
-        Ok(())
-      }
 
-      fn draw_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
-        for jump_pad in &mut self.interactables.jump_pads {
-          self.camera.draw(ctx, jump_pad)?;
+        fn draw_player(&mut self, ctx: &mut Context) -> GameResult<()> {
+          self.camera.draw(ctx, &self.player)
         }
-        for switch in &mut self.interactables.switches {
-          self.camera.draw(ctx, switch)?;
-        }
-        for door in &mut self.interactables.doors {
-          self.camera.draw(ctx, door)?;
-        }
-        Ok(())
-      }
-
-      fn draw_children(&mut self, ctx: &mut Context) -> GameResult<()> {
-        for child in &self.children {
-          self.camera.draw(ctx, child)?;
-        }
-        Ok(())
-      }
-
-      fn draw_player(&mut self, ctx: &mut Context) -> GameResult<()> {
-        self.camera.draw(ctx, &self.player)
-      }
       }
