@@ -55,7 +55,7 @@ impl GameState {
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.level = Some(Level::new(ctx, self.window_size.clone(), "door")?);
+    self.level = Some(Level::new(ctx, self.window_size.clone(), "walls")?);
     self.song.play();
     Ok(())
   }

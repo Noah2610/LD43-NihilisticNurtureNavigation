@@ -18,7 +18,7 @@ pub struct Wall {
 
 impl Wall {
   pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
-    let image_filepath = &::join_str(IMAGES, "tile1.png");
+    let image_filepath = &::join_str(IMAGES, "tile4.1.1.png");
     let image = Image::new(ctx, image_filepath).expect(
       &format!("Couldn't load image for wall: {}", image_filepath)
     );
