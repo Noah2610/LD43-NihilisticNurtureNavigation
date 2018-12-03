@@ -25,10 +25,10 @@ struct JumpPadAnimations {
 }
 
 impl JumpPadAnimations {
-  pub fn new(ctx: &mut Context, color: &str) -> Self {
+  pub fn new(ctx: &mut Context) -> Self {
     Self {
-      main:    jump_pad::new_main_animation(ctx, color),
-      trigger: jump_pad::new_trigger_animation(ctx, color),
+      main:    jump_pad::new_main_animation(ctx),
+      trigger: jump_pad::new_trigger_animation(ctx),
     }
   }
 }
@@ -44,15 +44,15 @@ pub struct JumpPad {
 }
 
 impl JumpPad {
-  pub fn new(ctx: &mut Context, point: Point, size: Size, id: IdType, color: &str) -> Self {
+  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
     Self {
       point,
       size,
       origin:      Origin::TopLeft,
       state:       State::Main,
-      animations:  JumpPadAnimations::new(ctx, color),
+      animations:  JumpPadAnimations::new(ctx),
       intersected: Vec::new(),
-      id
+      id:          generate_id()
     }
   }
 

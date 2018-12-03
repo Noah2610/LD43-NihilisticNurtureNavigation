@@ -157,9 +157,7 @@ impl Level {
             JumpPad::new(
               ctx,
               point_opt.expect(err_msg),
-              size_opt.expect(err_msg),
-              id_opt.expect(err_msg),
-              color_opt.expect(err_msg)
+              size_opt.expect(err_msg)
             )
           );
         }
