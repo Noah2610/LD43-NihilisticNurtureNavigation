@@ -6,7 +6,6 @@ use ggez::{
 use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
 
-use settings::interactables::switch::*;
 use animation::Animation;
 use animation::Facing;
 use super::Interactable;
@@ -125,7 +124,7 @@ impl Entity for Switch {
         _ => ()
       };
     }
-    self.animation_mut().update();
+    self.animation_mut().update()?;
     Ok(())
   }
 

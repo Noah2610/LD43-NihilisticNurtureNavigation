@@ -108,7 +108,7 @@ impl Entity for Door {
         _ => ()
       };
     }
-    self.animation_mut().update();
+    self.animation_mut().update()?;
     Ok(())
   }
 

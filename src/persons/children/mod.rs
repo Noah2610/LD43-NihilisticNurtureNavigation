@@ -55,7 +55,7 @@ impl Child {
       has_moved:        Vec::new(),
       animations:       PersonAnimations::new_child_animations(ctx, &child_type),
       anim_state:       AnimState::Idle,
-      walk_direction:   WalkDirection::Right,
+      walk_direction:   WalkDirection::Still,
       facing:           Facing::default(),
       gravity_increase: Point::new(0.0, GRAVITY_INCREASE),
       child_type,

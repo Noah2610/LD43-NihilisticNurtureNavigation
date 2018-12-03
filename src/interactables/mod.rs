@@ -3,12 +3,14 @@ mod animations;
 pub mod jump_pad;
 pub mod switch;
 pub mod door;
+pub mod one_way;
 
 pub mod prelude {
   pub use super::Interactable;
   pub use super::jump_pad::{ JumpPad, self };
   pub use super::switch::{ Switch, self };
   pub use super::door::{ Door, self };
+  pub use super::one_way::{ OneWay, self };
 }
 
 use noframe::geo::prelude::*;

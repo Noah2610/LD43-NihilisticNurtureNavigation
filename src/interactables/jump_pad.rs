@@ -86,7 +86,7 @@ impl Entity for JumpPad {
         self.state = State::Main;
       }
     }
-    self.animation_mut().update();
+    self.animation_mut().update()?;
     Ok(())
   }
 

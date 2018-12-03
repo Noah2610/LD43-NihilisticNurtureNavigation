@@ -8,7 +8,7 @@ pub fn new_main_animation(ctx: &mut Context) -> Animation {
                  vec![
                  ::join_str(IMAGES, "jump_pad.png"),
                  ], vec![
-                 100
+                 1000
                  ])
 }
 

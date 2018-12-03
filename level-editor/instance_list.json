@@ -30,5 +30,9 @@
   {
     "name": "DoorInteractable",
     "color": "#c54414"
+  },
+  {
+    "name": "OneWayInteractable",
+    "color": "#a482e3"
   }
 ]
