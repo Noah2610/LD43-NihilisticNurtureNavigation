@@ -1,12 +1,14 @@
 mod animations;
 
-mod jump_pad;
-mod switch;
+pub mod jump_pad;
+pub mod switch;
+pub mod door;
 
 pub mod prelude {
   pub use super::Interactable;
   pub use super::jump_pad::JumpPad;
   pub use super::switch::Switch;
+  pub use super::door::{ Door, self };
 }
 
 use noframe::geo::prelude::*;

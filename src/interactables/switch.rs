@@ -77,6 +77,13 @@ impl Switch {
       State::TurningOff => &mut self.animations.turning_off
     }
   }
+
+  fn facing(&self) -> Facing {
+    match self.state {
+      State::Off => Facing::Left,
+      _          => Facing::Right
+    }
+  }
 }
 
 impl Mask for Switch {
@@ -88,27 +95,29 @@ impl Mask for Switch {
 
 impl Entity for Switch {
   fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-    match self.state {
-      State::TurningOn if self.animation().played() >= 1 => {
-        self.animation_mut().reset();
-        self.state = State::On;
-      }
-      State::TurningOff => {
-        self.animation_mut().reset();
-        self.state = State::Off;
-      }
-      _ => ()
-    };
+    if self.animation().played() > 1 {
+      match self.state {
+        State::TurningOn => {
+          self.animation_mut().reset();
+          self.state = State::On;
+        }
+        State::TurningOff => {
+          self.animation_mut().reset();
+          self.state = State::Off;
+        }
+        _ => ()
+      };
+    }
     self.animation_mut().update();
     Ok(())
   }
 
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
-    self.animation().draw(ctx, self.point(), self.size(), &Facing::default())
+    self.animation().draw(ctx, self.point(), self.size(), &self.facing())
   }
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
-    self.animation().draw_offset(ctx, self.point(), self.size(), &Facing::default(), offset)
+    self.animation().draw_offset(ctx, self.point(), self.size(), &self.facing(), offset)
   }
 }
 

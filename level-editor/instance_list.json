@@ -8,7 +8,7 @@
     "color": "#ff0000"
   },
   {
-    "name": "Child-Larry",
+    "name": "Child",
     "color": "#994444"
   },
   {
@@ -18,5 +18,9 @@
   {
     "name": "SwitchInteractable",
     "color": "#252ab8"
+  },
+  {
+    "name": "DoorInteractable",
+    "color": "#c54414"
   }
 ]
