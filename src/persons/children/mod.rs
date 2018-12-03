@@ -41,6 +41,7 @@ pub struct Child {
   gravity_increase: Point,
   child_type:       ChildType,
   id:               IdType,
+  solid:            bool,
   dt:               Deltatime
 }
 
@@ -55,11 +56,12 @@ impl Child {
       has_moved:        Vec::new(),
       animations:       PersonAnimations::new_child_animations(ctx, &child_type),
       anim_state:       AnimState::Idle,
-      walk_direction:   WalkDirection::Still,
+      walk_direction:   WalkDirection::Right,
       facing:           Facing::default(),
       gravity_increase: Point::new(0.0, GRAVITY_INCREASE),
       child_type,
       id:               generate_id(),
+      solid:            false,
       dt:               Deltatime::new()
     }
   }
@@ -73,6 +75,7 @@ impl Child {
   }
 
   fn handle_walk(&mut self) {
+    if self.is_solid() { return; }
     match self.walk_direction {
       WalkDirection::Left  => {
         self.add_velocity(&Point::new(-SPEED_INCREASE, 0.0));
@@ -186,7 +189,14 @@ impl Gravity for Child {
   }
 }
 
-impl Person for Child {}
+impl Person for Child {
+  fn is_solid(&self) -> bool {
+    self.solid
+  }
+  fn solidify(&mut self) {
+    self.solid = true;
+  }
+}
 
 impl IdGenerator for Child {
   fn id(&self) -> IdType {

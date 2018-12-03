@@ -24,4 +24,7 @@ enum WalkDirection {
   Right
 }
 
-pub trait Person: Entity + Velocity + IdGenerator {}
+pub trait Person: Entity + Velocity + IdGenerator {
+  fn is_solid(&self) -> bool;
+  fn solidify(&mut self);
+}

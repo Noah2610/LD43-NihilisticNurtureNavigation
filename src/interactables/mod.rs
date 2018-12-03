@@ -4,6 +4,7 @@ pub mod jump_pad;
 pub mod switch;
 pub mod door;
 pub mod one_way;
+pub mod solidifier;
 
 pub mod prelude {
   pub use super::Interactable;
@@ -11,6 +12,7 @@ pub mod prelude {
   pub use super::switch::{ Switch, self };
   pub use super::door::{ Door, self };
   pub use super::one_way::{ OneWay, self };
+  pub use super::solidifier::{ Solidifier, self };
 }
 
 use noframe::geo::prelude::*;

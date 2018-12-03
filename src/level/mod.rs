@@ -13,27 +13,30 @@ use noframe::entity::prelude::*;
 use noframe::geo::prelude::*;
 
 use settings::res;
+use persons::Person;
 use persons::player::Player;
 use persons::children::Child;
+use persons::children::ChildType;
 use wall::Wall;
 use interactables::prelude::*;
-use persons::children::ChildType;
 use id_generator::prelude::*;
 
 struct InteractablesContainer {
-  pub jump_pads: Vec<JumpPad>,
-  pub switches:  Vec<Switch>,
-  pub doors:     Vec<Door>,
-  pub one_ways:  Vec<OneWay>
+  pub jump_pads:   Vec<JumpPad>,
+  pub switches:    Vec<Switch>,
+  pub doors:       Vec<Door>,
+  pub one_ways:    Vec<OneWay>,
+  pub solidifiers: Vec<Solidifier>
 }
 
 impl InteractablesContainer {
   pub fn new() -> Self {
     Self {
-      jump_pads: Vec::new(),
-      switches:  Vec::new(),
-      doors:     Vec::new(),
-      one_ways:  Vec::new()
+      jump_pads:   Vec::new(),
+      switches:    Vec::new(),
+      doors:       Vec::new(),
+      one_ways:    Vec::new(),
+      solidifiers: Vec::new()
     }
   }
 
@@ -209,6 +212,17 @@ impl Level {
           )
         }
 
+        "SolidifierInteractable" => {
+          let err_msg = "Couldn't load level JSON data: Interactable Solidifier";
+          interactables.solidifiers.push(
+            Solidifier::new(
+              ctx,
+              point_opt.expect(err_msg),
+              size_opt.expect(err_msg)
+            )
+          )
+        }
+
         _ => {}
       }
     });
@@ -305,8 +319,19 @@ impl Level {
       }
       door.update(ctx)?;
     }
-    Ok(())
+
+    for solidifier in &mut self.interactables.solidifiers {
+      if solidifier.intersects(&self.player) {
+        solidifier.trigger_once(&mut self.player);
+      }
+      for child in &mut self.children {
+        if solidifier.intersects(child) {
+          solidifier.trigger_once(child);
+        }
+      }
     }
+    Ok(())
+  }
 
     fn get_door_by_id_mut(&mut self, id: IdType) -> Option<&mut Door> {
       self.interactables.doors.iter_mut().find( |ref door| door.has_id(id) )
@@ -326,7 +351,11 @@ impl Level {
             let intersects_oneway = child.velocity().y > 0.0 && self.interactables.one_ways.iter().any( |oneway| {
               rect.intersects_round(oneway)
             });
-            !intersects_wall && !intersects_door && !intersects_oneway
+            let intersects_solid_children = self.children.iter().any( |c| {
+              !child.is(c) && c.is_solid() && rect.intersects_round(c)
+            });
+            let intersects_solid_player = self.player.is_solid() && rect.intersects_round(&self.player);
+            !intersects_wall && !intersects_door && !intersects_oneway && !intersects_solid_children && !intersects_solid_player
           })
         };
         let child = &mut self.children[i];
@@ -366,7 +395,10 @@ impl Level {
         let intersects_oneway = self.player.velocity().y > 0.0 && self.interactables.one_ways.iter().any( |oneway| {
           rect.intersects_round(oneway)
         });
-        !intersects_wall && !intersects_door && !intersects_oneway
+        let intersects_solid_children = self.children.iter().any( |child| {
+          child.is_solid() && rect.intersects_round(child)
+        });
+        !intersects_wall && !intersects_door && !intersects_oneway && !intersects_solid_children
       });
 
       if self.player.velocity().x != 0.0 && new_pos.x == self.player.point().x {

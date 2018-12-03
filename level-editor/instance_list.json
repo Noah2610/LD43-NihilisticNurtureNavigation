@@ -34,5 +34,9 @@
   {
     "name": "OneWayInteractable",
     "color": "#a482e3"
+  },
+  {
+    "name": "SolidifierInteractable",
+    "color": "#7c7c7c"
   }
 ]

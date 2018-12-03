@@ -13,7 +13,7 @@ const default_settings = {
     x: 0, y: 0
   },
   room_size: {
-    w: 960, h: 540
+    w: 1280, h: 720
   },
   colors: {}
 };

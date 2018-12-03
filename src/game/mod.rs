@@ -39,7 +39,7 @@ pub struct GameState {
 
 impl GameState {
   pub fn new(ctx: &mut Context, window_size: Size) -> GameResult<Self> {
-    let mut song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"ingame_2.5.wav"))?;
+    let mut song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.wav"))?;
     song.set_repeat(true);
     Ok(Self {
       window_size:   window_size.clone(),
@@ -55,7 +55,7 @@ impl GameState {
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.level = Some(Level::new(ctx, self.window_size.clone(), "one_way")?);
+    self.level = Some(Level::new(ctx, self.window_size.clone(), "tut_dev")?);
     self.song.play();
     Ok(())
   }
