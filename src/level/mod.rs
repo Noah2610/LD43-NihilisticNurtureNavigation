@@ -309,32 +309,13 @@ impl Level {
             let new_pos = {
               let child = &self.children[i];
               child.get_move_while( |rect| {
-                let mut child_intersects_wall = false;
-                let mut rect_intersects_wall  = false;
-                let mut child_intersects_door = false;
-                let mut rect_intersects_door  = false;
-                self.walls.iter().for_each( |wall| {
-                  if child.intersects_round(wall) {
-                    child_intersects_wall = true;
-                  }
-                  if rect.intersects_round(wall) {
-                    rect_intersects_wall = true;
-                  }
-                  if child_intersects_wall && rect_intersects_wall { return; }
+                let intersects_wall = self.walls.iter().any( |wall| {
+                  rect.intersects_round(wall)
                 });
-                self.interactables.solid_doors().iter().for_each( |&door| {
-                  if child.intersects_round(door) {
-                    child_intersects_door = true;
-                  }
-                  if rect.intersects_round(door) {
-                    rect_intersects_door = true;
-                  }
-                  if child_intersects_door && rect_intersects_door { return; }
+                let intersects_door = self.interactables.solid_doors().iter().any( |&door| {
+                  rect.intersects_round(door)
                 });
-
-                (child_intersects_wall || child_intersects_door) || (
-                  !rect_intersects_wall && !rect_intersects_door
-                )
+                !intersects_wall && !intersects_door
               })
             };
             let child = &mut self.children[i];
@@ -347,39 +328,30 @@ impl Level {
             if &new_pos != child.point() {
               child.point_mut().set(&new_pos);
             }
+            // Child is stuck
+            if self.interactables.solid_doors().iter().any( |&door| child.intersects_round(door) ) {
+              let x = child.point().x + ((child.size().w * 2.0) * (child.walk_direction_mult() * -1.0));
+              child.point_mut().set_x(x);
+            }
             child.update(ctx)?;
           }
           Ok(())
         }
 
         fn update_player(&mut self, ctx: &mut Context) -> GameResult<()> {
+          // Player is stuck
+          if self.interactables.solid_doors().iter().any( |&door| self.player.intersects_round(door) ) {
+            let x = self.player.point().x - (self.player.size().w * 2.0);
+            self.player.point_mut().set_x(x);
+          }
           let new_pos = self.player.get_move_while( |rect| {
-            let mut player_intersects_wall = false;
-            let mut rect_intersects_wall   = false;
-            let mut player_intersects_door = false;
-            let mut rect_intersects_door   = false;
-            self.walls.iter().for_each( |wall| {
-              if self.player.intersects_round(wall) {
-                player_intersects_wall = true;
-              }
-              if rect.intersects_round(wall) {
-                rect_intersects_wall = true;
-              }
-              if player_intersects_wall && rect_intersects_wall { return; }
+            let intersects_wall = self.walls.iter().any( |wall| {
+              rect.intersects_round(wall)
             });
-            self.interactables.solid_doors().iter().for_each( |&door| {
-              if self.player.intersects_round(door) {
-                player_intersects_door = true;
-              }
-              if rect.intersects_round(door) {
-                rect_intersects_door = true;
-              }
-              if player_intersects_door && rect_intersects_door { return; }
+            let intersects_door = self.interactables.solid_doors().iter().any( |&door| {
+              rect.intersects_round(door)
             });
-
-            (player_intersects_wall || player_intersects_door) || (
-              !rect_intersects_wall && !rect_intersects_door
-            )
+            !intersects_wall && !intersects_door
           });
 
           if self.player.velocity().x != 0.0 && new_pos.x == self.player.point().x {
@@ -394,9 +366,6 @@ impl Level {
             self.camera.move_to(
               &self.player.center()
             );
-            // self.camera.move_to(
-            //   &Point::combine(vec![&self.window_rect.center().mult_axes_by(-1.0), &self.player.center()])
-            // );
           }
           self.player.update(ctx)
         }
