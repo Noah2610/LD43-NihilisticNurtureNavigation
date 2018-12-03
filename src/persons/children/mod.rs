@@ -66,6 +66,18 @@ impl Child {
     }
   }
 
+  pub fn walk_right(&mut self) {
+    self.walk_direction = WalkDirection::Right;
+  }
+
+  pub fn walk_left(&mut self) {
+    self.walk_direction = WalkDirection::Left;
+  }
+
+  pub fn stop_walking(&mut self) {
+    self.walk_direction = WalkDirection::Still;
+  }
+
   pub fn walk_direction_mult(&self) -> f32 {
     match self.walk_direction {
       WalkDirection::Right =>  1.0,

@@ -366,6 +366,7 @@ impl Level {
         let child = &mut self.children[i];
         if child.velocity().x != 0.0 && new_pos.x == child.point().x {
           child.set_velocity_x(0.0);
+          child.stop_walking();
         }
         if child.velocity().y != 0.0 && new_pos.y == child.point().y {
           child.set_velocity_y(0.0);
@@ -409,6 +410,7 @@ impl Level {
       if self.player.velocity().x != 0.0 && new_pos.x == self.player.point().x {
         self.player.set_velocity_x(0.0);
       }
+      // Hacky way to check if a solid block is beneath
       if self.player.velocity().y != 0.0 && new_pos.y == self.player.point().y {
         self.player.set_velocity_y(0.0);
         self.player.stop_jumping();
