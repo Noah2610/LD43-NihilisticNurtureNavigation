@@ -63,3 +63,15 @@ pub mod interactables {
     pub const JUMP_SPEED: f32 = 1000.0;
   }
 }
+
+pub mod menus {
+  pub const IMAGES: &str = "/images/menus/";
+  pub mod title {
+  }
+}
+
+pub mod buttons {
+  pub const IMAGES: &str = "/images/buttons/";
+  pub mod title {
+  }
+}

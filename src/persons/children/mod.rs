@@ -21,6 +21,7 @@ use animation::Facing;
 use gravity::Gravity;
 use id_generator::prelude::*;
 
+#[derive(PartialEq)]
 pub enum ChildType {
   Larry,
   Thing,
@@ -39,7 +40,7 @@ pub struct Child {
   walk_direction:   WalkDirection,
   facing:           Facing,
   gravity_increase: Point,
-  child_type:       ChildType,
+  pub child_type:   ChildType,
   id:               IdType,
   solid:            bool,
   dt:               Deltatime
@@ -56,7 +57,7 @@ impl Child {
       has_moved:        Vec::new(),
       animations:       PersonAnimations::new_child_animations(ctx, &child_type),
       anim_state:       AnimState::Idle,
-      walk_direction:   WalkDirection::Right,
+      walk_direction:   WalkDirection::Still,
       facing:           Facing::default(),
       gravity_increase: Point::new(0.0, GRAVITY_INCREASE),
       child_type,

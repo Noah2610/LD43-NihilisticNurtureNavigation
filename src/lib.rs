@@ -12,6 +12,7 @@ mod animation;
 mod gravity;
 mod interactables;
 mod id_generator;
+mod menu;
 
 use std::env;
 use std::path;

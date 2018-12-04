@@ -20,6 +20,9 @@ use persons::children::ChildType;
 use wall::Wall;
 use interactables::prelude::*;
 use id_generator::prelude::*;
+use menu::Menu;
+use menu::ButtonType;
+use menu::toolbox::ToolboxMenu;
 
 struct InteractablesContainer {
   pub jump_pads:   Vec<JumpPad>,
@@ -53,6 +56,7 @@ pub struct Level {
   children:      Vec<Child>,
   walls:         Vec<Wall>,
   interactables: InteractablesContainer,
+  toolbox:       ToolboxMenu,
   dt:            Deltatime
 }
 
@@ -235,12 +239,13 @@ impl Level {
 
     Ok(Level {
       window_rect: Rect::new(Point::new(0.0, 0.0), size.clone(), Origin::TopLeft),
-      camera:      Camera::new(window_size),
+      camera:      Camera::new(window_size.clone()),
       camera_rect: Rect::new(Point::new(0.0, 0.0), size, Origin::TopLeft),
       player,
       children,
       walls,
       interactables,
+      toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 64.0), Size::new(window_size.w, 64.0)),
       dt:          Deltatime::new()
     })
   }
@@ -261,12 +266,53 @@ impl Level {
     }
   }
 
+  pub fn mouse_down(&mut self, x: i32, y: i32) {
+    self.toolbox.mouse_down(x, y);
+  }
+
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.update_interactables(ctx)?;
     self.update_children(ctx)?;
     self.update_player(ctx)?;
+    let button_type_opt = self.toolbox.get_clicked().clone();
+    if let Some(button_type) = button_type_opt {
+      match button_type {
+        ButtonType::LarryLeft  => if let Some(child) = self.larry() {
+          child.walk_left()
+        },
+        ButtonType::LarryRight => if let Some(child) = self.larry() {
+          child.walk_right()
+        },
+        ButtonType::ThingLeft  => if let Some(child) = self.thing() {
+          child.walk_left()
+        },
+        ButtonType::ThingRight => if let Some(child) = self.thing() {
+          child.walk_right()
+        },
+        ButtonType::BloatLeft  => if let Some(child) = self.bloat() {
+          child.walk_left()
+        },
+        ButtonType::BloatRight => if let Some(child) = self.bloat() {
+          child.walk_right()
+        },
+        _ => ()
+      };
+    }
+    self.toolbox.update()?;
     self.dt.update();
     Ok(())
+  }
+
+  fn larry(&mut self) -> Option<&mut Child> {
+    self.children.iter_mut().find( |c| c.child_type == ChildType::Larry )
+  }
+
+  fn thing(&mut self) -> Option<&mut Child> {
+    self.children.iter_mut().find( |c| c.child_type == ChildType::Thing )
+  }
+
+  fn bloat(&mut self) -> Option<&mut Child> {
+    self.children.iter_mut().find( |c| c.child_type == ChildType::Bloat )
   }
 
   fn update_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -336,7 +382,7 @@ impl Level {
       self.player.unsolidify();
     }
     Ok(())
-  }
+    }
 
     fn get_door_by_id_mut(&mut self, id: IdType) -> Option<&mut Door> {
       self.interactables.doors.iter_mut().find( |ref door| door.has_id(id) )
@@ -429,6 +475,9 @@ impl Level {
       self.draw_children(ctx)?;
       self.draw_player(ctx)?;
       self.draw_interactables(ctx)?;
+      self.toolbox.draw(ctx)?;
+      self.toolbox.closeups.iter_mut()
+        .for_each( |closeup| closeup.draw(ctx) );
       Ok(())
     }
 
