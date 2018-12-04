@@ -68,15 +68,15 @@ impl Child {
   }
 
   pub fn walk_right(&mut self) {
-    self.walk_direction = WalkDirection::Right;
+    if let WalkDirection::Still = self.walk_direction {
+      self.walk_direction = WalkDirection::Right;
+    }
   }
 
   pub fn walk_left(&mut self) {
-    self.walk_direction = WalkDirection::Left;
-  }
-
-  pub fn stop_walking(&mut self) {
-    self.walk_direction = WalkDirection::Still;
+    if let WalkDirection::Still = self.walk_direction {
+      self.walk_direction = WalkDirection::Left;
+    }
   }
 
   pub fn walk_direction_mult(&self) -> f32 {
@@ -211,6 +211,9 @@ impl Person for Child {
   }
   fn unsolidify(&mut self) {
     self.solid = false;
+  }
+  fn stop_walking(&mut self) {
+    self.walk_direction = WalkDirection::Still;
   }
 }
 

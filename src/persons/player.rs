@@ -221,6 +221,7 @@ impl Person for Player {
   fn unsolidify(&mut self) {
     self.solid = false;
   }
+  fn stop_walking(&mut self) {}
 }
 
 impl IdGenerator for Player {

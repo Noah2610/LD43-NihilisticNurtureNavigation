@@ -28,4 +28,5 @@ pub trait Person: Entity + Velocity + IdGenerator {
   fn is_solid(&self) -> bool;
   fn solidify(&mut self);
   fn unsolidify(&mut self);
+  fn stop_walking(&mut self);
 }

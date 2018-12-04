@@ -21,6 +21,10 @@ pub mod res {
   pub const MISSING_IMAGE: &str = "/images/missing.png";
 }
 
+pub mod camera {
+  pub const CAMERA_SPEED: f32 = 10.0;
+}
+
 pub mod player {
   pub const IMAGES: &str = "/images/player/";
   // pub const SPEED_INCREASE: f32 = 50.0;

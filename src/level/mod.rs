@@ -13,6 +13,7 @@ use noframe::entity::prelude::*;
 use noframe::geo::prelude::*;
 
 use settings::res;
+use settings::camera::*;
 use persons::Person;
 use persons::player::Player;
 use persons::children::Child;
@@ -237,7 +238,7 @@ impl Level {
       return Err(ggez::GameError::from("Couldn't load player".to_string()));
     };
 
-    Ok(Level {
+    let mut lvl = Level {
       window_rect: Rect::new(Point::new(0.0, 0.0), size.clone(), Origin::TopLeft),
       camera:      Camera::new(window_size.clone()),
       camera_rect: Rect::new(Point::new(0.0, 0.0), size, Origin::TopLeft),
@@ -247,10 +248,24 @@ impl Level {
       interactables,
       toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 64.0), Size::new(window_size.w, 64.0)),
       dt:          Deltatime::new()
-    })
+    };
+
+    let point = lvl.player.center();
+    lvl.camera.move_to(&point);
+
+    Ok(lvl)
   }
 
   pub fn keys_pressed(&mut self, keycodes: &Vec<Keycode>) {
+    for key in keycodes {
+      match key {
+        Keycode::Up    => self.camera.point_mut().add(&Point::new(0.0, -CAMERA_SPEED)),
+        Keycode::Down  => self.camera.point_mut().add(&Point::new(0.0,  CAMERA_SPEED)),
+        Keycode::Left  => self.camera.point_mut().add(&Point::new(-CAMERA_SPEED, 0.0)),
+        Keycode::Right => self.camera.point_mut().add(&Point::new( CAMERA_SPEED, 0.0)),
+        _              => ()
+      };
+    }
     self.player.keys_pressed(keycodes);
   }
 
@@ -463,9 +478,9 @@ impl Level {
       }
       if &new_pos != self.player.point() {
         self.player.point_mut().set(&new_pos);
-        self.camera.move_to(
-          &self.player.center()
-        );
+        // self.camera.move_to(
+        //   &self.player.center()
+        // );
       }
       self.player.update(ctx)
     }
