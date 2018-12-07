@@ -38,5 +38,9 @@
   {
     "name": "SolidifierInteractable",
     "color": "#7c7c7c"
+  },
+  {
+    "name": "GoalInteractable",
+    "color": "#00ff00"
   }
 ]

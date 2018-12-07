@@ -18,6 +18,7 @@ use animation::Facing;
 #[derive(Clone, Debug)]
 pub enum ButtonType {
   Start,
+  NextLevel,
   LarryLeft,
   LarryRight,
   ThingLeft,
@@ -55,8 +56,6 @@ pub trait Menu: Mask {
       if self.buttons()[i].intersects_point(&point) {
         self.clicked(btn_type);
       }
-    }
-    for button in self.buttons() {
     }
   }
 

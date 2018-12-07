@@ -22,7 +22,7 @@ pub mod res {
 }
 
 pub mod camera {
-  pub const CAMERA_SPEED: f32 = 10.0;
+  pub const CAMERA_SPEED: f32 = 500.0;
 }
 
 pub mod player {
@@ -78,4 +78,9 @@ pub mod buttons {
   pub const IMAGES: &str = "/images/buttons/";
   pub mod title {
   }
+}
+
+pub mod fonts {
+  pub const FONTS:             &str = "/fonts/";
+  pub const TO_SAVE_FONT_SIZE: u32  = 16;
 }

@@ -30,7 +30,8 @@ struct InteractablesContainer {
   pub switches:    Vec<Switch>,
   pub doors:       Vec<Door>,
   pub one_ways:    Vec<OneWay>,
-  pub solidifiers: Vec<Solidifier>
+  pub solidifiers: Vec<Solidifier>,
+  pub goal:        Option<Goal>
 }
 
 impl InteractablesContainer {
@@ -40,7 +41,8 @@ impl InteractablesContainer {
       switches:    Vec::new(),
       doors:       Vec::new(),
       one_ways:    Vec::new(),
-      solidifiers: Vec::new()
+      solidifiers: Vec::new(),
+      goal:        None
     }
   }
 
@@ -228,6 +230,15 @@ impl Level {
           )
         }
 
+        "GoalInteractable" => {
+          let err_msg = "Couldn't load level JSON data: Interactable Goal";
+          interactables.goal = Some(Goal::new(
+              ctx,
+              point_opt.expect(err_msg),
+              size_opt.expect(err_msg)
+          ))
+        }
+
         _ => {}
       }
     });
@@ -246,7 +257,7 @@ impl Level {
       children,
       walls,
       interactables,
-      toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 64.0), Size::new(window_size.w, 64.0)),
+      toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 96.0), Size::new(window_size.w, 64.0)),
       dt:          Deltatime::new()
     };
 
@@ -259,10 +270,10 @@ impl Level {
   pub fn keys_pressed(&mut self, keycodes: &Vec<Keycode>) {
     for key in keycodes {
       match key {
-        Keycode::Up    => self.camera.point_mut().add(&Point::new(0.0, -CAMERA_SPEED)),
-        Keycode::Down  => self.camera.point_mut().add(&Point::new(0.0,  CAMERA_SPEED)),
-        Keycode::Left  => self.camera.point_mut().add(&Point::new(-CAMERA_SPEED, 0.0)),
-        Keycode::Right => self.camera.point_mut().add(&Point::new( CAMERA_SPEED, 0.0)),
+        Keycode::Up    => self.camera.point_mut().add(&Point::new(0.0, -CAMERA_SPEED * self.dt.secs())),
+        Keycode::Down  => self.camera.point_mut().add(&Point::new(0.0,  CAMERA_SPEED * self.dt.secs())),
+        Keycode::Left  => self.camera.point_mut().add(&Point::new(-CAMERA_SPEED * self.dt.secs(), 0.0)),
+        Keycode::Right => self.camera.point_mut().add(&Point::new( CAMERA_SPEED * self.dt.secs(), 0.0)),
         _              => ()
       };
     }
@@ -289,45 +300,9 @@ impl Level {
     self.update_interactables(ctx)?;
     self.update_children(ctx)?;
     self.update_player(ctx)?;
-    let button_type_opt = self.toolbox.get_clicked().clone();
-    if let Some(button_type) = button_type_opt {
-      match button_type {
-        ButtonType::LarryLeft  => if let Some(child) = self.larry() {
-          child.walk_left()
-        },
-        ButtonType::LarryRight => if let Some(child) = self.larry() {
-          child.walk_right()
-        },
-        ButtonType::ThingLeft  => if let Some(child) = self.thing() {
-          child.walk_left()
-        },
-        ButtonType::ThingRight => if let Some(child) = self.thing() {
-          child.walk_right()
-        },
-        ButtonType::BloatLeft  => if let Some(child) = self.bloat() {
-          child.walk_left()
-        },
-        ButtonType::BloatRight => if let Some(child) = self.bloat() {
-          child.walk_right()
-        },
-        _ => ()
-      };
-    }
-    self.toolbox.update()?;
+    self.update_toolbox()?;
     self.dt.update();
     Ok(())
-  }
-
-  fn larry(&mut self) -> Option<&mut Child> {
-    self.children.iter_mut().find( |c| c.child_type == ChildType::Larry )
-  }
-
-  fn thing(&mut self) -> Option<&mut Child> {
-    self.children.iter_mut().find( |c| c.child_type == ChildType::Thing )
-  }
-
-  fn bloat(&mut self) -> Option<&mut Child> {
-    self.children.iter_mut().find( |c| c.child_type == ChildType::Bloat )
   }
 
   fn update_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -350,9 +325,7 @@ impl Level {
     let mut door_ids_to_trigger: Vec<IdType> = Vec::new();
 
     for i in 0 .. self.interactables.switches.len() {
-      // for switch in &mut self.interactables.switches {
-      {
-        let mut switch = &mut self.interactables.switches[i];
+      { let mut switch = &mut self.interactables.switches[i];
         if switch.intersects(&self.player) {
           switch.trigger_once(&mut self.player);
         } else {
@@ -365,12 +338,9 @@ impl Level {
             switch.set_intersected(&*child, false);
           }
         }
-        switch.update(ctx)?;
-      }
-      {
-        let switch = &self.interactables.switches[i];
-        door_ids_to_trigger.append(&mut switch.get_interactables_to_trigger());
-      }
+        switch.update(ctx)?; }
+      { let switch = &self.interactables.switches[i];
+        door_ids_to_trigger.append(&mut switch.get_interactables_to_trigger()); }
       self.interactables.switches[i].interactables_triggered();
     }
 
@@ -396,134 +366,183 @@ impl Level {
     if !player_in_solidifier {
       self.player.unsolidify();
     }
+
+    if let Some(goal) = &mut self.interactables.goal {
+      if goal.intersects(&self.player) {
+        goal.trigger_once(&mut self.player);
+      } else {
+        goal.set_intersected(&self.player, false);
+      }
+      for child in &mut self.children {
+        if goal.intersects(&*child) {
+          goal.trigger_once(child);
+        } else {
+          goal.set_intersected(&*child, false);
+        }
+      }
+      goal.update(ctx)?;
+    }
+
     Ok(())
-    }
-
-    fn get_door_by_id_mut(&mut self, id: IdType) -> Option<&mut Door> {
-      self.interactables.doors.iter_mut().find( |ref door| door.has_id(id) )
-    }
-
-    fn update_children(&mut self, ctx: &mut Context) -> GameResult<()> {
-      for i in 0 .. self.children.len() {
-        let new_pos = {
-          let child = &self.children[i];
-          child.get_move_while( |rect| {
-            let intersects_wall = self.walls.iter().any( |wall| {
-              rect.intersects_round(wall)
-            });
-            let intersects_door = self.interactables.solid_doors().iter().any( |&door| {
-              rect.intersects_round(door)
-            });
-            let intersects_oneway = child.velocity().y > 0.0 && self.interactables.one_ways.iter().any( |oneway| {
-              rect.intersects_round(oneway)
-            });
-            let intersects_solid_children = self.children.iter().any( |c| {
-              !child.is(c) && c.is_solid() && rect.intersects_round(c)
-            });
-            let intersects_solid_player = self.player.is_solid() && rect.intersects_round(&self.player);
-            !intersects_wall && !intersects_door && !intersects_oneway && !intersects_solid_children && !intersects_solid_player
-          })
-        };
-        let child = &mut self.children[i];
-        if child.velocity().x != 0.0 && new_pos.x == child.point().x {
-          child.set_velocity_x(0.0);
-          child.stop_walking();
-        }
-        if child.velocity().y != 0.0 && new_pos.y == child.point().y {
-          child.set_velocity_y(0.0);
-        }
-        if &new_pos != child.point() {
-          child.point_mut().set(&new_pos);
-        }
-        // Child is stuck
-        if self.interactables.solid_doors().iter().any( |&door| child.intersects_round(door) ) {
-          let x = child.point().x + ((child.size().w * 2.0) * (child.walk_direction_mult() * -1.0));
-          child.point_mut().set_x(x);
-        }
-        child.update(ctx)?;
-      }
-      Ok(())
-    }
-
-    fn update_player(&mut self, ctx: &mut Context) -> GameResult<()> {
-      // Player is stuck
-      if self.interactables.solid_doors().iter().any( |&door| self.player.intersects_round(door) ) {
-        let x = self.player.point().x - (self.player.size().w * 2.0);
-        self.player.point_mut().set_x(x);
-      }
-      // Move
-      let new_pos = self.player.get_move_while( |rect| {
-        let intersects_wall = self.walls.iter().any( |wall| {
-          rect.intersects_round(wall)
-        });
-        let intersects_door = self.interactables.solid_doors().iter().any( |&door| {
-          rect.intersects_round(door)
-        });
-        let intersects_oneway = self.player.velocity().y > 0.0 && self.interactables.one_ways.iter().any( |oneway| {
-          rect.intersects_round(oneway)
-        });
-        let intersects_solid_children = self.children.iter().any( |child| {
-          child.is_solid() && rect.intersects_round(child)
-        });
-        !intersects_wall && !intersects_door && !intersects_oneway && !intersects_solid_children
-      });
-
-      if self.player.velocity().x != 0.0 && new_pos.x == self.player.point().x {
-        self.player.set_velocity_x(0.0);
-      }
-      // Hacky way to check if a solid block is beneath
-      if self.player.velocity().y != 0.0 && new_pos.y == self.player.point().y {
-        self.player.set_velocity_y(0.0);
-        self.player.stop_jumping();
-      }
-      if &new_pos != self.player.point() {
-        self.player.point_mut().set(&new_pos);
-        // self.camera.move_to(
-        //   &self.player.center()
-        // );
-      }
-      self.player.update(ctx)
-    }
-
-    pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-      self.draw_walls(ctx)?;
-      self.draw_children(ctx)?;
-      self.draw_player(ctx)?;
-      self.draw_interactables(ctx)?;
-      self.toolbox.draw(ctx)?;
-      self.toolbox.closeups.iter_mut()
-        .for_each( |closeup| closeup.draw(ctx) );
-      Ok(())
-    }
-
-    fn draw_walls(&mut self, ctx: &mut Context) -> GameResult<()> {
-      for wall in &self.walls {
-        self.camera.draw(ctx, wall)?;
-      }
-      Ok(())
-    }
-
-    fn draw_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
-      for jump_pad in &mut self.interactables.jump_pads {
-        self.camera.draw(ctx, jump_pad)?;
-      }
-      for switch in &mut self.interactables.switches {
-        self.camera.draw(ctx, switch)?;
-      }
-      for door in &mut self.interactables.doors {
-        self.camera.draw(ctx, door)?;
-      }
-      Ok(())
-    }
-
-    fn draw_children(&mut self, ctx: &mut Context) -> GameResult<()> {
-      for child in &self.children {
-        self.camera.draw(ctx, child)?;
-      }
-      Ok(())
-    }
-
-    fn draw_player(&mut self, ctx: &mut Context) -> GameResult<()> {
-      self.camera.draw(ctx, &self.player)
-    }
   }
+
+  fn get_door_by_id_mut(&mut self, id: IdType) -> Option<&mut Door> {
+    self.interactables.doors.iter_mut().find( |ref door| door.has_id(id) )
+  }
+
+  fn update_children(&mut self, ctx: &mut Context) -> GameResult<()> {
+    for i in 0 .. self.children.len() {
+      let new_pos = {
+        let child = &self.children[i];
+        child.get_move_while( |rect| {
+          let intersects_wall = self.walls.iter().any( |wall| {
+            rect.intersects_round(wall)
+          });
+          let intersects_door = self.interactables.solid_doors().iter().any( |&door| {
+            rect.intersects_round(door)
+          });
+          let intersects_oneway = child.velocity().y > 0.0 && self.interactables.one_ways.iter().any( |oneway| {
+            rect.intersects_round(oneway)
+          });
+          let intersects_solid_children = self.children.iter().any( |c| {
+            !child.is(c) && c.is_solid() && rect.intersects_round(c)
+          });
+          let intersects_solid_player = self.player.is_solid() && rect.intersects_round(&self.player);
+          !intersects_wall && !intersects_door && !intersects_oneway && !intersects_solid_children && !intersects_solid_player
+        })
+      };
+      let child = &mut self.children[i];
+      if child.velocity().x != 0.0 && new_pos.x == child.point().x {
+        child.set_velocity_x(0.0);
+        child.stop_walking();
+      }
+      if child.velocity().y != 0.0 && new_pos.y == child.point().y {
+        child.set_velocity_y(0.0);
+      }
+      if &new_pos != child.point() {
+        child.point_mut().set(&new_pos);
+      }
+      // Child is stuck
+      if self.interactables.solid_doors().iter().any( |&door| child.intersects_round(door) ) {
+        let x = child.point().x + ((child.size().w * 2.0) * (child.walk_direction_mult() * -1.0));
+        child.point_mut().set_x(x);
+      }
+      child.update(ctx)?;
+    }
+    Ok(())
+  }
+
+  fn larry(&mut self) -> Option<&mut Child> {
+    self.children.iter_mut().find( |c| c.child_type == ChildType::Larry )
+  }
+
+  fn thing(&mut self) -> Option<&mut Child> {
+    self.children.iter_mut().find( |c| c.child_type == ChildType::Thing )
+  }
+
+  fn bloat(&mut self) -> Option<&mut Child> {
+    self.children.iter_mut().find( |c| c.child_type == ChildType::Bloat )
+  }
+
+  fn update_player(&mut self, ctx: &mut Context) -> GameResult<()> {
+    // Player is stuck
+    if self.interactables.solid_doors().iter().any( |&door| self.player.intersects_round(door) ) {
+      let x = self.player.point().x - (self.player.size().w * 2.0);
+      self.player.point_mut().set_x(x);
+    }
+    // Move
+    let new_pos = self.player.get_move_while( |rect| {
+      let intersects_wall = self.walls.iter().any( |wall| {
+        rect.intersects_round(wall)
+      });
+      let intersects_door = self.interactables.solid_doors().iter().any( |&door| {
+        rect.intersects_round(door)
+      });
+      let intersects_oneway = self.player.velocity().y > 0.0 && self.interactables.one_ways.iter().any( |oneway| {
+        rect.intersects_round(oneway)
+      });
+      let intersects_solid_children = self.children.iter().any( |child| {
+        child.is_solid() && rect.intersects_round(child)
+      });
+      !intersects_wall && !intersects_door && !intersects_oneway && !intersects_solid_children
+    });
+
+    if self.player.velocity().x != 0.0 && new_pos.x == self.player.point().x {
+      self.player.set_velocity_x(0.0);
+    }
+    // Hacky way to check if a solid block is beneath
+    if self.player.velocity().y != 0.0 && new_pos.y == self.player.point().y {
+      self.player.set_velocity_y(0.0);
+      self.player.stop_jumping();
+    }
+    if &new_pos != self.player.point() {
+      self.player.point_mut().set(&new_pos);
+    }
+    self.player.update(ctx)
+  }
+
+  fn update_toolbox(&mut self) -> GameResult<()> {
+    if let Some(button_type) = self.toolbox.get_clicked().clone() {
+      match button_type {
+        ButtonType::NextLevel  => println!("NEXT LEVEL"),  // TODO
+        ButtonType::LarryLeft  => if let Some(child) = self.larry() { child.walk_left()  },
+        ButtonType::LarryRight => if let Some(child) = self.larry() { child.walk_right() },
+        ButtonType::ThingLeft  => if let Some(child) = self.thing() { child.walk_left()  },
+        ButtonType::ThingRight => if let Some(child) = self.thing() { child.walk_right() },
+        ButtonType::BloatLeft  => if let Some(child) = self.bloat() { child.walk_left()  },
+        ButtonType::BloatRight => if let Some(child) = self.bloat() { child.walk_right() },
+        _                      => ()
+      };
+    }
+    if let Some(goal) = &self.interactables.goal {
+      self.toolbox.set_to_save_amount(goal.get_intersected().len());
+    }
+    self.toolbox.update()?;
+    Ok(())
+  }
+
+  pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.draw_walls(ctx)?;
+    self.draw_children(ctx)?;
+    self.draw_player(ctx)?;
+    self.draw_interactables(ctx)?;
+    self.toolbox.draw(ctx)?;
+    self.toolbox.closeups.iter_mut()
+      .for_each( |closeup| closeup.draw(ctx) );
+    Ok(())
+  }
+
+  fn draw_walls(&mut self, ctx: &mut Context) -> GameResult<()> {
+    for wall in &self.walls {
+      self.camera.draw(ctx, wall)?;
+    }
+    Ok(())
+  }
+
+  fn draw_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
+    for jump_pad in &mut self.interactables.jump_pads {
+      self.camera.draw(ctx, jump_pad)?;
+    }
+    for switch in &mut self.interactables.switches {
+      self.camera.draw(ctx, switch)?;
+    }
+    for door in &mut self.interactables.doors {
+      self.camera.draw(ctx, door)?;
+    }
+    for oneway in &mut self.interactables.one_ways {
+      self.camera.draw(ctx, oneway)?;
+    }
+    Ok(())
+  }
+
+  fn draw_children(&mut self, ctx: &mut Context) -> GameResult<()> {
+    for child in &self.children {
+      self.camera.draw(ctx, child)?;
+    }
+    Ok(())
+  }
+
+  fn draw_player(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.camera.draw(ctx, &self.player)
+  }
+}
