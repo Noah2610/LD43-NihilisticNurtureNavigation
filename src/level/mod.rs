@@ -269,6 +269,14 @@ impl Level {
     Ok(lvl)
   }
 
+  pub fn camera(&self) -> &Camera {
+    &self.camera
+  }
+
+  pub fn camera_mut(&mut self) -> &mut Camera {
+    &mut self.camera
+  }
+
   pub fn keys_pressed(&mut self, keycodes: &Vec<Keycode>) {
     for key in keycodes {
       match key {

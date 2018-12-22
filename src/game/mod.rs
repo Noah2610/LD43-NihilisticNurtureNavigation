@@ -7,28 +7,20 @@ use ggez::{
   event::{
     self,
     Keycode,
-    MouseButton
+    MouseButton,
+    MouseState
   },
   audio
 };
 
 use noframe::geo::prelude::*;
-use noframe::entity::{
-  Entity,
-  Movement
-};
 use noframe::input_manager::InputManager;
-use noframe::camera::Camera;
-use noframe::deltatime::Deltatime;
 
 use settings::game::*;
 use settings::res;
 use level_manager::LevelManager;
-use level::Level;
-use interactables::Interactable;
 use menu::Menu;
 use menu::MenuManager;
-use menu::buttons::Button;
 use menu::ButtonType;
 
 enum Scene {
@@ -141,6 +133,12 @@ impl event::EventHandler for GameState {
     // if let Scene::Title = self.scene {
     //   self.menu_manager.title.mouse_up(x, y);
     // }
+  }
+
+  fn mouse_motion_event(&mut self, _ctx: &mut Context, state: MouseState, _x: i32, _y: i32, xrel: i32, yrel: i32) {
+    if state.left() || state.right() {
+      self.level_manager.mouse_drag(xrel, yrel);
+    }
   }
 
   fn update(&mut self, ctx: &mut Context) -> GameResult<()> {

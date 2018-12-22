@@ -9,14 +9,17 @@ use noframe::geo::prelude::*;
 use level::Level;
 use settings::levels::*;
 use settings::res;
+use animation::Animation;
+use animation::Facing;
 
 pub struct LevelManager {
-  level_index: usize,
-  level:       Option<Level>,
-  level_names: Vec<&'static str>,
-  song:        Option<audio::Source>,
-  song_names:  Vec<&'static str>,
-  window_size: Size
+  level_index:      usize,
+  level:            Option<Level>,
+  level_names:      Vec<&'static str>,
+  song:             Option<audio::Source>,
+  song_names:       Vec<&'static str>,
+  background:       Option<Animation>,
+  window_size:      Size
 }
 
 impl LevelManager {
@@ -27,6 +30,7 @@ impl LevelManager {
       level_names: LEVEL_NAMES.to_vec(),
       song:        None,
       song_names:  SONG_NAMES.to_vec(),
+      background:  None,
       window_size
     }
   }
@@ -54,6 +58,7 @@ impl LevelManager {
       song.play()?;
       self.song = Some( song );
     }
+    self.background = new_background(ctx, self.level_index);
     if self.level.is_some() {
       self.level_index += 1;
     }
@@ -78,6 +83,12 @@ impl LevelManager {
     }
   }
 
+  pub fn mouse_drag(&mut self, xrel: i32, yrel: i32) {
+    if let Some(level) = &mut self.level {
+      level.camera_mut().move_by(&Point::new(xrel as NumType, yrel as NumType).inverted());
+    }
+  }
+
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     let mut next_level = false;
     if let Some(level) = &mut self.level {
@@ -91,9 +102,23 @@ impl LevelManager {
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if let Some(bg) = &self.background {
+      bg.draw(ctx, &Point::new(0.0, 0.0), &self.window_size, &Facing::Right)?;
+    }
     if let Some(level) = &mut self.level {
       level.draw(ctx)?;
     }
     Ok(())
+  }
+}
+
+fn new_background(ctx: &mut Context, n: usize) -> Option<Animation> {
+  match n {
+    0 => Some(Animation::new(
+        ctx,
+        vec![::join_str(res::BACKGROUND_IMAGES, "default.png")],
+        vec![1000]
+    )),
+    _ => None
   }
 }
