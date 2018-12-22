@@ -84,3 +84,7 @@ pub mod fonts {
   pub const FONTS:             &str = "/fonts/";
   pub const TO_SAVE_FONT_SIZE: u32  = 16;
 }
+
+pub mod levels {
+  pub const LEVEL_NAMES: [&'static str; 2] = ["main", "two_tmp"];
+}

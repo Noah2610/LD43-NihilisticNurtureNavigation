@@ -60,6 +60,7 @@ pub struct Level {
   walls:         Vec<Wall>,
   interactables: InteractablesContainer,
   toolbox:       ToolboxMenu,
+  next_level:    bool,
   dt:            Deltatime
 }
 
@@ -258,6 +259,7 @@ impl Level {
       walls,
       interactables,
       toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 96.0), Size::new(window_size.w, 64.0)),
+      next_level:  false,
       dt:          Deltatime::new()
     };
 
@@ -294,6 +296,10 @@ impl Level {
 
   pub fn mouse_down(&mut self, x: i32, y: i32) {
     self.toolbox.mouse_down(x, y);
+  }
+
+  pub fn next_level(&self) -> bool {
+    self.next_level
   }
 
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -484,7 +490,7 @@ impl Level {
   fn update_toolbox(&mut self) -> GameResult<()> {
     if let Some(button_type) = self.toolbox.get_clicked().clone() {
       match button_type {
-        ButtonType::NextLevel  => println!("NEXT LEVEL"),  // TODO
+        ButtonType::NextLevel  => self.next_level = true,
         ButtonType::LarryLeft  => if let Some(child) = self.larry() { child.walk_left()  },
         ButtonType::LarryRight => if let Some(child) = self.larry() { child.walk_right() },
         ButtonType::ThingLeft  => if let Some(child) = self.thing() { child.walk_left()  },

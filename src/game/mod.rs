@@ -23,6 +23,7 @@ use noframe::deltatime::Deltatime;
 
 use settings::game::*;
 use settings::res;
+use level_manager::LevelManager;
 use level::Level;
 use interactables::Interactable;
 use menu::Menu;
@@ -39,7 +40,7 @@ pub struct GameState {
   window_size:   Size,
   window_rect:   Rect,
   input_manager: InputManager,
-  level:         Option<Level>,
+  level_manager: LevelManager,
   menu_manager:  MenuManager,
   running:       bool,
   last_update:   Instant,
@@ -57,7 +58,7 @@ impl GameState {
       window_size:   window_size.clone(),
       window_rect:   Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft),
       input_manager: InputManager::new(),
-      level:         None,
+      level_manager: LevelManager::new(window_size.clone()),
       running:       true,
       last_update:   Instant::now(),
       menu_manager:  MenuManager::new(ctx, window_size.clone()),
@@ -74,18 +75,14 @@ impl GameState {
   }
 
   fn update_ingame(&mut self, ctx: &mut Context) -> GameResult<()> {
-    if let Some(ref mut level) = self.level {
-      level.keys_pressed(self.input_manager.keys_pressed());
-      level.keys_down(self.input_manager.keys_down());
-      level.keys_up(self.input_manager.keys_up());
-      level.update(ctx)?;
-    }
+    self.level_manager.keys_pressed(self.input_manager.keys_pressed());
+    self.level_manager.keys_down(self.input_manager.keys_down());
+    self.level_manager.keys_up(self.input_manager.keys_up());
+    self.level_manager.update(ctx)?;
     Ok(())
   }
 
   fn update_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
-    // self.menu_manager.title.mouse_down(self.input_manager.mouse_down());
-    // self.menu_manager.title.mouse_up(self.input_manager.mouse_up());
     if let Some(ButtonType::Start) = self.menu_manager.title.get_clicked() {
       self.start_game(ctx)?;
     }
@@ -94,15 +91,13 @@ impl GameState {
   }
 
   fn start_game(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.level = Some(Level::new(ctx, self.window_size.clone(), "main")?);
+    self.level_manager.next_level(ctx)?;
     self.scene = Scene::Ingame;
     Ok(())
   }
 
   fn draw_ingame(&mut self, ctx: &mut Context) -> GameResult<()> {
-    if let Some(ref mut level) = self.level {
-      level.draw(ctx)?;
-    };
+    self.level_manager.draw(ctx)?;
     Ok(())
   }
 
@@ -137,7 +132,7 @@ impl event::EventHandler for GameState {
     match self.scene {
       Scene::Title  => self.menu_manager.title.mouse_down(x, y),
       Scene::Ingame => {
-        if let Some(ref mut level) = self.level {
+        if let Some(ref mut level) = self.level_manager.level() {
           level.mouse_down(x, y);
         }
       }

@@ -1,6 +1,5 @@
 pub mod title;
 pub mod toolbox;
-pub mod ingame;
 pub mod buttons;
 
 use ggez::{

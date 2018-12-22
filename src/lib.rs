@@ -13,6 +13,7 @@ mod gravity;
 mod interactables;
 mod id_generator;
 mod menu;
+mod level_manager;
 
 use std::env;
 use std::path;
