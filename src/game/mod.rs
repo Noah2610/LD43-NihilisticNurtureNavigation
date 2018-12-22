@@ -45,15 +45,13 @@ pub struct GameState {
   running:       bool,
   last_update:   Instant,
   scene:         Scene,
-
-  // TODO tmp
-  song:          audio::Source
+  title_song:    audio::Source
 }
 
 impl GameState {
   pub fn new(ctx: &mut Context, window_size: Size) -> GameResult<Self> {
-    let mut song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.wav"))?;
-    song.set_repeat(true);
+    let mut title_song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.wav"))?;
+    title_song.set_repeat(true);
     Ok(Self {
       window_size:   window_size.clone(),
       window_rect:   Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft),
@@ -63,14 +61,12 @@ impl GameState {
       last_update:   Instant::now(),
       menu_manager:  MenuManager::new(ctx, window_size.clone()),
       scene:         Scene::Title,
-
-      // TODO tmp
-      song:          song
+      title_song:    title_song
     })
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.song.play();
+    self.title_song.play();
     Ok(())
   }
 
@@ -92,6 +88,7 @@ impl GameState {
 
   fn start_game(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.level_manager.next_level(ctx)?;
+    self.title_song.stop();
     self.scene = Scene::Ingame;
     Ok(())
   }
