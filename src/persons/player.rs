@@ -81,7 +81,9 @@ impl Player {
 
   pub fn key_down(&mut self, keycode: &Keycode) {
     if let &controls::JUMP = keycode {
-      self.jump();
+      if self.velocity.y == 0.0 || self.velocity.y == self.gravity_increase.y {
+        self.jump();
+      }
     }
   }
 

@@ -1,6 +1,12 @@
 # Interactables
 ## JumpPad
-Needs no configuration
+```json
+{
+  "id":       0,
+  "color":    "red",
+  "state":    "Active|Inactive"
+}
+```
 
 ## Switch
 ```json
