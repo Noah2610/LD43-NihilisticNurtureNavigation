@@ -61,6 +61,9 @@ impl JumpPad {
   }
 
   pub fn intersects_center<T: Mask>(&self, other: &T) -> bool {
+    if let State::Inactive = self.state {
+      return false;
+    }
     let self_sides = self.sides().map( |(side, val)| {
       match side {
         Side::Top | Side::Bottom => val,
@@ -145,12 +148,15 @@ impl Interactable for JumpPad {
   }
 
   fn trigger<T: Person>(&mut self, person: &mut T) {
-    if let State::Active = self.state {
-      self.state = State::Trigger;
-      self.animations.trigger.reset();
-      person.set_velocity_y(-JUMP_SPEED);
-      person.set_velocity_x(0.0);
-      person.stop_walking();
+    match self.state {
+      State::Active | State::Trigger => {
+        self.state = State::Trigger;
+        self.animations.trigger.reset();
+        person.set_velocity_y(-JUMP_SPEED);
+        person.set_velocity_x(0.0);
+        person.stop_walking();
+      }
+      _ => ()
     }
   }
 }
