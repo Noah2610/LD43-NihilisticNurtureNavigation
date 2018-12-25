@@ -34,7 +34,7 @@ pub mod player {
   pub const SPEED_DECREASE_Y: f32 = 50.0;
   pub const MAX_VELOCITY_X: f32 = 150.0;
   pub const MAX_VELOCITY_Y: f32 = 1000.0;
-  pub const JUMP_SPEED: f32 = 300.0;
+  pub const JUMP_SPEED: f32 = 400.0;
   pub const JUMP_KILL_VELOCITY: f32 = 250.0;
   //pub const MAX_JUMP_SPEED: f32 = 200.0;
   pub const GRAVITY_INCREASE: f32 = 20.0;
@@ -88,6 +88,6 @@ pub mod fonts {
 
 pub mod levels {
   pub const AUDIO_FORMAT: &str = "ogg";
-  pub const LEVEL_NAMES: [&'static str; 1] = ["jump_pad_states"];
+  pub const LEVEL_NAMES: [&'static str; 1] = ["jump_pad_one_way"];
   pub const SONG_NAMES:  [&'static str; 1] = ["ingame_1"];
 }

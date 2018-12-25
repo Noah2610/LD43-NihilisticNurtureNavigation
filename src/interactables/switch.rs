@@ -161,7 +161,7 @@ impl Interactable for Switch {
     match &self.state {
       State::On  => self.state = State::TurningOff,
       State::Off => self.state = State::TurningOn,
-      _          => ()
+      _          => return,
     };
     self.trigger_interactables = true;
   }
