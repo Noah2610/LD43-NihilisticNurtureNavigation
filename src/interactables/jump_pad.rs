@@ -15,21 +15,24 @@ use super::animations::jump_pad;
 use persons::Person;
 use id_generator::prelude::*;
 
-enum State {
-  Main,
+pub enum State {
+  Active,
+  Inactive,
   Trigger
 }
 
 struct JumpPadAnimations {
-  pub main:    Animation,
-  pub trigger: Animation
+  pub active:   Animation,
+  pub inactive: Animation,
+  pub trigger:  Animation
 }
 
 impl JumpPadAnimations {
-  pub fn new(ctx: &mut Context) -> Self {
+  pub fn new(ctx: &mut Context, color: &str) -> Self {
     Self {
-      main:    jump_pad::new_main_animation(ctx),
-      trigger: jump_pad::new_trigger_animation(ctx),
+      active:   jump_pad::new_active_animation(ctx, color),
+      inactive: jump_pad::new_inactive_animation(ctx, color),
+      trigger:  jump_pad::new_trigger_animation(ctx, color),
     }
   }
 }
@@ -45,15 +48,15 @@ pub struct JumpPad {
 }
 
 impl JumpPad {
-  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
+  pub fn new(ctx: &mut Context, point: Point, size: Size, id: IdType, color: &str, state: State) -> Self {
     Self {
       point,
       size,
       origin:      Origin::TopLeft,
-      state:       State::Main,
-      animations:  JumpPadAnimations::new(ctx),
+      state,
+      animations:  JumpPadAnimations::new(ctx, color),
       intersected: Vec::new(),
-      id:          generate_id()
+      id
     }
   }
 
@@ -69,17 +72,26 @@ impl JumpPad {
     Self::sides_intersect(self_sides, other_sides)
   }
 
+  pub fn toggle_state(&mut self) {
+    self.state = match self.state {
+      State::Active | State::Trigger => State::Inactive,
+      State::Inactive                => State::Active,
+    }
+  }
+
   fn animation(&self) -> &Animation {
     match self.state {
-      State::Main    => &self.animations.main,
-      State::Trigger => &self.animations.trigger
+      State::Active   => &self.animations.active,
+      State::Inactive => &self.animations.inactive,
+      State::Trigger  => &self.animations.trigger
     }
   }
 
   fn animation_mut(&mut self) -> &mut Animation {
     match self.state {
-      State::Main    => &mut self.animations.main,
-      State::Trigger => &mut self.animations.trigger
+      State::Active   => &mut self.animations.active,
+      State::Inactive => &mut self.animations.inactive,
+      State::Trigger  => &mut self.animations.trigger
     }
   }
 }
@@ -96,7 +108,7 @@ impl Entity for JumpPad {
     if let State::Trigger = self.state {
       if self.animations.trigger.played() > 1 {
         self.animations.trigger.reset();
-        self.state = State::Main;
+        self.state = State::Active;
       }
     }
     self.animation_mut().update()?;
@@ -133,10 +145,12 @@ impl Interactable for JumpPad {
   }
 
   fn trigger<T: Person>(&mut self, person: &mut T) {
-    self.state = State::Trigger;
-    self.animations.trigger.reset();
-    person.set_velocity_y(-JUMP_SPEED);
-    person.set_velocity_x(0.0);
-    person.stop_walking();
+    if let State::Active = self.state {
+      self.state = State::Trigger;
+      self.animations.trigger.reset();
+      person.set_velocity_y(-JUMP_SPEED);
+      person.set_velocity_x(0.0);
+      person.stop_walking();
+    }
   }
 }

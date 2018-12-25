@@ -165,11 +165,20 @@ impl Level {
 
         "JumpPadInteractable" => {
           let err_msg = "Couldn't load level JSON data: Interactable JumpPad";
+          let state = match state_opt.expect("Couldn't load level JSON data: Interactable JumpPad must have State") {
+            "Active"   => jump_pad::State::Active,
+            "Inactive" => jump_pad::State::Inactive,
+            "Trigger"  => jump_pad::State::Trigger,
+            _          => panic!("Interactable JumpPad: Invalid state: {}", state_opt.unwrap())
+          };
           interactables.jump_pads.push(
             JumpPad::new(
               ctx,
               point_opt.expect(err_msg),
-              size_opt.expect(err_msg)
+              size_opt.expect(err_msg),
+              id_opt.expect(err_msg),
+              color_opt.expect(err_msg),
+              state
             )
           );
         }
@@ -320,23 +329,7 @@ impl Level {
   }
 
   fn update_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
-    for jump_pad in &mut self.interactables.jump_pads {
-      if jump_pad.intersects_center(&self.player) {
-        jump_pad.trigger_once(&mut self.player);
-      } else {
-        jump_pad.set_intersected(&self.player, false);
-      }
-      for child in &mut self.children {
-        if jump_pad.intersects_center(child) {
-          jump_pad.trigger_once(child);
-        } else {
-          jump_pad.set_intersected(&*child, false);
-        }
-      }
-      jump_pad.update(ctx)?;
-    }
-
-    let mut door_ids_to_trigger: Vec<IdType> = Vec::new();
+    let mut ids_to_trigger: Vec<IdType> = Vec::new();
 
     for i in 0 .. self.interactables.switches.len() {
       { let mut switch = &mut self.interactables.switches[i];
@@ -354,13 +347,32 @@ impl Level {
         }
         switch.update(ctx)?; }
       { let switch = &self.interactables.switches[i];
-        door_ids_to_trigger.append(&mut switch.get_interactables_to_trigger()); }
+        ids_to_trigger.append(&mut switch.get_interactables_to_trigger()); }
       self.interactables.switches[i].interactables_triggered();
     }
 
+    for jump_pad in &mut self.interactables.jump_pads {
+      if ids_to_trigger.contains(&jump_pad.id()) {
+        jump_pad.toggle_state();
+      }
+      if jump_pad.intersects_center(&self.player) {
+        jump_pad.trigger_once(&mut self.player);
+      } else {
+        jump_pad.set_intersected(&self.player, false);
+      }
+      for child in &mut self.children {
+        if jump_pad.intersects_center(child) {
+          jump_pad.trigger_once(child);
+        } else {
+          jump_pad.set_intersected(&*child, false);
+        }
+      }
+      jump_pad.update(ctx)?;
+    }
+
     for door in &mut self.interactables.doors {
-      if door_ids_to_trigger.contains(&door.id()) {
-        door.trigger(&mut self.player);
+      if ids_to_trigger.contains(&door.id()) {
+        door.trigger(&mut self.player);  // We don't use the player, but something needs to be passed...
       }
       door.update(ctx)?;
     }
