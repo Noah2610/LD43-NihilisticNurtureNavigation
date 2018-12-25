@@ -53,7 +53,7 @@ impl LevelManager {
       song.stop();
     }
     if let Some(song_name) = self.song_names.get(self.level_index) {
-      let mut song = audio::Source::new(ctx, format!("{}{}.wav", res::AUDIO, song_name))?;
+      let mut song = audio::Source::new(ctx, format!("{}{}.{}", res::AUDIO, song_name, AUDIO_FORMAT))?;
       song.set_volume(0.5);
       song.set_repeat(true);
       song.play()?;

@@ -87,6 +87,7 @@ pub mod fonts {
 }
 
 pub mod levels {
+  pub const AUDIO_FORMAT: &str = "ogg";
   pub const LEVEL_NAMES: [&'static str; 2] = ["main", "two_tmp"];
   pub const SONG_NAMES:  [&'static str; 2] = ["ingame_1", "ingame_2"];
 }

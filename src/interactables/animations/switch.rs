@@ -26,10 +26,10 @@ pub fn new_off_animation(ctx: &mut Context, color: &str) -> Animation {
 pub fn new_turning_on_animation(ctx: &mut Context, color: &str) -> Animation {
   Animation::new(ctx,
                  vec![
-                 format!("{}{}{}.png", IMAGES, "switch_switching_1_", color),
-                 format!("{}{}{}.png", IMAGES, "switch_switching_1_", color),
-                 format!("{}{}{}.png", IMAGES, "switch_switching_2_", color),
-                 format!("{}{}{}.png", IMAGES, "switch_switching_3_", color),
+                 format!("{}{}{}.png", IMAGES, "switch_1_", color),
+                 format!("{}{}{}.png", IMAGES, "switch_1_", color),
+                 format!("{}{}{}.png", IMAGES, "switch_2_", color),
+                 format!("{}{}{}.png", IMAGES, "switch_3_", color),
                  ],
                  vec![
                  250,
@@ -42,10 +42,10 @@ pub fn new_turning_on_animation(ctx: &mut Context, color: &str) -> Animation {
 pub fn new_turning_off_animation(ctx: &mut Context, color: &str) -> Animation {
   Animation::new(ctx,
                  vec![
-                 format!("{}{}{}.png", IMAGES, "switch_switching_3_", color),
-                 format!("{}{}{}.png", IMAGES, "switch_switching_3_", color),
-                 format!("{}{}{}.png", IMAGES, "switch_switching_2_", color),
-                 format!("{}{}{}.png", IMAGES, "switch_switching_1_", color)
+                 format!("{}{}{}.png", IMAGES, "switch_3_", color),
+                 format!("{}{}{}.png", IMAGES, "switch_3_", color),
+                 format!("{}{}{}.png", IMAGES, "switch_2_", color),
+                 format!("{}{}{}.png", IMAGES, "switch_1_", color)
                  ],
                  vec![
                  250,

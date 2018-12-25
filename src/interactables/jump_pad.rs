@@ -5,6 +5,7 @@ use ggez::{
 
 use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
+use noframe::geo::mask::misc::Side;
 
 use settings::interactables::jump_pad::*;
 use animation::Animation;
@@ -54,6 +55,18 @@ impl JumpPad {
       intersected: Vec::new(),
       id:          generate_id()
     }
+  }
+
+  pub fn intersects_center<T: Mask>(&self, other: &T) -> bool {
+    let self_sides = self.sides().map( |(side, val)| {
+      match side {
+        Side::Top | Side::Bottom => val,
+        Side::Left  => val + self.size.w / 2.0,
+        Side::Right => val - self.size.w / 2.0,
+      }
+    }).collect::<_>();
+    let other_sides = other.sides();
+    Self::sides_intersect(self_sides, other_sides)
   }
 
   fn animation(&self) -> &Animation {

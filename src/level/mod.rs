@@ -321,13 +321,13 @@ impl Level {
 
   fn update_interactables(&mut self, ctx: &mut Context) -> GameResult<()> {
     for jump_pad in &mut self.interactables.jump_pads {
-      if jump_pad.intersects(&self.player) {
+      if jump_pad.intersects_center(&self.player) {
         jump_pad.trigger_once(&mut self.player);
       } else {
         jump_pad.set_intersected(&self.player, false);
       }
       for child in &mut self.children {
-        if jump_pad.intersects(child) {
+        if jump_pad.intersects_center(child) {
           jump_pad.trigger_once(child);
         } else {
           jump_pad.set_intersected(&*child, false);

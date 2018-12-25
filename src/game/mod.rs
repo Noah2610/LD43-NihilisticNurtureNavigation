@@ -42,7 +42,7 @@ pub struct GameState {
 
 impl GameState {
   pub fn new(ctx: &mut Context, window_size: Size) -> GameResult<Self> {
-    let mut title_song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.wav"))?;
+    let mut title_song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.ogg"))?;
     title_song.set_volume(0.5);
     title_song.set_repeat(true);
     Ok(Self {
