@@ -88,6 +88,6 @@ pub mod fonts {
 
 pub mod levels {
   pub const AUDIO_FORMAT: &str = "ogg";
-  pub const LEVEL_NAMES: [&'static str; 1] = ["jump_pad_one_way"];
+  pub const LEVEL_NAMES: [&'static str; 1] = ["levelding"];
   pub const SONG_NAMES:  [&'static str; 1] = ["ingame_1"];
 }
