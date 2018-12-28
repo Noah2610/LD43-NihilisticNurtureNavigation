@@ -63,13 +63,13 @@ impl Player {
         &controls::LEFT => {
           if !self.has_moved(Axis::X) {
             self.moved_on_axis(Axis::X);
-            Some(Point::new( -SPEED_INCREASE, 0.0 ))
+            Some(Point::new( -SPEED_INCREASE * self.dt.secs(), 0.0 ))
           } else { None }
         }
         &controls::RIGHT => {
           if !self.has_moved(Axis::X) {
             self.moved_on_axis(Axis::X);
-            Some(Point::new( SPEED_INCREASE, 0.0 ))
+            Some(Point::new( SPEED_INCREASE * self.dt.secs(), 0.0 ))
           } else { None }
         }
         _ => None
@@ -81,7 +81,7 @@ impl Player {
 
   pub fn key_down(&mut self, keycode: &Keycode) {
     if let &controls::JUMP = keycode {
-      if self.velocity.y == 0.0 || self.velocity.y == self.gravity_increase.y {
+      if self.on_floor() {  // Inclusive end
         self.jump();
       }
     }
@@ -100,35 +100,13 @@ impl Player {
 
   fn jump(&mut self) {
     if self.is_jumping { return; }
+    let dt = self.dt.secs();
     self.is_jumping = true;
     self.add_velocity(&Point::new(0.0, -JUMP_SPEED));
   }
 
   pub fn stop_jumping(&mut self) {
     self.is_jumping = false;
-  }
-
-  fn moved_on_axis(&mut self, axis: Axis) {
-    if !self.has_moved.iter().any( |a| &axis == a ) {
-      self.has_moved.push(axis);
-    }
-  }
-
-  fn has_moved(&self, axis: Axis) -> bool {
-    self.has_moved.iter().any( |a| &axis == a )
-  }
-
-  fn handle_decrease_velocity(&mut self) {
-    let decr_vel = Point::new(
-      if !self.has_moved(Axis::X) {
-        SPEED_DECREASE_X
-      } else { 0.0 },
-      if false && !self.has_moved(Axis::Y) {  // TODO I don't think we need to decrease y velocity automatically
-        SPEED_DECREASE_Y
-      } else { 0.0 }
-    );
-    self.decrease_velocity(&decr_vel);
-    self.has_moved.clear();
   }
 
   fn handle_anim_state(&mut self) {
@@ -208,12 +186,25 @@ impl Velocity for Player {
 impl Movement for Player {}
 
 impl Gravity for Player {
-  fn gravity_increase(&self) -> &Point {
-    &self.gravity_increase
+  fn gravity_increase(&self) -> Point {
+    self.gravity_increase.mult_axes_by(self.dt.secs())
   }
 }
 
 impl Person for Player {
+  fn moved_axes(&self) -> &Vec<Axis> {
+    &self.has_moved
+  }
+  fn add_moved_axis(&mut self, axis: Axis) {
+    self.has_moved.push(axis);
+  }
+  fn clear_moved_axes(&mut self) {
+    self.has_moved.clear();
+  }
+  fn speed_decrease(&self) -> Point {
+    Point::new(SPEED_DECREASE_X * self.dt.secs(), SPEED_DECREASE_Y * self.dt.secs())
+  }
+
   fn is_solid(&self) -> bool {
     self.solid
   }

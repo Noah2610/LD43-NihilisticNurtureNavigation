@@ -29,16 +29,14 @@ pub mod camera {
 
 pub mod player {
   pub const IMAGES: &str = "/images/player/";
-  // pub const SPEED_INCREASE: f32 = 50.0;
-  pub const SPEED_INCREASE: f32 = 50.0;
-  pub const SPEED_DECREASE_X: f32 = 50.0;
-  pub const SPEED_DECREASE_Y: f32 = 50.0;
+  pub const SPEED_INCREASE: f32 = 600.0;
+  pub const SPEED_DECREASE_X: f32 = 600.0;
+  pub const SPEED_DECREASE_Y: f32 = 600.0;
   pub const MAX_VELOCITY_X: f32 = 150.0;
   pub const MAX_VELOCITY_Y: f32 = 1000.0;
-  pub const JUMP_SPEED: f32 = 400.0;
+  pub const JUMP_SPEED: f32 = 325.0;
   pub const JUMP_KILL_VELOCITY: f32 = 250.0;
-  //pub const MAX_JUMP_SPEED: f32 = 200.0;
-  pub const GRAVITY_INCREASE: f32 = 20.0;
+  pub const GRAVITY_INCREASE: f32 = 800.0;
 
   pub mod controls {
     use ggez::event::Keycode;
@@ -50,12 +48,12 @@ pub mod player {
 
 pub mod child {
   pub const IMAGES: &str = "/images/children/";
-  pub const SPEED_INCREASE: f32 = 10.0;
-  pub const SPEED_DECREASE_X: f32 = 20.0;
-  pub const SPEED_DECREASE_Y: f32 = 20.0;
+  pub const SPEED_INCREASE: f32 = 400.0;
+  pub const SPEED_DECREASE_X: f32 = 600.0;
+  pub const SPEED_DECREASE_Y: f32 = 600.0;
   pub const MAX_VELOCITY_X: f32 = 80.0;
   pub const MAX_VELOCITY_Y: f32 = 1000.0;
-  pub const GRAVITY_INCREASE: f32 = 20.0;
+  pub const GRAVITY_INCREASE: f32 = 800.0;
 }
 
 pub mod wall {
@@ -66,7 +64,7 @@ pub mod interactables {
   pub const IMAGES: &str = "/images/interactables/";
 
   pub mod jump_pad {
-    pub const JUMP_SPEED: f32 = 1000.0;
+    pub const JUMP_SPEED: f32 = 600.0;
   }
 }
 
@@ -86,9 +84,15 @@ pub mod fonts {
   pub const TO_SAVE_FONT_SIZE: u32 = 16;
 }
 
+pub mod level {
+  use ggez::event::Keycode;
+  pub const FONT_SIZE: u32 = 16;
+  pub const CENTER_KEY: Keycode = Keycode::C;
+  pub const SKIP_KEY: Keycode = Keycode::N;  // TODO: Temporary! Only for debugging!
+}
+
 pub mod levels {
   pub const AUDIO_FORMAT: &str = "ogg";
-  pub const LEVEL_NAMES: [&'static str; 1] = ["jump_pad_one_way"];
-  pub const SONG_NAMES:  [&'static str; 1] = ["ingame_1"];
-  pub const FONT_SIZE: u32 = 16;
+  pub const LEVEL_NAMES: [&'static str; 2] = ["test_one", "test_two"];
+  pub const SONG_NAMES:  [&'static str; 2] = ["ingame_1", "ingame_2"];
 }

@@ -102,29 +102,6 @@ impl Child {
     };
   }
 
-  fn handle_decrease_velocity(&mut self) {
-    let decr_vel = Point::new(
-      if !self.has_moved(Axis::X) {
-        SPEED_DECREASE_X
-      } else { 0.0 },
-      if false && !self.has_moved(Axis::Y) {  // TODO I don't think we need to decrease y velocity automatically
-        SPEED_DECREASE_Y
-      } else { 0.0 }
-    );
-    self.decrease_velocity(&decr_vel);
-    self.has_moved.clear();
-  }
-
-  fn moved_on_axis(&mut self, axis: Axis) {
-    if !self.has_moved.iter().any( |a| &axis == a ) {
-      self.has_moved.push(axis);
-    }
-  }
-
-  fn has_moved(&self, axis: Axis) -> bool {
-    self.has_moved.iter().any( |a| &axis == a )
-  }
-
   fn handle_anim_state(&mut self) {
     self.anim_state = match self.velocity.as_tup() {
       (_x, y) if y <  0.0 => AnimState::Jump,
@@ -197,12 +174,25 @@ impl Velocity for Child {
 impl Movement for Child {}
 
 impl Gravity for Child {
-  fn gravity_increase(&self) -> &Point {
-    &self.gravity_increase
+  fn gravity_increase(&self) -> Point {
+    self.gravity_increase.mult_axes_by(self.dt.secs())
   }
 }
 
 impl Person for Child {
+  fn moved_axes(&self) -> &Vec<Axis> {
+    &self.has_moved
+  }
+  fn add_moved_axis(&mut self, axis: Axis) {
+    self.has_moved.push(axis);
+  }
+  fn clear_moved_axes(&mut self) {
+    self.has_moved.clear();
+  }
+  fn speed_decrease(&self) -> Point {
+    Point::new(SPEED_DECREASE_X * self.dt.secs(), SPEED_DECREASE_Y * self.dt.secs())
+  }
+
   fn is_solid(&self) -> bool {
     self.solid
   }

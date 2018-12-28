@@ -12,7 +12,7 @@ use noframe::camera::Camera;
 
 use super::Level;
 use super::InteractablesContainer;
-use settings::levels;
+use settings::level::*;
 use settings::res;
 use id_generator::IdType;
 use interactables::prelude::*;
@@ -22,7 +22,7 @@ use wall::Wall;
 use menu::toolbox::ToolboxMenu;
 
 pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameResult<Level> {
-  let font = graphics::Font::new(ctx, ::join_str(res::FONTS, "vcr_osd_mono.ttf"), levels::FONT_SIZE)?;
+  let font = graphics::Font::new(ctx, ::join_str(res::FONTS, "vcr_osd_mono.ttf"), FONT_SIZE)?;
   let level_name = graphics::Text::new(ctx, &::semantic(filename), &font)?;
 
   let filename = &::join_str(filename, ".json");

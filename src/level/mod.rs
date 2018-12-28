@@ -13,6 +13,7 @@ use noframe::entity::prelude::*;
 use noframe::geo::prelude::*;
 
 use settings::camera::*;
+use settings::level::*;
 use persons::Person;
 use persons::player::Player;
 use persons::children::{ Child, ChildType };
@@ -92,8 +93,13 @@ impl Level {
   }
 
   pub fn keys_down(&mut self, keycodes: &Vec<Keycode>) {
-    for key in keycodes {
-      self.player.key_down(key);
+    for &key in keycodes {
+      self.player.key_down(&key);
+      match key {
+        CENTER_KEY => self.center_camera(),
+        SKIP_KEY   => self.next_level(),  // TODO: Temporary! Remove for production version!
+        _          => ()
+      }
     }
   }
 
@@ -107,7 +113,16 @@ impl Level {
     self.toolbox.mouse_down(x, y);
   }
 
-  pub fn next_level(&self) -> bool {
+  fn center_camera(&mut self) {
+    let p = self.window_rect.center();
+    self.camera.move_to(&p);
+  }
+
+  fn next_level(&mut self) {
+    self.next_level = true;
+  }
+
+  pub fn goto_next_level(&self) -> bool {
     self.next_level
   }
 
@@ -302,7 +317,7 @@ impl Level {
   fn update_toolbox(&mut self) -> GameResult<()> {
     if let Some(button_type) = self.toolbox.get_clicked().clone() {
       match button_type {
-        ButtonType::NextLevel  => self.next_level = true,
+        ButtonType::NextLevel  => self.next_level(),
         ButtonType::LarryLeft  => if let Some(child) = self.larry() { child.walk_left()  },
         ButtonType::LarryRight => if let Some(child) = self.larry() { child.walk_right() },
         ButtonType::ThingLeft  => if let Some(child) = self.thing() { child.walk_left()  },

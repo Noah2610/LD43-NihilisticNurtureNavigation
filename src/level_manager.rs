@@ -94,7 +94,7 @@ impl LevelManager {
     let mut next_level = false;
     if let Some(level) = &mut self.level {
       level.update(ctx)?;
-      next_level = level.next_level();
+      next_level = level.goto_next_level();
     }
     if next_level {
       self.next_level(ctx)?;
@@ -115,11 +115,10 @@ impl LevelManager {
 
 fn new_background(ctx: &mut Context, n: usize) -> Option<Animation> {
   match n {
-    0 => Some(Animation::new(
+    _ => Some(Animation::new(
         ctx,
         vec![::join_str(res::BACKGROUND_IMAGES, "default.png")],
         vec![1000]
-    )),
-    _ => None
+    ))
   }
 }
