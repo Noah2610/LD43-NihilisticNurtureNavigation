@@ -65,6 +65,9 @@ pub mod interactables {
 
   pub mod jump_pad {
     pub const JUMP_SPEED: f32 = 600.0;
+    // 0.5  => starting (and ending) in center
+    // 0.25 => starting 1/4 into it from the left and ending 1/4 before the end
+    pub const HITBOX_PERCENT: f32 = 0.4;
   }
 }
 
@@ -93,6 +96,6 @@ pub mod level {
 
 pub mod levels {
   pub const AUDIO_FORMAT: &str = "ogg";
-  pub const LEVEL_NAMES: [&'static str; 2] = ["test_one", "test_two"];
-  pub const SONG_NAMES:  [&'static str; 2] = ["ingame_1", "ingame_2"];
+  pub const LEVEL_NAMES: [&'static str; 3] = ["jump_pad_one_way", "test_one", "test_two"];
+  pub const SONG_NAMES:  [&'static str; 3] = ["ingame_1", "ingame_1", "ingame_2"];
 }

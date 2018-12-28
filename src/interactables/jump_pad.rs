@@ -67,8 +67,8 @@ impl JumpPad {
     let self_sides = self.sides().map( |(side, val)| {
       match side {
         Side::Top | Side::Bottom => val,
-        Side::Left  => val + self.size.w / 2.0,
-        Side::Right => val - self.size.w / 2.0,
+        Side::Left  => val + self.size.w * HITBOX_PERCENT,
+        Side::Right => val - self.size.w * HITBOX_PERCENT,
       }
     }).collect::<_>();
     let other_sides = other.sides();
