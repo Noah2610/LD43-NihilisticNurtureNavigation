@@ -228,7 +228,6 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
     interactables,
     toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 96.0), Size::new(window_size.w, 64.0)),
     next_level:  false,
-    font,
     level_name,
     dt:          Deltatime::new()
   };

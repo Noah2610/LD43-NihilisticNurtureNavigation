@@ -61,7 +61,6 @@ pub struct Level {
   interactables: InteractablesContainer,
   toolbox:       ToolboxMenu,
   next_level:    bool,
-  font:          graphics::Font,
   level_name:    graphics::Text,
   dt:            Deltatime
 }
@@ -217,10 +216,6 @@ impl Level {
     }
 
     Ok(())
-  }
-
-  fn get_door_by_id_mut(&mut self, id: IdType) -> Option<&mut Door> {
-    self.interactables.doors.iter_mut().find( |ref door| door.has_id(id) )
   }
 
   fn update_children(&mut self, ctx: &mut Context) -> GameResult<()> {
