@@ -7,6 +7,7 @@ use noframe::geo::prelude::*;
 
 use settings::menus::IMAGES;
 use settings::buttons;
+use settings::res;
 use settings::fonts::*;
 use super::Menu;
 use super::buttons::Button;
@@ -49,7 +50,7 @@ impl ToolboxMenu {
       origin:                  Origin::TopLeft,
       to_save_amount:          0,
       previous_to_save_amount: 0,
-      font:                    graphics::Font::new(ctx, ::join_str(FONTS, "vcr_osd_mono.ttf"), TO_SAVE_FONT_SIZE).expect("Should load font"),
+      font:                    graphics::Font::new(ctx, ::join_str(res::FONTS, "vcr_osd_mono.ttf"), TO_SAVE_FONT_SIZE).expect("Should load font"),
       to_save_text:            None,
       next_level_button:       Button::new(
         ctx,

@@ -38,7 +38,7 @@ pub fn run() -> GameResult<()> {
     ggez::conf::WindowMode::default().dimensions(
       WINDOW_SIZE.w as u32,
       WINDOW_SIZE.h as u32,
-    )
+      )
   ).build()?;
 
   if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
@@ -56,4 +56,24 @@ pub fn run() -> GameResult<()> {
 
 pub fn join_str<'a>(str_one: &'a str, str_two: &'a str) -> String {
   format!("{}{}", str_one, str_two)
+}
+
+pub fn semantic(s: &str) -> String {
+  let mut upper_at = 0;
+  s.chars().enumerate()
+    .map( |(i, c)| {
+      let l = match c {
+        '_' => {
+          upper_at = i + 1;
+          ' '
+        },
+        _   => c
+      };
+      if i == upper_at {
+        l.to_ascii_uppercase()
+      } else {
+        l.to_ascii_lowercase()
+      }
+    }
+    ).collect()
 }

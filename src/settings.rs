@@ -20,6 +20,7 @@ pub mod res {
   pub const LEVELS:            &str = "resources/levels/";
   pub const AUDIO:             &str = "/audio/";
   pub const MISSING_IMAGE:     &str = "/images/missing.png";
+  pub const FONTS:             &str = "/fonts/";
 }
 
 pub mod camera {
@@ -82,12 +83,12 @@ pub mod buttons {
 }
 
 pub mod fonts {
-  pub const FONTS:             &str = "/fonts/";
-  pub const TO_SAVE_FONT_SIZE: u32  = 16;
+  pub const TO_SAVE_FONT_SIZE: u32 = 16;
 }
 
 pub mod levels {
   pub const AUDIO_FORMAT: &str = "ogg";
-  pub const LEVEL_NAMES: [&'static str; 1] = ["levelding"];
+  pub const LEVEL_NAMES: [&'static str; 1] = ["jump_pad_one_way"];
   pub const SONG_NAMES:  [&'static str; 1] = ["ingame_1"];
+  pub const FONT_SIZE: u32 = 16;
 }
