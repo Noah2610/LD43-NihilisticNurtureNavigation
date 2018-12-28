@@ -27,6 +27,10 @@ enum WalkDirection {
 }
 
 pub trait Person: Entity + Velocity + Gravity + IdGenerator {
+  fn is_solid(&self) -> bool;
+  fn solidify(&mut self);
+  fn unsolidify(&mut self);
+  fn stop_walking(&mut self);
   fn moved_axes(&self) -> &Vec<Axis>;
   fn add_moved_axis(&mut self, axis: Axis);
   fn clear_moved_axes(&mut self);
@@ -59,9 +63,4 @@ pub trait Person: Entity + Velocity + Gravity + IdGenerator {
     self.decrease_velocity(&decr_vel);
     self.clear_moved_axes();
   }
-
-  fn is_solid(&self) -> bool;
-  fn solidify(&mut self);
-  fn unsolidify(&mut self);
-  fn stop_walking(&mut self);
 }

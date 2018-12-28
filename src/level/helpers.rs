@@ -20,6 +20,7 @@ use persons::player::Player;
 use persons::children::{ Child, ChildType };
 use wall::Wall;
 use menu::toolbox::ToolboxMenu;
+use score::prelude::*;
 
 pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameResult<Level> {
   let font = graphics::Font::new(ctx, ::join_str(res::FONTS, "vcr_osd_mono.ttf"), FONT_SIZE)?;
@@ -229,6 +230,7 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
     toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 96.0), Size::new(window_size.w, 64.0)),
     next_level:  false,
     level_name,
+    score:       Score::new(),
     dt:          Deltatime::new()
   };
 

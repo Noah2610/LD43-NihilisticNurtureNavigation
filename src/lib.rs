@@ -14,6 +14,7 @@ mod interactables;
 mod id_generator;
 mod menu;
 mod level_manager;
+mod score;
 
 use std::env;
 use std::path;

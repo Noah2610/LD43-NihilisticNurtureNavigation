@@ -12,6 +12,7 @@ use noframe::entity::Entity;
 use noframe::entity::prelude::*;
 use noframe::geo::prelude::*;
 
+use self::helpers::*;
 use settings::camera::*;
 use settings::level::*;
 use persons::Person;
@@ -23,7 +24,7 @@ use id_generator::prelude::*;
 use menu::Menu;
 use menu::ButtonType;
 use menu::toolbox::ToolboxMenu;
-use self::helpers::*;
+use score::prelude::*;
 
 struct InteractablesContainer {
   pub jump_pads:   Vec<JumpPad>,
@@ -62,6 +63,7 @@ pub struct Level {
   toolbox:       ToolboxMenu,
   next_level:    bool,
   level_name:    graphics::Text,
+  score:         Score,
   dt:            Deltatime
 }
 
@@ -118,7 +120,45 @@ impl Level {
   }
 
   fn next_level(&mut self) {
+    self.add_score();
     self.next_level = true;
+  }
+
+  pub fn score(&self) -> &Score {
+    &self.score
+  }
+
+  fn add_score(&mut self) {
+    if self.is_player_in_goal() {
+      // self.score.add_for(&self.player);
+      // self.score.saved_player();
+      self.score.saved_player();
+    }
+    // let children_score = self.children_in_goal().iter().fold(0, |acc, c| acc + c.score());
+    // self.score.add(children_score);
+    let children_types: Vec<ChildType> = self.children_in_goal().iter().map( |child| child.child_type.clone() ).collect();
+    for child_type in children_types {
+      self.score.saved_child(child_type);
+    }
+    // self.children_in_goal().iter().for_each( |child| self.score.saved_child(child.child_type.clone()) );
+  }
+
+  fn is_player_in_goal(&self) -> bool {
+    if let Some(goal) = &self.interactables.goal {
+      goal.get_intersected().iter().any( |&id| self.player.has_id(id) )
+    } else {
+      false
+    }
+  }
+
+  fn children_in_goal(&self) -> Vec<&Child> {
+    if let Some(goal) = &self.interactables.goal {
+      goal.get_intersected().iter()
+        .filter_map( |&id| self.children.iter().find( |child| child.has_id(id) ))
+        .collect()
+    } else {
+      Vec::new()
+    }
   }
 
   pub fn goto_next_level(&self) -> bool {

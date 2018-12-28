@@ -28,6 +28,7 @@ pub mod camera {
 }
 
 pub mod player {
+  use score::ScoreType;
   pub const IMAGES: &str = "/images/player/";
   pub const SPEED_INCREASE: f32 = 600.0;
   pub const SPEED_DECREASE_X: f32 = 600.0;
@@ -47,6 +48,7 @@ pub mod player {
 }
 
 pub mod child {
+  use score::ScoreType;
   pub const IMAGES: &str = "/images/children/";
   pub const SPEED_INCREASE: f32 = 400.0;
   pub const SPEED_DECREASE_X: f32 = 600.0;
@@ -98,4 +100,10 @@ pub mod levels {
   pub const AUDIO_FORMAT: &str = "ogg";
   pub const LEVEL_NAMES: [&'static str; 3] = ["jump_pad_one_way", "test_one", "test_two"];
   pub const SONG_NAMES:  [&'static str; 3] = ["ingame_1", "ingame_1", "ingame_2"];
+}
+
+pub mod score {
+  use score::ScoreType;
+  pub const PLAYER_SCORE_REWARD: ScoreType = 100;
+  pub const CHILD_SCORE_REWARD:  ScoreType = 300;
 }
