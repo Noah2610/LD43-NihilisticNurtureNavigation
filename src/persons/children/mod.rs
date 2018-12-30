@@ -22,7 +22,7 @@ use gravity::Gravity;
 use id_generator::prelude::*;
 use score::prelude::*;
 
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ChildType {
   Larry,
   Thing,

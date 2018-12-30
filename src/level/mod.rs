@@ -53,21 +53,22 @@ impl InteractablesContainer {
 }
 
 pub struct Level {
-  window_rect:   Rect,
-  camera:        Camera,
-  camera_rect:   Rect,
-  player:        Player,
-  children:      Vec<Child>,
-  walls:         Vec<Wall>,
-  interactables: InteractablesContainer,
-  toolbox:       ToolboxMenu,
-  next_level:    bool,
-  font:          graphics::Font,
-  level_name:    graphics::Text,
-  score:         Score,
-  prev_score:    ScoreType,
-  score_text:    graphics::Text,
-  dt:            Deltatime
+  window_rect:     Rect,
+  camera:          Camera,
+  camera_rect:     Rect,
+  player:          Player,
+  children:        Vec<Child>,
+  walls:           Vec<Wall>,
+  interactables:   InteractablesContainer,
+  toolbox:         ToolboxMenu,
+  next_level:      bool,
+  font:            graphics::Font,
+  level_name:      String,
+  level_name_text: graphics::Text,
+  score:           Score,
+  prev_score:      ScoreType,
+  score_text:      graphics::Text,
+  dt:              Deltatime
 }
 
 impl Level {
@@ -129,6 +130,10 @@ impl Level {
 
   pub fn score(&self) -> &Score {
     &self.score
+  }
+
+  pub fn level_name(&self) -> &str {
+    &self.level_name
   }
 
   fn add_score(&mut self) {
@@ -426,7 +431,7 @@ impl Level {
       color:  Some(noframe::color::BLACK.into()),
       .. Default::default()
     };
-    graphics::draw_ex(ctx, &self.level_name, param)?;
+    graphics::draw_ex(ctx, &self.level_name_text, param)?;
     Ok(())
   }
 

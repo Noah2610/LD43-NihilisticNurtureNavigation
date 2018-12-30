@@ -1,3 +1,5 @@
+use std::collections::hash_map::HashMap;
+
 use ggez::{
   GameResult,
   Context,
@@ -11,6 +13,7 @@ use settings::level_manager::*;
 use settings::res;
 use animation::Animation;
 use animation::Facing;
+use score::Score;
 
 pub struct LevelManager {
   level_index:      usize,
@@ -19,7 +22,8 @@ pub struct LevelManager {
   song:             Option<audio::Source>,
   song_names:       Vec<&'static str>,
   background:       Option<Animation>,
-  window_size:      Size
+  window_size:      Size,
+  scores:           HashMap<&'static str, Score>
 }
 
 impl LevelManager {
@@ -31,7 +35,8 @@ impl LevelManager {
       song:        None,
       song_names:  SONG_NAMES.to_vec(),
       background:  None,
-      window_size
+      window_size,
+      scores:      HashMap::new()
     }
   }
 
@@ -44,11 +49,20 @@ impl LevelManager {
   }
 
   pub fn next_level(&mut self, ctx: &mut Context) -> GameResult<()> {
+    // Save the current level's score
+    if let Some(level) = &mut self.level {
+      if let Some(level_name) = self.level_names.get(self.level_index - 1) {
+        self.scores.insert(level_name, level.score().clone());
+      }
+    }
+
+    // Load the next level
     if let Some(level_name) = self.level_names.get(self.level_index) {
       self.level = Some( Level::new(ctx, self.window_size.clone(), level_name)? );
     } else {
       self.level = None;
     }
+    // Load audio
     let mut muted = false;
     if let Some(song) = &self.song {
       muted = song.paused();
@@ -62,6 +76,7 @@ impl LevelManager {
       if muted { song.pause(); }
       self.song = Some( song );
     }
+    // Load background animation
     self.background = new_background(ctx, self.level_index);
     if self.level.is_some() {
       self.level_index += 1;
