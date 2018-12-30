@@ -1,6 +1,5 @@
 use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
-use noframe::deltatime::Deltatime;
 
 pub trait Gravity: Entity + Velocity {
   fn gravity_increase(&self) -> Point;

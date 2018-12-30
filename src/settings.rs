@@ -102,7 +102,8 @@ pub mod level_manager {
   pub const SONG_NAMES:  [&'static str; 3] = ["ingame_1", "ingame_1", "ingame_2"];
   pub mod controls {
     use ggez::event::Keycode;
-    pub const MUTE: Keycode = Keycode::M;
+    pub const MUTE:  Keycode = Keycode::M;
+    pub const PAUSE: Keycode = Keycode::P;
   }
 }
 

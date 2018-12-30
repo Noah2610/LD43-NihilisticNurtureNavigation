@@ -197,6 +197,10 @@ impl Gravity for Player {
 }
 
 impl Person for Player {
+  fn reset_dt(&mut self) {
+    self.dt.reset();
+  }
+
   fn moved_axes(&self) -> &Vec<Axis> {
     &self.has_moved
   }

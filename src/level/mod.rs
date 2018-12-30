@@ -68,7 +68,7 @@ pub struct Level {
   score:           Score,
   prev_score:      ScoreType,
   score_text:      graphics::Text,
-  dt:              Deltatime
+  pub dt:              Deltatime  // TODO TMP
 }
 
 impl Level {
@@ -134,6 +134,13 @@ impl Level {
 
   pub fn level_name(&self) -> &str {
     &self.level_name
+  }
+
+  pub fn reset_dt(&mut self) {
+    self.dt.reset();
+    self.player.reset_dt();
+    self.children.iter_mut()
+      .for_each( |child| child.reset_dt() );
   }
 
   fn add_score(&mut self) {

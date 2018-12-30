@@ -23,7 +23,8 @@ pub struct LevelManager {
   song_names:       Vec<&'static str>,
   background:       Option<Animation>,
   window_size:      Size,
-  scores:           HashMap<&'static str, Score>
+  scores:           HashMap<&'static str, Score>,
+  paused:           bool
 }
 
 impl LevelManager {
@@ -36,7 +37,8 @@ impl LevelManager {
       song_names:  SONG_NAMES.to_vec(),
       background:  None,
       window_size,
-      scores:      HashMap::new()
+      scores:      HashMap::new(),
+      paused:      false
     }
   }
 
@@ -93,36 +95,56 @@ impl LevelManager {
   pub fn keys_down(&mut self, keys: &Vec<Keycode>) {
     for &key in keys {
       match key {
-        controls::MUTE => {
-          if let Some(song) = &self.song {
-            if song.paused() {
-              song.resume();
-            } else {
-              song.pause();
-            }
-          }
-        }
+        controls::MUTE  => self.toggle_mute(),
+        controls::PAUSE => self.toggle_pause(),
         _ => ()
       }
     }
+
+    if self.paused { return; }
     if let Some(level) = &mut self.level {
       level.keys_down(keys);
     }
   }
 
   pub fn keys_up(&mut self, keys: &Vec<Keycode>) {
+    if self.paused { return; }
     if let Some(level) = &mut self.level {
       level.keys_up(keys);
     }
   }
 
   pub fn mouse_drag(&mut self, xrel: i32, yrel: i32) {
+    if self.paused { return; }
     if let Some(level) = &mut self.level {
       level.camera_mut().move_by(&Point::new(xrel as NumType, yrel as NumType).inverted());
     }
   }
 
+  fn toggle_mute(&mut self) {
+    if let Some(song) = &self.song {
+      if song.paused() {
+        song.resume();
+      } else {
+        song.pause();
+      }
+    }
+  }
+
+  fn toggle_pause(&mut self) {
+    if self.paused {
+      if let Some(level) = &mut self.level {
+        level.reset_dt();
+      }
+      self.paused = false;
+    } else {
+      self.paused = true;
+    }
+  }
+
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if self.paused { return Ok(()); }
+
     let mut next_level = false;
     if let Some(level) = &mut self.level {
       level.update(ctx)?;
@@ -151,6 +173,6 @@ fn new_background(ctx: &mut Context, n: usize) -> Option<Animation> {
         ctx,
         vec![::join_str(res::BACKGROUND_IMAGES, "default.png")],
         vec![1000]
-    ))
+        ))
   }
 }
