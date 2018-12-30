@@ -32,6 +32,7 @@ pub struct Player {
   facing:           Facing,
   gravity_increase: Point,
   is_jumping:       bool,
+  has_jumped:       bool,
   id:               IdType,
   solid:            bool,
   dt:               Deltatime
@@ -52,6 +53,7 @@ impl Player {
       facing:           Facing::Right,
       gravity_increase: Point::new(0.0, GRAVITY_INCREASE),
       is_jumping:       false,
+      has_jumped:       false,
       id:               generate_id(),
       solid:            false,
       dt:               Deltatime::new()
@@ -73,6 +75,12 @@ impl Player {
             Some(Point::new( SPEED_INCREASE * self.dt.secs(), 0.0 ))
           } else { None }
         }
+        &controls::JUMP => {
+          if !self.has_jumped && self.on_floor() {
+            self.jump();
+          }
+          None
+        }
         _ => None
       } {
         self.add_velocity(&point);
@@ -81,15 +89,11 @@ impl Player {
   }
 
   pub fn key_down(&mut self, keycode: &Keycode) {
-    if let &controls::JUMP = keycode {
-      if self.on_floor() {  // Inclusive end
-        self.jump();
-      }
-    }
   }
 
   pub fn key_up(&mut self, keycode: &Keycode) {
     if let &controls::JUMP = keycode {
+      self.has_jumped = false;
       if self.is_jumping && self.velocity.y < 0.0 {
         self.add_velocity(&Point::new(0.0, JUMP_KILL_VELOCITY));
         if self.velocity.y > 0.0 {
@@ -101,7 +105,7 @@ impl Player {
 
   fn jump(&mut self) {
     if self.is_jumping { return; }
-    let dt = self.dt.secs();
+    self.has_jumped = true;
     self.is_jumping = true;
     self.add_velocity(&Point::new(0.0, -JUMP_SPEED));
   }

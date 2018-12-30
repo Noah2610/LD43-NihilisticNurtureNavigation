@@ -223,10 +223,15 @@ impl Menu for ToolboxMenu {
       self.next_level_button.draw(ctx)?;
       if let Some(text) = self.get_to_save_text(ctx)?.clone() {
         let point = graphics::Point2::from(
-          &Point::combine(vec![self.next_level_button.point(), &Point::new(0.0, -32.0)])
+          &Point::combine(vec![&self.next_level_button.top_right(), &Point::new(0.0, -32.0)])
         );
-        graphics::set_color(ctx, noframe::color::WHITE.into())?;
-        graphics::draw(ctx, &text, point, 0.0)?;
+        let param = graphics::DrawParam {
+          dest:   point,
+          offset: graphics::Point2::new(1.0, 0.0),
+          color:  Some(noframe::color::WHITE.into()),
+          .. Default::default()
+        };
+        graphics::draw_ex(ctx, &text, param)?;
       }
     }
     Ok(())
