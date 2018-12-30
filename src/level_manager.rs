@@ -7,7 +7,7 @@ use ggez::{
 use noframe::geo::prelude::*;
 
 use level::Level;
-use settings::levels::*;
+use settings::level_manager::*;
 use settings::res;
 use animation::Animation;
 use animation::Facing;
@@ -49,7 +49,9 @@ impl LevelManager {
     } else {
       self.level = None;
     }
+    let mut muted = false;
     if let Some(song) = &self.song {
+      muted = song.paused();
       song.stop();
     }
     if let Some(song_name) = self.song_names.get(self.level_index) {
@@ -57,6 +59,7 @@ impl LevelManager {
       song.set_volume(0.5);
       song.set_repeat(true);
       song.play()?;
+      if muted { song.pause(); }
       self.song = Some( song );
     }
     self.background = new_background(ctx, self.level_index);
@@ -73,6 +76,20 @@ impl LevelManager {
   }
 
   pub fn keys_down(&mut self, keys: &Vec<Keycode>) {
+    for &key in keys {
+      match key {
+        controls::MUTE => {
+          if let Some(song) = &self.song {
+            if song.paused() {
+              song.resume();
+            } else {
+              song.pause();
+            }
+          }
+        }
+        _ => ()
+      }
+    }
     if let Some(level) = &mut self.level {
       level.keys_down(keys);
     }

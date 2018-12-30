@@ -62,8 +62,11 @@ pub struct Level {
   interactables: InteractablesContainer,
   toolbox:       ToolboxMenu,
   next_level:    bool,
+  font:          graphics::Font,
   level_name:    graphics::Text,
   score:         Score,
+  prev_score:    ScoreType,
+  score_text:    graphics::Text,
   dt:            Deltatime
 }
 
@@ -425,5 +428,27 @@ impl Level {
     };
     graphics::draw_ex(ctx, &self.level_name, param)?;
     Ok(())
+  }
+
+  // TODO: We don't need to draw the score during a Level
+  fn draw_score(&mut self, ctx: &mut Context) -> GameResult<()> {
+    let dest = graphics::Point2::from(&self.window_rect.top_left());
+    let param = graphics::DrawParam {
+      dest,
+      color: Some(noframe::color::BLACK.into()),
+      .. Default::default()
+    };
+    let text = self.score_text(ctx)?;
+    graphics::draw_ex(ctx, text, param)?;
+    Ok(())
+  }
+
+  fn score_text(&mut self, ctx: &mut Context) -> GameResult<&graphics::Text> {
+    let score = self.score.score();
+    if self.prev_score != score {
+      self.prev_score = score;
+      self.score_text = graphics::Text::new(ctx, &self.score.semantic(), &self.font)?;
+    }
+    Ok(&self.score_text)
   }
 }

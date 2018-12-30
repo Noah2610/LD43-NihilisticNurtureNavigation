@@ -25,6 +25,7 @@ use score::prelude::*;
 pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameResult<Level> {
   let font = graphics::Font::new(ctx, ::join_str(res::FONTS, "vcr_osd_mono.ttf"), FONT_SIZE)?;
   let level_name = graphics::Text::new(ctx, &::semantic(filename), &font)?;
+  let score_text = graphics::Text::new(ctx, "Score: 0", &font)?;
 
   let filename = &::join_str(filename, ".json");
   let level_filepath = &::join_str(res::LEVELS, filename);
@@ -229,8 +230,11 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
     interactables,
     toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 96.0), Size::new(window_size.w, 64.0)),
     next_level:  false,
+    font,
     level_name,
     score:       Score::new(),
+    prev_score:  0,
+    score_text,
     dt:          Deltatime::new()
   };
 

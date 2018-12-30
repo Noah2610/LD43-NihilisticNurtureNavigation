@@ -96,10 +96,14 @@ pub mod level {
   pub const SKIP_KEY: Keycode = Keycode::N;  // TODO: Temporary! Only for debugging!
 }
 
-pub mod levels {
+pub mod level_manager {
   pub const AUDIO_FORMAT: &str = "ogg";
   pub const LEVEL_NAMES: [&'static str; 3] = ["jump_pad_one_way", "test_one", "test_two"];
   pub const SONG_NAMES:  [&'static str; 3] = ["ingame_1", "ingame_1", "ingame_2"];
+  pub mod controls {
+    use ggez::event::Keycode;
+    pub const MUTE: Keycode = Keycode::M;
+  }
 }
 
 pub mod score {

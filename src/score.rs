@@ -28,6 +28,10 @@ impl Score {
       (self.times_saved_children.values().sum::<ScoreType>() * CHILD_SCORE_REWARD)
   }
 
+  pub fn semantic(&self) -> String {
+    format!("Score: {}", self.score())
+  }
+
   pub fn times_saved_player(&self) -> ScoreType {
     self.times_saved_player
   }
