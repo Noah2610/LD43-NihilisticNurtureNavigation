@@ -101,21 +101,21 @@ impl LevelManager {
       }
     }
 
-    if self.paused { return; }
+    //if self.paused { return; }
     if let Some(level) = &mut self.level {
       level.keys_down(keys);
     }
   }
 
   pub fn keys_up(&mut self, keys: &Vec<Keycode>) {
-    if self.paused { return; }
+    //if self.paused { return; }
     if let Some(level) = &mut self.level {
       level.keys_up(keys);
     }
   }
 
   pub fn mouse_drag(&mut self, xrel: i32, yrel: i32) {
-    if self.paused { return; }
+    //if self.paused { return; }
     if let Some(level) = &mut self.level {
       level.camera_mut().move_by(&Point::new(xrel as NumType, yrel as NumType).inverted());
     }
