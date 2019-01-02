@@ -20,19 +20,23 @@ use id_generator::prelude::*;
 use score::prelude::*;
 
 struct MultiJump {
-  count:      u8,
-  max_count:  u8,
-  strength:   NumType,
-  direction:  Option<WalkDirection>,
+  count:             u8,
+  max_count:         u8,
+  strength:          NumType,
+  direction:         Option<WalkDirection>,
+  rotation:          f32,
+  rotation_increase: f32,
 }
 
 impl MultiJump {
   pub fn new(strength: NumType) -> Self {
     Self {
-      count:      0,
-      max_count:  3,
+      count:             0,
+      max_count:         3,
       strength,
-      direction:  None,
+      direction:         None,
+      rotation:          0.0,
+      rotation_increase: 10.0,
     }
   }
 
@@ -56,6 +60,12 @@ impl MultiJump {
     }
   }
 
+  pub fn reset(&mut self) {
+    self.count = 0;
+    self.direction = None;
+    //self.rotation = 0;
+  }
+
   pub fn direction(&self) -> &Option<WalkDirection> {
     &self.direction
   }
@@ -64,9 +74,12 @@ impl MultiJump {
     self.count as NumType * self.strength
   }
 
-  pub fn reset(&mut self) {
-    self.count = 0;
-    self.direction = None;
+  pub fn rotation(&self) -> f32 {
+    self.rotation
+  }
+
+  pub fn update(&mut self) {
+    self.rotation = (self.rotation + self.rotation_increase) % 360.0;
   }
 }
 
@@ -194,6 +207,7 @@ impl Player {
 
   fn update_triple_jump(&mut self) {
     if let Some(triple_dir) = self.triple_jump.direction().clone() {
+      self.triple_jump.update();
       if self.walk_direction != triple_dir {
         self.triple_jump.reset();
       }
@@ -229,11 +243,13 @@ impl Entity for Player {
   }
 
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
-    self.animations.get_by_state(&self.anim_state).draw(ctx, &self.point, &self.size, &self.facing)
+    self.animations.get_by_state(&self.anim_state)
+      .draw_rotate(ctx, &self.point, &self.size, &self.facing, self.triple_jump.rotation())
   }
 
   fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
-    self.animations.get_by_state(&self.anim_state).draw_offset(ctx, &self.point, &self.size, &self.facing, offset)
+    self.animations.get_by_state(&self.anim_state)
+      .draw_offset_rotate(ctx, &self.point, &self.size, &self.facing, offset, self.triple_jump.rotation())
   }
 }
 

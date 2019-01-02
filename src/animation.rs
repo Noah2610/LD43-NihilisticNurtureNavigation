@@ -109,6 +109,23 @@ impl Animation {
     graphics::draw_ex(ctx, image, param)
   }
 
+  pub fn draw_rotate(&self, ctx: &mut Context, point: &Point, size: &Size, facing: &Facing, rotation: f32) -> GameResult<()> {
+    let image = self.current_image();
+    let dest = graphics::Point2::from(point);
+    let scale = Point::new(
+      size.w / image.width()  as NumType * facing.num() as NumType,
+      size.h / image.height() as NumType
+    );
+    let param = graphics::DrawParam {
+      dest,
+      scale:  graphics::Point2::from(&scale),
+      offset: graphics::Point2::new(facing.offset_for_draw_param(), 0.0),
+      rotation,
+      .. Default::default()
+    };
+    graphics::draw_ex(ctx, image, param)
+  }
+
   pub fn draw_offset(&self, ctx: &mut Context, point: &Point, size: &Size, facing: &Facing, offset: &Point) -> GameResult<()> {
     let image = self.current_image();
     let dest = graphics::Point2::from(
@@ -122,6 +139,25 @@ impl Animation {
       dest,
       scale: graphics::Point2::from(&scale),
       offset: graphics::Point2::new(facing.offset_for_draw_param(), 0.0),
+      .. Default::default()
+    };
+    graphics::draw_ex(ctx, image, param)
+  }
+
+  pub fn draw_offset_rotate(&self, ctx: &mut Context, point: &Point, size: &Size, facing: &Facing, offset: &Point, rotation: f32) -> GameResult<()> {
+    let image = self.current_image();
+    let dest = graphics::Point2::from(
+      &Point::combine(vec![point, offset])
+    );
+    let scale = Point::new(
+      size.w / image.width()  as NumType * facing.num() as NumType,
+      size.h / image.height() as NumType
+    );
+    let param = graphics::DrawParam {
+      dest,
+      scale: graphics::Point2::from(&scale),
+      offset: graphics::Point2::new(facing.offset_for_draw_param(), 0.0),
+      rotation,
       .. Default::default()
     };
     graphics::draw_ex(ctx, image, param)
