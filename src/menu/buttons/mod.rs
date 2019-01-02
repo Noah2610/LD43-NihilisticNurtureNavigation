@@ -1,5 +1,3 @@
-// pub mod title;
-
 use ggez::{
   GameResult,
   Context
@@ -20,14 +18,26 @@ pub struct Button {
 
 impl Button {
   pub fn new(ctx: &mut Context, point: Point, size: Size, button_type: ButtonType, images: Vec<String>, delays: Vec<u64>) -> Self {
+    Self::new_with_origin(
+      ctx,
+      point,
+      size,
+      Origin::TopLeft,
+      button_type,
+      images,
+      delays
+      )
+  }
+
+  pub fn new_with_origin(ctx: &mut Context, point: Point, size: Size, origin: Origin, button_type: ButtonType, images: Vec<String>, delays: Vec<u64>) -> Self {
     Self {
       point,
       size,
-      origin:    Origin::TopLeft,
+      origin,
       animation: Animation::new(
         ctx, images, delays
-      ),
-      button_type
+        ),
+        button_type
     }
   }
 
@@ -46,7 +56,8 @@ impl Button {
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     let point = self.point().clone();
     let size = self.size().clone();
-    self.animation_mut().draw(ctx, &point, &size, &Facing::Right)
+    let top_left = self.top_left();
+    self.animation_mut().draw(ctx, &top_left, &size, &Facing::Right)
   }
 }
 

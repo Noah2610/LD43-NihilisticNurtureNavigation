@@ -20,7 +20,7 @@ use settings::game::*;
 use settings::res;
 use level_manager::LevelManager;
 use menu::Menu;
-use menu::MenuManager;
+use menu::title::TitleMenuManager;
 use menu::ButtonType;
 
 enum Scene {
@@ -33,7 +33,7 @@ pub struct GameState {
   window_rect:   Rect,
   input_manager: InputManager,
   level_manager: LevelManager,
-  menu_manager:  MenuManager,
+  menu_manager:  TitleMenuManager,
   running:       bool,
   last_update:   Instant,
   scene:         Scene,
@@ -45,25 +45,31 @@ impl GameState {
     let mut title_song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.ogg"))?;
     title_song.set_volume(0.5);
     title_song.set_repeat(true);
+
     Ok(Self {
       window_size:   window_size.clone(),
       window_rect:   Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft),
       input_manager: InputManager::new(),
-      level_manager: LevelManager::new(window_size.clone()),
+      level_manager: LevelManager::new(ctx, window_size.clone()),
       running:       true,
       last_update:   Instant::now(),
-      menu_manager:  MenuManager::new(ctx, window_size.clone()),
+      menu_manager:  TitleMenuManager::new(ctx, window_size.clone()),
       scene:         Scene::Title,
       title_song:    title_song
     })
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.title_song.play();
+    self.title_song.play()?;
     Ok(())
   }
 
   fn update_ingame(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if self.level_manager.to_title {
+      self.title_song.play()?;  // TODO: Doesnt play song?
+      self.level_manager.to_title = false;
+      self.scene = Scene::Title;
+    }
     self.level_manager.keys_pressed(self.input_manager.keys_pressed());
     self.level_manager.keys_down(self.input_manager.keys_down());
     self.level_manager.keys_up(self.input_manager.keys_up());
@@ -121,11 +127,7 @@ impl event::EventHandler for GameState {
     // self.input_manager.add_mouse_down(btn, x, y);
     match self.scene {
       Scene::Title  => self.menu_manager.title.mouse_down(x, y),
-      Scene::Ingame => {
-        if let Some(ref mut level) = self.level_manager.level() {
-          level.mouse_down(x, y);
-        }
-      }
+      Scene::Ingame => self.level_manager.mouse_down(x, y)
     }
   }
 
@@ -150,7 +152,7 @@ impl event::EventHandler for GameState {
 
     match self.scene {
       Scene::Title  => self.update_menu(ctx)?,
-      Scene::Ingame => self.update_ingame(ctx)?
+      Scene::Ingame => self.update_ingame(ctx)?,
     };
 
     self.input_manager.update();

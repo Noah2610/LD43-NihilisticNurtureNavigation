@@ -1,5 +1,14 @@
+pub mod prelude {
+  pub use super::Menu;
+  pub use super::buttons::Button;
+  pub use super::ButtonType;
+  pub use animation::Animation;
+}
+
 pub mod title;
 pub mod toolbox;
+pub mod pause;
+
 pub mod buttons;
 
 use ggez::{
@@ -16,26 +25,21 @@ use animation::Facing;
 
 #[derive(Clone, Debug)]
 pub enum ButtonType {
+  // TITLE
   Start,
+
+  // INGAME
   NextLevel,
   LarryLeft,
   LarryRight,
   ThingLeft,
   ThingRight,
   BloatLeft,
-  BloatRight
-}
+  BloatRight,
 
-pub struct MenuManager {
-  pub title: TitleMenu
-}
-
-impl MenuManager {
-  pub fn new(ctx: &mut Context, size: Size) -> Self {
-    Self {
-      title: title::TitleMenu::new(ctx, Point::new(0.0, 0.0), size)
-    }
-  }
+  // PAUSE
+  PauseResume,
+  PauseToTitle
 }
 
 pub trait Menu: Mask {

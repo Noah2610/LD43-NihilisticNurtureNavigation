@@ -12,6 +12,18 @@ use super::ButtonType;
 use animation::Animation;
 use animation::Facing;
 
+pub struct TitleMenuManager {
+  pub title: TitleMenu
+}
+
+impl TitleMenuManager {
+  pub fn new(ctx: &mut Context, size: Size) -> Self {
+    Self {
+      title: TitleMenu::new(ctx, Point::new(0.0, 0.0), size)
+    }
+  }
+}
+
 pub struct TitleMenu {
   point:       Point,
   size:        Size,
