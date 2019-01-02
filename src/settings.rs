@@ -30,14 +30,15 @@ pub mod camera {
 pub mod player {
   use score::ScoreType;
   pub const IMAGES: &str = "/images/player/";
-  pub const SPEED_INCREASE: f32 = 600.0;
-  pub const SPEED_DECREASE_X: f32 = 600.0;
+  pub const SPEED_INCREASE: f32 = 800.0;
+  pub const SPEED_DECREASE_X: f32 = 800.0;
   pub const SPEED_DECREASE_Y: f32 = 600.0;
   pub const MAX_VELOCITY_X: f32 = 150.0;
-  pub const MAX_VELOCITY_Y: f32 = 1000.0;
-  pub const JUMP_SPEED: f32 = 325.0;
+  pub const MAX_VELOCITY_Y: f32 = 1500.0;
+  pub const JUMP_SPEED: f32 = 375.0;
   pub const JUMP_KILL_VELOCITY: f32 = 250.0;
-  pub const GRAVITY_INCREASE: f32 = 800.0;
+  pub const GRAVITY_INCREASE: f32 = 900.0;
+  pub const TRIPLE_JUMP_STRENGTH: f32 = 75.0;
 
   pub mod controls {
     use ggez::event::Keycode;
@@ -50,12 +51,12 @@ pub mod player {
 pub mod child {
   use score::ScoreType;
   pub const IMAGES: &str = "/images/children/";
-  pub const SPEED_INCREASE: f32 = 400.0;
+  pub const SPEED_INCREASE: f32 = 500.0;
   pub const SPEED_DECREASE_X: f32 = 600.0;
   pub const SPEED_DECREASE_Y: f32 = 600.0;
   pub const MAX_VELOCITY_X: f32 = 80.0;
-  pub const MAX_VELOCITY_Y: f32 = 1000.0;
-  pub const GRAVITY_INCREASE: f32 = 800.0;
+  pub const MAX_VELOCITY_Y: f32 = 1500.0;
+  pub const GRAVITY_INCREASE: f32 = 900.0;
 }
 
 pub mod wall {
@@ -98,8 +99,8 @@ pub mod level {
 
 pub mod level_manager {
   pub const AUDIO_FORMAT: &str = "ogg";
-  pub const LEVEL_NAMES: [&'static str; 3] = ["jump_pad_one_way", "test_one", "test_two"];
-  pub const SONG_NAMES:  [&'static str; 3] = ["ingame_1", "ingame_1", "ingame_2"];
+  pub const LEVEL_NAMES: [&'static str; 1] = ["plain"];
+  pub const SONG_NAMES:  [&'static str; 1] = ["ingame_1"];
   pub mod controls {
     use ggez::event::Keycode;
     pub const MUTE:  Keycode = Keycode::M;

@@ -20,6 +20,7 @@ pub enum Axis {
   Y
 }
 
+#[derive(PartialEq, Clone)]
 enum WalkDirection {
   Still,
   Left,

@@ -19,6 +19,57 @@ use gravity::Gravity;
 use id_generator::prelude::*;
 use score::prelude::*;
 
+struct MultiJump {
+  count:      u8,
+  max_count:  u8,
+  strength:   NumType,
+  direction:  Option<WalkDirection>,
+}
+
+impl MultiJump {
+  pub fn new(strength: NumType) -> Self {
+    Self {
+      count:      0,
+      max_count:  3,
+      strength,
+      direction:  None,
+    }
+  }
+
+  pub fn jumped(&mut self, dir: &WalkDirection) {
+    if let WalkDirection::Still = dir {
+      self.reset();
+      return;
+    }
+    if let None = self.direction {
+      self.direction = Some(dir.clone());
+    }
+    if let Some(jump_dir) = self.direction.clone() {
+      if &jump_dir == dir {
+        self.count += 1;
+        if self.count >= self.max_count {
+          self.reset();
+        }
+      } else {
+        self.reset();
+      }
+    }
+  }
+
+  pub fn direction(&self) -> &Option<WalkDirection> {
+    &self.direction
+  }
+
+  pub fn strength(&self) -> NumType {
+    self.count as NumType * self.strength
+  }
+
+  pub fn reset(&mut self) {
+    self.count = 0;
+    self.direction = None;
+  }
+}
+
 pub struct Player {
   point:            Point,
   size:             Size,
@@ -35,6 +86,7 @@ pub struct Player {
   has_jumped:       bool,
   id:               IdType,
   solid:            bool,
+  triple_jump:      MultiJump,
   dt:               Deltatime
 }
 
@@ -56,7 +108,8 @@ impl Player {
       has_jumped:       false,
       id:               generate_id(),
       solid:            false,
-      dt:               Deltatime::new()
+      triple_jump:      MultiJump::new(TRIPLE_JUMP_STRENGTH),
+      dt:               Deltatime::new(),
     }
   }
 
@@ -107,7 +160,9 @@ impl Player {
     if self.is_jumping { return; }
     self.has_jumped = true;
     self.is_jumping = true;
-    self.add_velocity(&Point::new(0.0, -JUMP_SPEED));
+    let strength = -(JUMP_SPEED + self.triple_jump.strength());
+    self.add_velocity(&Point::new(0.0, strength));
+    self.triple_jump.jumped(&self.walk_direction);
   }
 
   pub fn stop_jumping(&mut self) {
@@ -136,6 +191,14 @@ impl Player {
       _ => WalkDirection::Still,
     };
   }
+
+  fn update_triple_jump(&mut self) {
+    if let Some(triple_dir) = self.triple_jump.direction().clone() {
+      if self.walk_direction != triple_dir {
+        self.triple_jump.reset();
+      }
+    }
+  }
 }
 
 impl Mask for Player {
@@ -160,6 +223,7 @@ impl Entity for Player {
     self.handle_decrease_velocity();
     self.handle_walk_direction();
     self.update_gravity();
+    self.update_triple_jump();
     self.dt.update();
     Ok(())
   }
