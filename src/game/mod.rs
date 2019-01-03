@@ -22,6 +22,7 @@ use level_manager::LevelManager;
 use menu::Menu;
 use menu::title::TitleMenuManager;
 use menu::ButtonType;
+use frames_counter::FramesCounter;
 
 enum Scene {
   Title,
@@ -37,7 +38,11 @@ pub struct GameState {
   running:       bool,
   last_update:   Instant,
   scene:         Scene,
-  title_song:    audio::Source
+  title_song:    audio::Source,
+  fps:           FramesCounter,
+  ups:           FramesCounter,
+
+  last_log:      Instant,
 }
 
 impl GameState {
@@ -55,7 +60,11 @@ impl GameState {
       last_update:   Instant::now(),
       menu_manager:  TitleMenuManager::new(ctx, window_size.clone()),
       scene:         Scene::Title,
-      title_song:    title_song
+      title_song:    title_song,
+      fps:           FramesCounter::new(),
+      ups:           FramesCounter::new(),
+
+      last_log:      Instant::now(),
     })
   }
 
@@ -150,6 +159,12 @@ impl event::EventHandler for GameState {
       return Ok(());
     }
 
+    if now - self.last_log > Duration::from_secs(1) {
+      println!("{} UPS / {} FPS",
+               self.ups.avg(), self.fps.avg());
+      self.last_log = Instant::now();
+    }
+
     match self.scene {
       Scene::Title  => self.update_menu(ctx)?,
       Scene::Ingame => self.update_ingame(ctx)?,
@@ -157,6 +172,7 @@ impl event::EventHandler for GameState {
 
     self.input_manager.update();
     self.last_update = now;
+    self.ups.update();
     return Ok(());
   }
 
@@ -170,6 +186,7 @@ impl event::EventHandler for GameState {
 
     graphics::present(ctx);
     ::ggez::timer::yield_now();
+    self.fps.update();
     return Ok(());
   }
 }

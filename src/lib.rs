@@ -15,6 +15,7 @@ mod id_generator;
 mod menu;
 mod level_manager;
 mod score;
+mod frames_counter;
 
 use std::env;
 use std::path;

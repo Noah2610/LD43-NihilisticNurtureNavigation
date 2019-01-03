@@ -10,8 +10,8 @@ pub mod meta {
 pub mod game {
   use noframe::color::Color;
   pub const BG_COLOR: Color = [0.33, 0.33, 0.33, 1.0];
-  pub const FPS: f32 = 60.0;
-  pub const UPDATE_INTERVAL_MS: u64 = (1.0 / FPS * 1000.0) as u64;
+  pub const UPS: f32 = 60.0;
+  pub const UPDATE_INTERVAL_MS: u64 = (1.0 / UPS * 1000.0) as u64;
 }
 
 pub mod res {
