@@ -159,11 +159,11 @@ impl event::EventHandler for GameState {
       return Ok(());
     }
 
-    if now - self.last_log > Duration::from_secs(1) {
-      println!("{} UPS / {} FPS",
-               self.ups.avg(), self.fps.avg());
-      self.last_log = Instant::now();
-    }
+    // if now - self.last_log > Duration::from_secs(1) {
+    //   println!("{} UPS / {} FPS",
+    //            self.ups.avg(), self.fps.avg());
+    //   self.last_log = Instant::now();
+    // }
 
     match self.scene {
       Scene::Title  => self.update_menu(ctx)?,

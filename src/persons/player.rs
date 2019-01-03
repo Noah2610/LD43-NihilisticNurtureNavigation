@@ -1,3 +1,5 @@
+use std::time::{ Instant, Duration };
+
 use ggez::{
   GameResult,
   Context,
@@ -26,6 +28,9 @@ struct MultiJump {
   direction:         Option<WalkDirection>,
   rotation:          f32,
   rotation_increase: f32,
+  wait:              Duration,
+  final_jump:        bool,
+  last_update:       Instant,
 }
 
 impl MultiJump {
@@ -36,7 +41,10 @@ impl MultiJump {
       strength,
       direction:         None,
       rotation:          0.0,
-      rotation_increase: 10.0,
+      rotation_increase: 5.0,
+      wait:              Duration::from_millis(500),
+      final_jump:        false,
+      last_update:       Instant::now(),
     }
   }
 
@@ -52,7 +60,10 @@ impl MultiJump {
       if &jump_dir == dir {
         self.count += 1;
         if self.count >= self.max_count {
+          self.final_jump = true;
           self.reset();
+        } else {
+          self.final_jump = false;
         }
       } else {
         self.reset();
@@ -63,7 +74,7 @@ impl MultiJump {
   pub fn reset(&mut self) {
     self.count = 0;
     self.direction = None;
-    //self.rotation = 0;
+    self.rotation = 0.0;
   }
 
   pub fn direction(&self) -> &Option<WalkDirection> {
@@ -78,8 +89,15 @@ impl MultiJump {
     self.rotation
   }
 
-  pub fn update(&mut self) {
-    self.rotation = (self.rotation + self.rotation_increase) % 360.0;
+  pub fn update(&mut self, dt: f32) {
+    let now = Instant::now();
+    if self.final_jump {
+      self.rotation = (self.rotation + (self.rotation_increase * dt)) % (2.0 * std::f32::consts::PI);
+    }
+    if now - self.last_update > self.wait {
+      self.reset();
+    }
+    self.last_update = now;
   }
 }
 
@@ -206,11 +224,13 @@ impl Player {
   }
 
   fn update_triple_jump(&mut self) {
-    if let Some(triple_dir) = self.triple_jump.direction().clone() {
-      self.triple_jump.update();
-      if self.walk_direction != triple_dir {
-        self.triple_jump.reset();
+    if !self.on_floor() {
+      if let Some(triple_dir) = self.triple_jump.direction().clone() {
+        if self.walk_direction != triple_dir {
+          self.triple_jump.reset();
+        }
       }
+      self.triple_jump.update(self.dt.secs());
     }
   }
 }

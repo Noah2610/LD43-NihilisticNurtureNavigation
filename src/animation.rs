@@ -147,7 +147,7 @@ impl Animation {
   pub fn draw_offset_rotate(&self, ctx: &mut Context, point: &Point, size: &Size, facing: &Facing, offset: &Point, rotation: f32) -> GameResult<()> {
     let image = self.current_image();
     let dest = graphics::Point2::from(
-      &Point::combine(vec![point, offset])
+      &Point::combine(vec![point, offset, &Point::new(image.width() as NumType / 2.0, image.height() as NumType / 2.0)])
     );
     let scale = Point::new(
       size.w / image.width()  as NumType * facing.num() as NumType,
@@ -156,7 +156,8 @@ impl Animation {
     let param = graphics::DrawParam {
       dest,
       scale: graphics::Point2::from(&scale),
-      offset: graphics::Point2::new(facing.offset_for_draw_param(), 0.0),
+      //offset: graphics::Point2::new(facing.offset_for_draw_param(), 0.0),
+      offset: graphics::Point2::new(0.5, 0.5),
       rotation,
       .. Default::default()
     };
