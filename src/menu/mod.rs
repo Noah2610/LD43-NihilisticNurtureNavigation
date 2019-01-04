@@ -53,6 +53,10 @@ pub trait Menu: Mask {
   }
 
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.draw_buttons(ctx)
+  }
+
+  fn draw_buttons(&mut self, ctx: &mut Context) -> GameResult<()> {
     let point = self.point().clone();
     let size = self.size().clone();
     if self.has_animation() {

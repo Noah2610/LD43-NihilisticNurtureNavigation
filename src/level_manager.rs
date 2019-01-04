@@ -15,6 +15,7 @@ use animation::Animation;
 use animation::Facing;
 use score::Score;
 use menu::pause::prelude::*;
+use menu::buttons::ButtonType;
 
 pub struct LevelManager {
   level_index:      usize,
@@ -185,29 +186,29 @@ impl LevelManager {
   }
 
   fn update_pause_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
-    if self.pause_menu.resume {
-      self.pause_menu.resume = false;
-      self.toggle_pause();
-    }
-    if self.pause_menu.to_title {
-      if self.level_index > 0 {
-        self.level_index -= 1;
+    if let Some(clicked) = self.pause_menu.get_clicked().clone() {
+      match clicked {
+        ButtonType::PauseResume => {
+          self.toggle_pause();
+        }
+        ButtonType::PauseToTitle => {
+          if self.level_index > 0 {
+            self.level_index -= 1;
+          }
+          if let Some(song) = &mut self.song {
+            song.stop();
+          }
+          self.paused = false;
+          self.to_title = true;
+        }
+        ButtonType::PauseReset => {
+          self.reset(ctx)?;
+        }
+        _ => ()
       }
-      if let Some(song) = &mut self.song {
-        song.stop();
-      }
-      self.pause_menu.to_title = false;
-      self.paused = false;
-      self.to_title = true;
-    }
-    if self.pause_menu.reset {
-      self.pause_menu.reset = false;
-      self.reset(ctx)?;
     }
 
-    if self.paused {
-      self.pause_menu.update()?;
-    }
+    self.pause_menu.update()?;
     Ok(())
   }
 
@@ -241,6 +242,6 @@ fn new_background(ctx: &mut Context, n: usize) -> Option<Animation> {
         ctx,
         vec![::join_str(res::BACKGROUND_IMAGES, "default.png")],
         vec![1000]
-        ))
+    ))
   }
 }

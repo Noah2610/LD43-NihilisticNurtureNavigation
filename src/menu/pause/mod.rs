@@ -19,9 +19,7 @@ pub struct PauseMenu {
   origin:       Origin,
   animation:    Animation,
   buttons:      Vec<Button>,
-  pub resume:   bool,
-  pub to_title: bool,
-  pub reset:    bool,
+  clicked:      Option<ButtonType>,
 }
 
 impl PauseMenu {
@@ -32,9 +30,7 @@ impl PauseMenu {
       origin:    Origin::TopLeft,
       animation: new_animation(ctx),
       buttons:   new_buttons(ctx, &window_size),
-      resume:    false,
-      to_title:  false,
-      reset:     false,
+      clicked:   None,
     }
   }
 }
@@ -69,22 +65,18 @@ impl Menu for PauseMenu {
   }
 
   fn clicked(&mut self, btn_type: ButtonType) {
-    match btn_type {
-      ButtonType::PauseResume  => self.resume = true,
-      ButtonType::PauseToTitle => self.to_title = true,
-      ButtonType::PauseReset   => self.reset = true,
-      _                        => ()
-    }
+    self.clicked = Some(btn_type);
   }
 
   fn get_clicked(&self) -> &Option<ButtonType> {
-    &None
+    &self.clicked
   }
 
   fn clear_clicked(&mut self) {
+    self.clicked = None;
   }
 
   fn has_animation(&self) -> bool {
-    true
+    false
   }
 }
