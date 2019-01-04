@@ -21,6 +21,7 @@ pub struct PauseMenu {
   buttons:      Vec<Button>,
   pub resume:   bool,
   pub to_title: bool,
+  pub reset:    bool,
 }
 
 impl PauseMenu {
@@ -33,6 +34,7 @@ impl PauseMenu {
       buttons:   new_buttons(ctx, &window_size),
       resume:    false,
       to_title:  false,
+      reset:     false,
     }
   }
 }
@@ -70,6 +72,7 @@ impl Menu for PauseMenu {
     match btn_type {
       ButtonType::PauseResume  => self.resume = true,
       ButtonType::PauseToTitle => self.to_title = true,
+      ButtonType::PauseReset   => self.reset = true,
       _                        => ()
     }
   }

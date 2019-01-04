@@ -21,7 +21,7 @@ use settings::res;
 use level_manager::LevelManager;
 use menu::Menu;
 use menu::title::TitleMenuManager;
-use menu::ButtonType;
+use menu::buttons::ButtonType;
 use frames_counter::FramesCounter;
 
 enum Scene {
@@ -68,7 +68,7 @@ impl GameState {
     })
   }
 
-  pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
+  pub fn init(&mut self, _ctx: &mut Context) -> GameResult<()> {
     self.title_song.play()?;
     Ok(())
   }
@@ -79,9 +79,9 @@ impl GameState {
       self.level_manager.to_title = false;
       self.scene = Scene::Title;
     }
-    self.level_manager.keys_pressed(self.input_manager.keys_pressed());
-    self.level_manager.keys_down(self.input_manager.keys_down());
-    self.level_manager.keys_up(self.input_manager.keys_up());
+    self.level_manager.keys_pressed(ctx, self.input_manager.keys_pressed());
+    self.level_manager.keys_down(ctx, self.input_manager.keys_down());
+    self.level_manager.keys_up(ctx, self.input_manager.keys_up());
     self.level_manager.update(ctx)?;
     Ok(())
   }
@@ -122,6 +122,11 @@ impl event::EventHandler for GameState {
     if let Keycode::Escape = keycode {
       ctx.quit().expect("Should quit Context");
     }
+    if let Scene::Title = self.scene {
+      if let Keycode::Return = keycode {
+        self.start_game(ctx).expect("Should start game");
+      }
+    }
   }
 
   fn key_up_event(&mut self,
@@ -132,19 +137,12 @@ impl event::EventHandler for GameState {
     self.input_manager.key_up(keycode, _keymod, repeat);
   }
 
-  fn mouse_button_down_event(&mut self, _ctx: &mut Context, btn: MouseButton, x: i32, y: i32) {
+  fn mouse_button_down_event(&mut self, _ctx: &mut Context, _btn: MouseButton, x: i32, y: i32) {
     // self.input_manager.add_mouse_down(btn, x, y);
     match self.scene {
       Scene::Title  => self.menu_manager.title.mouse_down(x, y),
       Scene::Ingame => self.level_manager.mouse_down(x, y)
     }
-  }
-
-  fn mouse_button_up_event(&mut self, _ctx: &mut Context, btn: MouseButton, x: i32, y: i32) {
-    // self.input_manager.add_mouse_up(btn, x, y);
-    // if let Scene::Title = self.scene {
-    //   self.menu_manager.title.mouse_up(x, y);
-    // }
   }
 
   fn mouse_motion_event(&mut self, _ctx: &mut Context, state: MouseState, _x: i32, _y: i32, xrel: i32, yrel: i32) {

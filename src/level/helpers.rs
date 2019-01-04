@@ -43,6 +43,35 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
     Size::new(data["size"]["w"].as_f32().expect(err_msg), data["size"]["h"].as_f32().expect(err_msg))
   } else { panic!("Level JSON size (root) attribute not present") };
 
+  let (player, children, walls, interactables) = load_json(ctx, &data)?;
+
+  let mut lvl = Level {
+    json_data:   data,
+    window_rect: Rect::new(Point::new(0.0, 0.0), size.clone(), Origin::TopLeft),
+    camera:      Camera::new(window_size.clone()),
+    camera_rect: Rect::new(Point::new(0.0, 0.0), size, Origin::TopLeft),
+    player,
+    children,
+    walls,
+    interactables,
+    toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 96.0), Size::new(window_size.w, 64.0)),
+    next_level:  false,
+    font,
+    level_name,
+    level_name_text,
+    score:       Score::new(),
+    prev_score:  0,
+    score_text,
+    dt:          Deltatime::new()
+  };
+
+  let point = lvl.player.center();
+  lvl.camera.move_to(&point);
+
+  Ok(lvl)
+}
+
+pub fn load_json(ctx: &mut Context, data: &json::JsonValue) -> GameResult<(Player, Vec<Child>, Vec<Wall>, InteractablesContainer)> {
   let mut player_opt = None;
   let mut children = Vec::new();
   let mut walls = Vec::new();
@@ -221,27 +250,5 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
     return Err(ggez::GameError::from("Couldn't load player".to_string()));
   };
 
-  let mut lvl = Level {
-    window_rect: Rect::new(Point::new(0.0, 0.0), size.clone(), Origin::TopLeft),
-    camera:      Camera::new(window_size.clone()),
-    camera_rect: Rect::new(Point::new(0.0, 0.0), size, Origin::TopLeft),
-    player,
-    children,
-    walls,
-    interactables,
-    toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 96.0), Size::new(window_size.w, 64.0)),
-    next_level:  false,
-    font,
-    level_name,
-    level_name_text,
-    score:       Score::new(),
-    prev_score:  0,
-    score_text,
-    dt:          Deltatime::new()
-  };
-
-  let point = lvl.player.center();
-  lvl.camera.move_to(&point);
-
-  Ok(lvl)
+  Ok((player, children, walls, interactables))
 }

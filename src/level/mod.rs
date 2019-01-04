@@ -22,11 +22,11 @@ use wall::Wall;
 use interactables::prelude::*;
 use id_generator::prelude::*;
 use menu::Menu;
-use menu::ButtonType;
+use menu::buttons::ButtonType;
 use menu::toolbox::ToolboxMenu;
 use score::prelude::*;
 
-struct InteractablesContainer {
+pub struct InteractablesContainer {
   pub jump_pads:   Vec<JumpPad>,
   pub switches:    Vec<Switch>,
   pub doors:       Vec<Door>,
@@ -53,6 +53,7 @@ impl InteractablesContainer {
 }
 
 pub struct Level {
+  json_data:       json::JsonValue,
   window_rect:     Rect,
   camera:          Camera,
   camera_rect:     Rect,
@@ -68,12 +69,26 @@ pub struct Level {
   score:           Score,
   prev_score:      ScoreType,
   score_text:      graphics::Text,
-  pub dt:              Deltatime  // TODO TMP
+  dt:              Deltatime
 }
 
 impl Level {
   pub fn new(ctx: &mut Context, window_size: Size, filename: &str) -> GameResult<Self> {
     new_level(ctx, window_size, filename)
+  }
+
+  pub fn reset(&mut self, ctx: &mut Context) -> GameResult<()> {
+    let (
+      player,
+      children,
+      walls,
+      interactables
+    ) = load_json(ctx, &self.json_data)?;
+    self.player        = player;
+    self.children      = children;
+    self.walls         = walls;
+    self.interactables = interactables;
+    Ok(())
   }
 
   pub fn camera(&self) -> &Camera {

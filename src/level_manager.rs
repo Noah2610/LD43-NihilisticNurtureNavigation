@@ -94,17 +94,18 @@ impl LevelManager {
     Ok(())
   }
 
-  pub fn keys_pressed(&mut self, keys: &Vec<Keycode>) {
+  pub fn keys_pressed(&mut self, _ctx: &mut Context, keys: &Vec<Keycode>) {
     if let Some(level) = &mut self.level {
       level.keys_pressed(keys);
     }
   }
 
-  pub fn keys_down(&mut self, keys: &Vec<Keycode>) {
+  pub fn keys_down(&mut self, ctx: &mut Context, keys: &Vec<Keycode>) {
     for &key in keys {
       match key {
         controls::MUTE  => self.toggle_mute(),
         controls::PAUSE => self.toggle_pause(),
+        controls::RESET => self.reset(ctx).expect("Should reset level"),
         _ => ()
       }
     }
@@ -114,7 +115,7 @@ impl LevelManager {
     }
   }
 
-  pub fn keys_up(&mut self, keys: &Vec<Keycode>) {
+  pub fn keys_up(&mut self, _ctx: &mut Context, keys: &Vec<Keycode>) {
     if let Some(level) = &mut self.level {
       level.keys_up(keys);
     }
@@ -147,7 +148,6 @@ impl LevelManager {
 
   fn toggle_pause(&mut self) {
     if self.paused {
-      self.pause_menu.resume = false;
       if let Some(level) = &mut self.level {
         level.reset_dt();
       }
@@ -155,6 +155,14 @@ impl LevelManager {
     } else {
       self.paused = true;
     }
+  }
+
+  fn reset(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if let Some(level) = &mut self.level {
+      level.reset(ctx)?;
+    }
+    self.paused = false;
+    Ok(())
   }
 
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -178,6 +186,7 @@ impl LevelManager {
 
   fn update_pause_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
     if self.pause_menu.resume {
+      self.pause_menu.resume = false;
       self.toggle_pause();
     }
     if self.pause_menu.to_title {
@@ -190,6 +199,10 @@ impl LevelManager {
       self.pause_menu.to_title = false;
       self.paused = false;
       self.to_title = true;
+    }
+    if self.pause_menu.reset {
+      self.pause_menu.reset = false;
+      self.reset(ctx)?;
     }
 
     if self.paused {

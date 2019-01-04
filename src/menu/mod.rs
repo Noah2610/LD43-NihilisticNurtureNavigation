@@ -1,7 +1,7 @@
 pub mod prelude {
   pub use super::Menu;
   pub use super::buttons::Button;
-  pub use super::ButtonType;
+  pub use super::buttons::ButtonType;
   pub use animation::Animation;
 }
 
@@ -20,27 +20,9 @@ use noframe::geo::prelude::*;
 
 use self::title::TitleMenu;
 use self::buttons::Button;
+use self::buttons::ButtonType;
 use animation::Animation;
 use animation::Facing;
-
-#[derive(Clone, Debug)]
-pub enum ButtonType {
-  // TITLE
-  Start,
-
-  // INGAME
-  NextLevel,
-  LarryLeft,
-  LarryRight,
-  ThingLeft,
-  ThingRight,
-  BloatLeft,
-  BloatRight,
-
-  // PAUSE
-  PauseResume,
-  PauseToTitle
-}
 
 pub trait Menu: Mask {
   fn buttons(&self) -> &Vec<Button>;

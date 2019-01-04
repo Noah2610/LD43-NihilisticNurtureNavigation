@@ -6,7 +6,26 @@ use noframe::geo::prelude::*;
 
 use animation::Animation;
 use animation::Facing;
-use super::ButtonType;
+
+#[derive(Clone, Debug)]
+pub enum ButtonType {
+  // TITLE
+  Start,
+
+  // INGAME
+  NextLevel,
+  LarryLeft,
+  LarryRight,
+  ThingLeft,
+  ThingRight,
+  BloatLeft,
+  BloatRight,
+
+  // PAUSE
+  PauseResume,
+  PauseToTitle,
+  PauseReset,
+}
 
 pub struct Button {
   point:           Point,
