@@ -13,6 +13,7 @@ use noframe::geo::prelude::*;
 
 use self::helpers::*;
 use super::prelude::*;
+use score::prelude::*;
 
 pub struct StatsMenu {
   point:        Point,
@@ -21,10 +22,11 @@ pub struct StatsMenu {
   animation:    Animation,
   buttons:      Vec<Button>,
   clicked:      Option<ButtonType>,
+  score:        Score,
 }
 
 impl StatsMenu {
-  pub fn new(ctx: &mut Context, window_size: Size) -> Self {
+  pub fn new(ctx: &mut Context, window_size: Size, score: Score) -> Self {
     Self {
       point:     Point::new(0.0, window_size.w),
       size:      window_size.clone(),
@@ -32,11 +34,8 @@ impl StatsMenu {
       animation: new_animation(ctx),
       buttons:   new_buttons(ctx, &window_size),
       clicked:   None,
+      score,
     }
-  }
-
-  pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-    Ok(())
   }
 }
 

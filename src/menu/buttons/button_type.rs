@@ -16,4 +16,9 @@ pub enum ButtonType {
   PauseResume,
   PauseToTitle,
   PauseReset,
+
+  // STATS
+  StatsNext,
+  StatsReset,
+  StatsToTitle,
 }

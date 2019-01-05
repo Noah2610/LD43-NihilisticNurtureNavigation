@@ -14,8 +14,9 @@ use settings::res;
 use animation::Animation;
 use animation::Facing;
 use score::Score;
-use menu::pause::prelude::*;
 use menu::buttons::ButtonType;
+use menu::pause::prelude::*;
+use menu::stats::prelude::*;
 
 pub struct LevelManager {
   level_index:      usize,
@@ -28,6 +29,7 @@ pub struct LevelManager {
   scores:           HashMap<&'static str, Score>,
   paused:           bool,
   pause_menu:       PauseMenu,
+  stats_menu:       Option<StatsMenu>,
   pub to_title:     bool,
 }
 
@@ -44,6 +46,7 @@ impl LevelManager {
       scores:      HashMap::new(),
       paused:      false,
       pause_menu:  PauseMenu::new(ctx, window_size.clone()),
+      stats_menu:  None,
       to_title:    false,
     }
   }
@@ -163,24 +166,24 @@ impl LevelManager {
       level.reset(ctx)?;
     }
     self.paused = false;
+    self.stats_menu = None;
     Ok(())
   }
 
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.update_pause_menu(ctx)?;
     self.update_level(ctx)?;
+    self.update_stats_menu(ctx)?;
     Ok(())
   }
 
   fn update_level(&mut self, ctx: &mut Context) -> GameResult<()> {
     if self.paused { return Ok(()); }
-    let mut next_level = false;
     if let Some(level) = &mut self.level {
       level.update(ctx)?;
-      next_level = level.goto_next_level();
-    }
-    if next_level {
-      self.next_level(ctx)?;
+      if level.should_goto_next_level() {
+        self.stats_menu = Some(StatsMenu::new(ctx, self.window_size.clone(), level.score().clone()));
+      }
     }
     Ok(())
   }
@@ -212,10 +215,41 @@ impl LevelManager {
     Ok(())
   }
 
+  fn update_stats_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
+    let mut next_level = false;
+    let mut reset      = false;
+    let mut to_title   = false;
+    if let Some(stats_menu) = &self.stats_menu {
+      if let Some(clicked) = stats_menu.get_clicked() {
+        match clicked {
+          ButtonType::StatsNext    => next_level = true,
+          ButtonType::StatsReset   => reset      = true,
+          ButtonType::StatsToTitle => to_title   = true,
+          _ => ()
+        }
+      }
+    }
+    if next_level {
+      self.stats_menu = None;
+      self.next_level(ctx)?;
+    }
+    if reset {
+      self.reset(ctx)?;
+    }
+    if to_title {
+      self.stats_menu = None;
+      self.to_title = true;
+    }
+    Ok(())
+  }
+
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.draw_level(ctx)?;
     if self.paused {
-      self.draw_pause_menu(ctx)?;
+      self.pause_menu.draw(ctx)?;
+    }
+    if let Some(stats_menu) = &mut self.stats_menu {
+      stats_menu.draw(ctx)?;
     }
     Ok(())
   }
@@ -227,11 +261,6 @@ impl LevelManager {
     if let Some(level) = &mut self.level {
       level.draw(ctx)?;
     }
-    Ok(())
-  }
-
-  fn draw_pause_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.pause_menu.draw(ctx)?;
     Ok(())
   }
 }

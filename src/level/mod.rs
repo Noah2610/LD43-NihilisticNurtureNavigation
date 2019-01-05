@@ -191,7 +191,7 @@ impl Level {
     }
   }
 
-  pub fn goto_next_level(&self) -> bool {
+  pub fn should_goto_next_level(&self) -> bool {
     self.next_level
   }
 
