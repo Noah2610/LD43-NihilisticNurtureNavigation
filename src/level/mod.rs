@@ -406,8 +406,6 @@ impl Level {
     self.draw_interactables(ctx)?;
     self.draw_level_name(ctx)?;
     self.toolbox.draw(ctx)?;
-    self.toolbox.closeups.iter_mut()
-      .for_each( |closeup| closeup.draw(ctx) );
     Ok(())
   }
 

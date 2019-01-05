@@ -26,7 +26,7 @@ use frames_counter::FramesCounter;
 
 enum Scene {
   Title,
-  Ingame
+  Ingame,
 }
 
 pub struct GameState {
@@ -141,7 +141,7 @@ impl event::EventHandler for GameState {
     // self.input_manager.add_mouse_down(btn, x, y);
     match self.scene {
       Scene::Title  => self.menu_manager.title.mouse_down(x, y),
-      Scene::Ingame => self.level_manager.mouse_down(x, y)
+      Scene::Ingame => self.level_manager.mouse_down(x, y),
     }
   }
 
@@ -179,7 +179,7 @@ impl event::EventHandler for GameState {
 
     match self.scene {
       Scene::Title  => self.draw_menu(ctx)?,
-      Scene::Ingame => self.draw_ingame(ctx)?
+      Scene::Ingame => self.draw_ingame(ctx)?,
     };
 
     graphics::present(ctx);

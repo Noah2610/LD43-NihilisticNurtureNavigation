@@ -1,37 +1,46 @@
 pub mod prelude {
-  pub use super::PauseMenu;
+  pub use super::StatsMenu;
   pub use super::super::Menu;
 }
 
 mod helpers;
 
-use ggez::Context;
+use ggez::{
+  Context,
+  GameResult,
+};
 use noframe::geo::prelude::*;
 
 use self::helpers::*;
 use super::prelude::*;
 
-pub struct PauseMenu {
+pub struct StatsMenu {
   point:        Point,
   size:         Size,
   origin:       Origin,
+  animation:    Animation,
   buttons:      Vec<Button>,
   clicked:      Option<ButtonType>,
 }
 
-impl PauseMenu {
+impl StatsMenu {
   pub fn new(ctx: &mut Context, window_size: Size) -> Self {
     Self {
       point:     Point::new(0.0, window_size.w),
       size:      window_size.clone(),
       origin:    Origin::TopLeft,
+      animation: new_animation(ctx),
       buttons:   new_buttons(ctx, &window_size),
       clicked:   None,
     }
   }
+
+  pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    Ok(())
+  }
 }
 
-impl Mask for PauseMenu {
+impl Mask for StatsMenu {
   fn point(&self) -> &Point {
     &self.point
   }
@@ -46,7 +55,7 @@ impl Mask for PauseMenu {
   }
 }
 
-impl Menu for PauseMenu {
+impl Menu for StatsMenu {
   fn buttons(&self) -> &Vec<Button> {
     &self.buttons
   }
@@ -54,10 +63,10 @@ impl Menu for PauseMenu {
     &mut self.buttons
   }
   fn animation(&self) -> Option<&Animation> {
-    None
+    Some(&self.animation)
   }
   fn animation_mut(&mut self) -> Option<&mut Animation> {
-    None
+    Some(&mut self.animation)
   }
   fn clicked(&mut self, btn_type: ButtonType) {
     self.clicked = Some(btn_type);

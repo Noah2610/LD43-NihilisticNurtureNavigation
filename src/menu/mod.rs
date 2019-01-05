@@ -8,6 +8,7 @@ pub mod prelude {
 pub mod title;
 pub mod toolbox;
 pub mod pause;
+pub mod stats;
 
 pub mod buttons;
 
@@ -27,12 +28,11 @@ use animation::Facing;
 pub trait Menu: Mask {
   fn buttons(&self) -> &Vec<Button>;
   fn buttons_mut(&mut self) -> &mut Vec<Button>;
-  fn animation(&self) -> &Animation;
-  fn animation_mut(&mut self) -> &mut Animation;
+  fn animation(&self) -> Option<&Animation>;
+  fn animation_mut(&mut self) -> Option<&mut Animation>;
   fn clicked(&mut self, btn_type: ButtonType);
   fn get_clicked(&self) -> &Option<ButtonType>;
   fn clear_clicked(&mut self);
-  fn has_animation(&self) -> bool;
 
   fn mouse_down(&mut self, x: i32, y: i32) {
     let point = Point::new(x as f32, y as f32);
@@ -53,14 +53,14 @@ pub trait Menu: Mask {
   }
 
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.draw_buttons(ctx)
+    self.draw_menu(ctx)
   }
 
-  fn draw_buttons(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn draw_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
     let point = self.point().clone();
     let size = self.size().clone();
-    if self.has_animation() {
-      self.animation_mut().draw(ctx, &point, &size, &Facing::Right)?;
+    if let Some(anim) = self.animation_mut() {
+      anim.draw(ctx, &point, &size, &Facing::Right)?;
     }
     for button in self.buttons_mut() {
       button.draw(ctx)?;

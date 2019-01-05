@@ -4,6 +4,14 @@ use noframe::geo::prelude::*;
 use settings::res::*;
 use super::super::prelude::*;
 
+pub fn new_animation(ctx: &mut Context) -> Animation {
+  Animation::new(ctx, vec![
+                 MISSING_IMAGE.to_string()
+  ], vec![
+  1000
+  ])
+}
+
 pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
   let size = Size::new(128.0, 64.0);
   let padding = 16.0;

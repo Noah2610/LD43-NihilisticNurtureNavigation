@@ -1,11 +1,12 @@
+mod helpers;
+
 use ggez::{
   GameResult,
   Context
 };
 use noframe::geo::prelude::*;
 
-use settings::menus::IMAGES;
-use settings::buttons;
+use self::helpers::*;
 use super::Menu;
 use super::buttons::Button;
 use super::ButtonType;
@@ -39,21 +40,8 @@ impl TitleMenu {
       point,
       size,
       origin:    Origin::TopLeft,
-      buttons:   vec![
-        Button::new(
-          ctx,
-          Point::new(128.0, 128.0),
-          Size::new(128.0, 64.0),
-          ButtonType::Start,
-          vec![::join_str(buttons::IMAGES, "startgame_title.png")],
-          vec![1000]
-        )
-      ],
-      animation: Animation::new(
-        ctx,
-        vec![::join_str(IMAGES, "title.png")],
-        vec![1000]
-      ),
+      buttons:   new_buttons(ctx),
+      animation: new_animation(ctx),
       clicked: None
     }
   }
@@ -67,18 +55,17 @@ impl Mask for TitleMenu {
 }
 
 impl Menu for TitleMenu {
-  fn has_animation(&self) -> bool { true }
   fn buttons(&self) -> &Vec<Button> {
     &self.buttons
   }
   fn buttons_mut(&mut self) -> &mut Vec<Button> {
     &mut self.buttons
   }
-  fn animation(&self) -> &Animation {
-    &self.animation
+  fn animation(&self) -> Option<&Animation> {
+    Some(&self.animation)
   }
-  fn animation_mut(&mut self) -> &mut Animation {
-    &mut self.animation
+  fn animation_mut(&mut self) -> Option<&mut Animation> {
+    Some(&mut self.animation)
   }
   fn clicked(&mut self, button_type: ButtonType) {
     self.clicked = Some(button_type);
