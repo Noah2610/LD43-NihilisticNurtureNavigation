@@ -22,7 +22,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
       window_size.center() - Point::new(0.0, size.h + padding),
       size.clone(),
       Origin::Center,
-      ButtonType::PauseResume,
+      ButtonType::StatsNext,
       vec![
       MISSING_IMAGE.to_string()
       ],
@@ -36,7 +36,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
       window_size.center(),
       size.clone(),
       Origin::Center,
-      ButtonType::PauseReset,
+      ButtonType::StatsReset,
       vec![
       MISSING_IMAGE.to_string()
       ],
@@ -50,7 +50,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
       window_size.center() + Point::new(0.0, size.h + padding),
       size.clone(),
       Origin::Center,
-      ButtonType::PauseToTitle,
+      ButtonType::StatsToTitle,
       vec![
       MISSING_IMAGE.to_string()
       ],

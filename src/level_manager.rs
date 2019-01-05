@@ -129,6 +129,9 @@ impl LevelManager {
     if self.paused {
       self.pause_menu.mouse_down(x, y);
     }
+    if let Some(stats_menu) = &mut self.stats_menu {
+      stats_menu.mouse_down(x, y);
+    }
     if let Some(level) = &mut self.level {
       level.mouse_down(x, y);
     }
@@ -172,16 +175,16 @@ impl LevelManager {
 
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.update_pause_menu(ctx)?;
-    self.update_level(ctx)?;
     self.update_stats_menu(ctx)?;
+    self.update_level(ctx)?;
     Ok(())
   }
 
   fn update_level(&mut self, ctx: &mut Context) -> GameResult<()> {
-    if self.paused { return Ok(()); }
+    if self.to_title || self.paused || self.stats_menu.is_some() { return Ok(()); }
     if let Some(level) = &mut self.level {
       level.update(ctx)?;
-      if level.should_goto_next_level() {
+      if level.next_level {
         self.stats_menu = Some(StatsMenu::new(ctx, self.window_size.clone(), level.score().clone()));
       }
     }
@@ -201,7 +204,7 @@ impl LevelManager {
           if let Some(song) = &mut self.song {
             song.stop();
           }
-          self.paused = false;
+          self.paused   = false;
           self.to_title = true;
         }
         ButtonType::PauseReset => {
@@ -219,7 +222,7 @@ impl LevelManager {
     let mut next_level = false;
     let mut reset      = false;
     let mut to_title   = false;
-    if let Some(stats_menu) = &self.stats_menu {
+    if let Some(stats_menu) = &mut self.stats_menu {
       if let Some(clicked) = stats_menu.get_clicked() {
         match clicked {
           ButtonType::StatsNext    => next_level = true,
@@ -228,6 +231,7 @@ impl LevelManager {
           _ => ()
         }
       }
+      stats_menu.update()?;
     }
     if next_level {
       self.stats_menu = None;
@@ -237,8 +241,12 @@ impl LevelManager {
       self.reset(ctx)?;
     }
     if to_title {
+      if let Some(level) = &mut self.level {
+        level.next_level = false;
+      }
       self.stats_menu = None;
-      self.to_title = true;
+      self.paused     = false;
+      self.to_title   = true;
     }
     Ok(())
   }

@@ -62,7 +62,7 @@ pub struct Level {
   walls:           Vec<Wall>,
   interactables:   InteractablesContainer,
   toolbox:         ToolboxMenu,
-  next_level:      bool,
+  pub next_level:  bool,
   font:            graphics::Font,
   level_name:      String,
   level_name_text: graphics::Text,
@@ -88,6 +88,7 @@ impl Level {
     self.children      = children;
     self.walls         = walls;
     self.interactables = interactables;
+    self.next_level    = false;
     Ok(())
   }
 
@@ -189,10 +190,6 @@ impl Level {
     } else {
       Vec::new()
     }
-  }
-
-  pub fn should_goto_next_level(&self) -> bool {
-    self.next_level
   }
 
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
