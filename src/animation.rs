@@ -1,3 +1,9 @@
+pub mod prelude {
+  pub use super::Animation;
+  pub use super::AnimationRect;
+  pub use super::Facing;
+}
+
 use std::time::{ Instant, Duration };
 
 use ggez::{
@@ -125,4 +131,39 @@ impl Animation {
   fn current_update_interval(&self) -> u64 {
     *self.image_update_intervals_ms.get(self.image_index).expect("image_index shouldn't be out of bounds")
   }
+}
+
+pub struct AnimationRect {
+  point:     Point,
+  size:      Size,
+  origin:    Origin,
+  animation: Animation,
+}
+
+impl AnimationRect {
+  pub fn new(point: Point, size: Size, origin: Origin, animation: Animation) -> Self {
+    Self {
+      point,
+      size,
+      origin,
+      animation,
+    }
+  }
+
+  pub fn update(&mut self) -> GameResult<()> {
+    self.animation.update()?;
+    Ok(())
+  }
+
+  pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.animation.draw(ctx, &self.top_left(), &self.size, &Facing::default())?;
+    Ok(())
+  }
+}
+
+impl Mask for AnimationRect {
+  fn point(&self)         -> &Point     { &self.point     }
+  fn point_mut(&mut self) -> &mut Point { &mut self.point }
+  fn size(&self)          -> &Size      { &self.size      }
+  fn origin(&self)        -> &Origin    { &self.origin    }
 }

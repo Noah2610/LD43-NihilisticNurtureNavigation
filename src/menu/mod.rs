@@ -2,7 +2,7 @@ pub mod prelude {
   pub use super::Menu;
   pub use super::buttons::Button;
   pub use super::buttons::ButtonType;
-  pub use animation::Animation;
+  pub use animation::prelude::*;
 }
 
 pub mod title;
@@ -43,6 +43,10 @@ pub trait Menu: Mask {
   }
 
   fn update(&mut self) -> GameResult<()> {
+    self.update_menu()
+  }
+
+  fn update_menu(&mut self) -> GameResult<()> {
     for button in self.buttons_mut() {
       button.update()?;
     }

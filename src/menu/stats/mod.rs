@@ -16,25 +16,27 @@ use super::prelude::*;
 use score::prelude::*;
 
 pub struct StatsMenu {
-  point:        Point,
-  size:         Size,
-  origin:       Origin,
-  animation:    Animation,
-  buttons:      Vec<Button>,
-  clicked:      Option<ButtonType>,
-  texts:        StatsTexts,
+  point:          Point,
+  size:           Size,
+  origin:         Origin,
+  animation:      Animation,
+  buttons:        Vec<Button>,
+  clicked:        Option<ButtonType>,
+  texts:          StatsTexts,
+  final_thankyou: Option<AnimationRect>,
 }
 
 impl StatsMenu {
-  pub fn new(ctx: &mut Context, window_size: Size, score: Score) -> GameResult<Self> {
+  pub fn new(ctx: &mut Context, window_size: Size, score: Score, is_final: bool) -> GameResult<Self> {
     Ok(Self {
-      point:      Point::new(0.0, window_size.w),
-      size:       window_size.clone(),
-      origin:     Origin::TopLeft,
-      animation:  new_animation(ctx),
-      buttons:    new_buttons(ctx, &window_size),
-      clicked:    None,
-      texts:      StatsTexts::new(ctx, score, &window_size)?,
+      point:          Point::new(0.0, window_size.w),
+      size:           window_size.clone(),
+      origin:         Origin::TopLeft,
+      animation:      new_animation(ctx),
+      buttons:        new_buttons(ctx, &window_size, is_final),
+      clicked:        None,
+      texts:          StatsTexts::new(ctx, score, &window_size)?,
+      final_thankyou: if is_final { Some(new_final_thankyou(ctx, &window_size)) } else { None },
     })
   }
 }
@@ -55,7 +57,18 @@ impl Mask for StatsMenu {
 }
 
 impl Menu for StatsMenu {
+  fn update(&mut self) -> GameResult<()> {
+    if let Some(thankyou) = &mut self.final_thankyou {
+      thankyou.update()?;
+    }
+    self.update_menu()?;
+    Ok(())
+  }
+
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if let Some(thankyou) = &mut self.final_thankyou {
+      thankyou.draw(ctx)?;
+    }
     self.texts.draw(ctx)?;
     self.draw_menu(ctx)?;
     Ok(())

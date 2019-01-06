@@ -74,13 +74,13 @@ impl StatsTexts {
       graphics::Text::new(ctx, &score.semantic_score(), &font_score)?,
       window_size.center() + Point::new(-offset_x, -BUTTON_OFFSET_Y),
       TextOrigin::Left,
-    );
+      );
 
     let saved_player = StatsText::new(
       graphics::Text::new(ctx, &score.semantic_player(), &font_saved)?,
       window_size.center() + Point::new(offset_x, -BUTTON_OFFSET_Y),
       TextOrigin::Right,
-    );
+      );
 
     let mut saved_children = Vec::new();
     for (i, s) in score.semantic_children().iter().enumerate() {
@@ -89,7 +89,7 @@ impl StatsTexts {
           graphics::Text::new(ctx, &s, &font_saved)?,
           window_size.center() + Point::new(offset_x, -BUTTON_OFFSET_Y + padding * (i + 1) as NumType),
           TextOrigin::Right,
-        )
+          )
       );
     }
 
@@ -118,11 +118,49 @@ pub fn new_animation(ctx: &mut Context) -> Animation {
   ])
 }
 
-pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
-  vec![
+pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec<Button> {
+  let mut vec = Vec::new();
+
+  if !is_final {
+    vec.push(Button::new_with_origin(
+        ctx,
+        window_size.center() + Point::new(BUTTON_SIZE.w + BUTTON_PADDING, BUTTON_OFFSET_Y),
+        BUTTON_SIZE.clone(),
+        Origin::Center,
+        ButtonType::StatsNext,
+        vec![
+        MISSING_IMAGE.to_string()
+        ],
+        vec![
+        1000
+        ]
+    ));
+
+    vec.push(
+      Button::new_with_origin(
+        ctx,
+        window_size.center() + Point::new(0.0, BUTTON_OFFSET_Y),
+        BUTTON_SIZE.clone(),
+        Origin::Center,
+        ButtonType::StatsReset,
+        vec![
+        MISSING_IMAGE.to_string()
+        ],
+        vec![
+        1000
+        ]
+      )
+    );
+  }
+
+  vec.push(
     Button::new_with_origin(
       ctx,
-      window_size.center() + Point::new(-(BUTTON_SIZE.w + BUTTON_PADDING), BUTTON_OFFSET_Y),
+      window_size.center() + if !is_final {
+        Point::new(-(BUTTON_SIZE.w + BUTTON_PADDING), BUTTON_OFFSET_Y)
+      } else {
+        Point::new(0.0, BUTTON_OFFSET_Y)
+      },
       BUTTON_SIZE.clone(),
       Origin::Center,
       ButtonType::StatsToTitle,
@@ -132,34 +170,21 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
       vec![
       1000
       ]
-    ),
-
-    Button::new_with_origin(
-      ctx,
-      window_size.center() + Point::new(0.0, BUTTON_OFFSET_Y),
-      BUTTON_SIZE.clone(),
-      Origin::Center,
-      ButtonType::StatsReset,
-      vec![
-      MISSING_IMAGE.to_string()
-      ],
-      vec![
-      1000
-      ]
-    ),
-
-    Button::new_with_origin(
-      ctx,
-      window_size.center() + Point::new(BUTTON_SIZE.w + BUTTON_PADDING, BUTTON_OFFSET_Y),
-      BUTTON_SIZE.clone(),
-      Origin::Center,
-      ButtonType::StatsNext,
-      vec![
-      MISSING_IMAGE.to_string()
-      ],
-      vec![
-      1000
-      ]
     )
-      ]
+  );
+
+  vec
+}
+
+pub fn new_final_thankyou(ctx: &mut Context, window_size: &Size) -> AnimationRect {
+  AnimationRect::new(
+    window_size.center() - Point::new(0.0, 256.0),
+    Size::new(512.0, 128.0),
+    Origin::Center,
+    Animation::new(
+      ctx,
+      vec![MISSING_IMAGE.to_string()],
+      vec![1000]
+    )
+  )
 }

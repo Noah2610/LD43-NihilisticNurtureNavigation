@@ -110,9 +110,11 @@ pub mod level_manager {
 
   pub mod controls {
     use ggez::event::Keycode;
-    pub const MUTE:  Keycode = Keycode::M;
-    pub const PAUSE: Keycode = Keycode::P;
-    pub const RESET: Keycode = Keycode::R;
+    pub const MUTE:     Keycode = Keycode::M;
+    pub const PAUSE:    Keycode = Keycode::P;
+    pub const RESET:    Keycode = Keycode::R;
+    pub const NEXT:     Keycode = Keycode::Return;
+    pub const TO_TITLE: Keycode = Keycode::Backspace;
   }
 }
 
@@ -120,4 +122,5 @@ pub mod score {
   use score::ScoreType;
   pub const PLAYER_SCORE_REWARD: ScoreType = 100;
   pub const CHILD_SCORE_REWARD:  ScoreType = 300;
+  pub const SCORE_CHAR_LEN:      u8        = 3;
 }

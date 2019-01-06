@@ -30,24 +30,26 @@ pub struct LevelManager {
   paused:           bool,
   pause_menu:       PauseMenu,
   stats_menu:       Option<StatsMenu>,
+  final_stats_menu: Option<StatsMenu>,
   pub to_title:     bool,
 }
 
 impl LevelManager {
   pub fn new(ctx: &mut Context, window_size: Size) -> Self {
     Self {
-      level_index: 0,
-      level:       None,
-      level_names: LEVEL_NAMES.to_vec(),
-      song:        None,
-      song_names:  SONG_NAMES.to_vec(),
-      background:  None,
-      window_size: window_size.clone(),
-      scores:      HashMap::new(),
-      paused:      false,
-      pause_menu:  PauseMenu::new(ctx, window_size.clone()),
-      stats_menu:  None,
-      to_title:    false,
+      level_index:      0,
+      level:            None,
+      level_names:      LEVEL_NAMES.to_vec(),
+      song:             None,
+      song_names:       SONG_NAMES.to_vec(),
+      background:       None,
+      window_size:      window_size.clone(),
+      scores:           HashMap::new(),
+      paused:           false,
+      pause_menu:       PauseMenu::new(ctx, window_size.clone()),
+      stats_menu:       None,
+      final_stats_menu: None,
+      to_title:         false,
     }
   }
 
@@ -69,6 +71,8 @@ impl LevelManager {
         }
       }
     }
+
+    self.stats_menu = None;
 
     // Load the next level
     if let Some(level_name) = self.level_names.get(self.level_index) {
@@ -94,7 +98,21 @@ impl LevelManager {
     self.background = new_background(ctx, self.level_index);
     if self.level.is_some() {
       self.level_index += 1;
+    } else {
+      self.beat_final_level(ctx)?;
     }
+    Ok(())
+  }
+
+  fn beat_final_level(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.final_stats_menu = Some(
+      StatsMenu::new(
+        ctx,
+        self.window_size.clone(),
+        Score::from(self.scores.values().collect::<Vec<&Score>>()),
+        true
+      )?
+    );
     Ok(())
   }
 
@@ -109,8 +127,19 @@ impl LevelManager {
       match key {
         controls::MUTE  => self.toggle_mute(),
         controls::PAUSE => self.toggle_pause(),
-        controls::RESET => self.reset(ctx).expect("Should reset level"),
-        _ => ()
+        controls::RESET => self.reset_level(ctx).expect("Should reset level"),
+        controls::NEXT =>
+          if self.paused {
+            self.toggle_pause();
+          } else if self.stats_menu.is_some() {
+            self.next_level(ctx).expect("Should load next level")
+          },
+        controls::TO_TITLE =>
+          if self.paused || self.stats_menu.is_some() {
+            let has_stats_menu = self.stats_menu.is_some();
+            self.to_title(has_stats_menu);
+          },
+        _ => (),
       }
     }
 
@@ -131,6 +160,9 @@ impl LevelManager {
     }
     if let Some(stats_menu) = &mut self.stats_menu {
       stats_menu.mouse_down(x, y);
+    }
+    if let Some(final_stats) = &mut self.final_stats_menu {
+      final_stats.mouse_down(x, y);
     }
     if let Some(level) = &mut self.level {
       level.mouse_down(x, y);
@@ -154,6 +186,7 @@ impl LevelManager {
   }
 
   fn toggle_pause(&mut self) {
+    if self.stats_menu.is_some() || self.final_stats_menu.is_some() { return; }
     if self.paused {
       if let Some(level) = &mut self.level {
         level.reset_dt();
@@ -164,7 +197,8 @@ impl LevelManager {
     }
   }
 
-  fn reset(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn reset_level(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if self.final_stats_menu.is_some() { return Ok(()); }
     if let Some(level) = &mut self.level {
       level.reset(ctx)?;
     }
@@ -176,16 +210,19 @@ impl LevelManager {
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.update_pause_menu(ctx)?;
     self.update_stats_menu(ctx)?;
+    self.update_final_stats_menu()?;
     self.update_level(ctx)?;
     Ok(())
   }
 
   fn update_level(&mut self, ctx: &mut Context) -> GameResult<()> {
-    if self.to_title || self.paused || self.stats_menu.is_some() { return Ok(()); }
+    if self.to_title || self.paused || self.stats_menu.is_some() || self.final_stats_menu.is_some() {
+      return Ok(());
+    }
     if let Some(level) = &mut self.level {
       level.update(ctx)?;
       if level.next_level {
-        self.stats_menu = Some(StatsMenu::new(ctx, self.window_size.clone(), level.score().clone())?);
+        self.stats_menu = Some(StatsMenu::new(ctx, self.window_size.clone(), level.score().clone(), false)?);
       }
     }
     Ok(())
@@ -198,17 +235,10 @@ impl LevelManager {
           self.toggle_pause();
         }
         ButtonType::PauseToTitle => {
-          if self.level_index > 0 {
-            self.level_index -= 1;
-          }
-          if let Some(song) = &mut self.song {
-            song.stop();
-          }
-          self.paused   = false;
-          self.to_title = true;
+          self.to_title(false);
         }
         ButtonType::PauseReset => {
-          self.reset(ctx)?;
+          self.reset_level(ctx)?;
         }
         _ => ()
       }
@@ -234,21 +264,59 @@ impl LevelManager {
       stats_menu.update()?;
     }
     if next_level {
-      self.stats_menu = None;
       self.next_level(ctx)?;
     }
     if reset {
-      self.reset(ctx)?;
+      self.reset_level(ctx)?;
     }
     if to_title {
-      if let Some(level) = &mut self.level {
-        level.next_level = false;
-      }
-      self.stats_menu = None;
-      self.paused     = false;
-      self.to_title   = true;
+      self.to_title(true);
     }
     Ok(())
+  }
+
+  fn update_final_stats_menu(&mut self) -> GameResult<()> {
+    let mut reset_and_to_title = false;
+    if let Some(final_stats) = &mut self.final_stats_menu {
+      if let Some(ButtonType::StatsToTitle) = final_stats.get_clicked() {
+        reset_and_to_title = true;
+      }
+      final_stats.update()?;
+    } else {
+      return Ok(());
+    }
+    if reset_and_to_title {
+      self.reset();
+      self.to_title(false);
+    }
+    Ok(())
+  }
+
+  fn reset(&mut self) {
+    self.level_index      = 0;
+    self.level            = None;
+    self.song             = None;
+    self.background       = None;
+    self.scores           = HashMap::new();
+    self.paused           = false;
+    self.stats_menu       = None;
+    self.final_stats_menu = None;
+    self.to_title         = false;
+  }
+
+  fn to_title(&mut self, beat_level: bool) {
+    if !beat_level && self.level_index > 0 {
+      self.level_index -= 1;
+    }
+    if let Some(level) = &mut self.level {
+      level.next_level = false;
+    }
+    if let Some(song) = &mut self.song {
+      song.stop();
+    }
+    self.stats_menu = None;
+    self.paused     = false;
+    self.to_title   = true;
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -258,6 +326,9 @@ impl LevelManager {
     }
     if let Some(stats_menu) = &mut self.stats_menu {
       stats_menu.draw(ctx)?;
+    }
+    if let Some(final_stats) = &mut self.final_stats_menu {
+      final_stats.draw(ctx)?;
     }
     Ok(())
   }
