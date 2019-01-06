@@ -31,7 +31,6 @@ pub mod camera {
 }
 
 pub mod player {
-  use score::ScoreType;
   pub const NAME: &str = "Player";
   pub const IMAGES: &str = "/images/player/";
   pub const SPEED_INCREASE: f32 = 600.0;
@@ -52,7 +51,6 @@ pub mod player {
 }
 
 pub mod child {
-  use score::ScoreType;
   pub const IMAGES: &str = "/images/children/";
   pub const SPEED_INCREASE: f32 = 400.0;
   pub const SPEED_DECREASE_X: f32 = 600.0;

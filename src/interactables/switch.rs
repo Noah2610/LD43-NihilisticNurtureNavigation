@@ -1,6 +1,6 @@
 use ggez::{
   Context,
-  GameResult
+  GameResult,
 };
 
 use noframe::geo::prelude::*;
@@ -110,7 +110,7 @@ impl Mask for Switch {
 }
 
 impl Entity for Switch {
-  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     if self.animation().played() >= 1 {
       match self.state {
         State::TurningOn => {
@@ -157,7 +157,7 @@ impl Interactable for Switch {
     self.intersected.remove(index);
   }
 
-  fn trigger<T: Person>(&mut self, person: &mut T) {
+  fn trigger<T: Person>(&mut self, _person: &mut T) {
     match &self.state {
       State::On  => self.state = State::TurningOff,
       State::Off => self.state = State::TurningOn,

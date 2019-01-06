@@ -1,6 +1,6 @@
 use ggez::{
   Context,
-  GameResult
+  GameResult,
 };
 
 use noframe::geo::prelude::*;
@@ -78,7 +78,7 @@ impl Mask for Goal {
 }
 
 impl Entity for Goal {
-  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     if let State::Trigger = self.state {
       if self.animations.trigger.played() > 1 {
         self.animations.trigger.reset();
@@ -118,6 +118,5 @@ impl Interactable for Goal {
     self.intersected.remove(index);
   }
 
-  fn trigger<T: Person>(&mut self, person: &mut T) {
-  }
+  fn trigger<T: Person>(&mut self, _person: &mut T) { }
 }

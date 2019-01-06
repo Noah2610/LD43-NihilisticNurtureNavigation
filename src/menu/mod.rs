@@ -15,11 +15,9 @@ pub mod buttons;
 use ggez::{
   GameResult,
   Context,
-  event::MouseButton
 };
 use noframe::geo::prelude::*;
 
-use self::title::TitleMenu;
 use self::buttons::Button;
 use self::buttons::ButtonType;
 use animation::Animation;

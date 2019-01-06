@@ -1,6 +1,6 @@
 use ggez::{
   Context,
-  GameResult
+  GameResult,
 };
 
 use noframe::geo::prelude::*;
@@ -107,7 +107,7 @@ impl Mask for JumpPad {
 }
 
 impl Entity for JumpPad {
-  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     if let State::Trigger = self.state {
       if self.animations.trigger.played() > 1 {
         self.animations.trigger.reset();

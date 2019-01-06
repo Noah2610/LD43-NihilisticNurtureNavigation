@@ -57,7 +57,6 @@ impl Button {
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-    let point = self.point().clone();
     let size = self.size().clone();
     let top_left = self.top_left();
     self.animation_mut().draw(ctx, &top_left, &size, &Facing::Right)

@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use ggez::{
   GameResult,
   Context,
-  graphics
+  graphics,
 };
 use noframe::deltatime::Deltatime;
 use noframe::geo::prelude::*;

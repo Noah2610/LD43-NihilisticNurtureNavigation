@@ -1,11 +1,9 @@
 mod animations;
 
 use ggez::{
-  GameResult,
   Context,
 };
 
-use settings::player::*;
 use animation::Animation;
 use super::AnimState;
 use self::animations::{ player, child };

@@ -82,15 +82,6 @@ impl Animation {
       self.times_played += 1;
       self.image_index = 0;
     }
-
-    return;
-
-    if self.image_index >= self.images.len() - 1 {
-      self.times_played += 1;
-      self.image_index = 0;
-    } else {
-      self.image_index += 1;
-    }
   }
 
   pub fn draw(&self, ctx: &mut Context, point: &Point, size: &Size, facing: &Facing) -> GameResult<()>{

@@ -17,7 +17,6 @@ pub mod prelude {
   pub use super::goal::{ Goal, self };
 }
 
-use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
 
 use persons::Person;

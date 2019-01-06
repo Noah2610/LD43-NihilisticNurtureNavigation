@@ -24,7 +24,6 @@ use super::person_animations::PersonAnimations;
 use animation::Facing;
 use gravity::Gravity;
 use id_generator::prelude::*;
-use score::prelude::*;
 
 pub struct Child {
   point:            Point,

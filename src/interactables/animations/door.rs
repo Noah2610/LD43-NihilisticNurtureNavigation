@@ -1,7 +1,6 @@
 use ggez::Context;
 use animation::Animation;
 use settings::interactables::*;
-use settings::res::MISSING_IMAGE;
 
 pub fn new_open_animation(ctx: &mut Context, color: &str) -> Animation {
   Animation::new(ctx,

@@ -7,7 +7,7 @@ use noframe::entity::prelude::*;
 use gravity::Gravity;
 use id_generator::IdGenerator;
 
-enum AnimState {
+pub enum AnimState {
   Walk,
   Idle,
   Jump,

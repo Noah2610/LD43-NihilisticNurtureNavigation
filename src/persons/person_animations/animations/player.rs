@@ -1,7 +1,6 @@
 use ggez::Context;
 use animation::Animation;
 use settings::player::*;
-use settings::child; //::*;
 
 pub fn new_idle_animation(ctx: &mut Context) -> Animation {
   let filepaths_idle: Vec<String> = vec![

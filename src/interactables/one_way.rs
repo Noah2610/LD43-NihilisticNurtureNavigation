@@ -73,7 +73,7 @@ impl Mask for OneWay {
 }
 
 impl Entity for OneWay {
-  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     self.animation_mut().update()?;
     Ok(())
   }
@@ -107,6 +107,5 @@ impl Interactable for OneWay {
     self.intersected.remove(index);
   }
 
-  fn trigger<T: Person>(&mut self, person: &mut T) {
-  }
+  fn trigger<T: Person>(&mut self, _person: &mut T) { }
 }

@@ -1,9 +1,6 @@
 mod helpers;
 
-use ggez::{
-  GameResult,
-  Context
-};
+use ggez::Context;
 use noframe::geo::prelude::*;
 
 use self::helpers::*;
@@ -11,7 +8,6 @@ use super::Menu;
 use super::buttons::Button;
 use super::ButtonType;
 use animation::Animation;
-use animation::Facing;
 
 pub struct TitleMenuManager {
   pub title: TitleMenu

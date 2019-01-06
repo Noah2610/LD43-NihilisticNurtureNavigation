@@ -6,7 +6,6 @@ use ggez::{
 use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
 
-use settings::interactables::jump_pad::*;
 use animation::Animation;
 use animation::Facing;
 use super::Interactable;
@@ -94,7 +93,7 @@ impl Mask for Door {
 }
 
 impl Entity for Door {
-  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     if self.animation().played() > 0 {
       match self.state {
         State::Opening => {

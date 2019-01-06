@@ -8,7 +8,6 @@ mod helpers;
 use ggez::{
   Context,
   GameResult,
-  graphics,
 };
 use noframe::geo::prelude::*;
 

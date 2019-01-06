@@ -17,7 +17,6 @@ use super::person_animations::PersonAnimations;
 use animation::Facing;
 use gravity::Gravity;
 use id_generator::prelude::*;
-use score::prelude::*;
 
 pub struct Player {
   point:            Point,
@@ -88,8 +87,7 @@ impl Player {
     }
   }
 
-  pub fn key_down(&mut self, keycode: &Keycode) {
-  }
+  pub fn key_down(&mut self, _keycode: &Keycode) { }
 
   pub fn key_up(&mut self, keycode: &Keycode) {
     if let &controls::JUMP = keycode {

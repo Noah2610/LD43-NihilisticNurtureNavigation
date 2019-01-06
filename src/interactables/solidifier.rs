@@ -19,7 +19,7 @@ pub struct Solidifier {
 }
 
 impl Solidifier {
-  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
+  pub fn new(_ctx: &mut Context, point: Point, size: Size) -> Self {
     Self {
       point,
       size,
@@ -39,15 +39,15 @@ impl Mask for Solidifier {
 }
 
 impl Entity for Solidifier {
-  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     Ok(())
   }
 
-  fn draw(&self, ctx: &mut Context) -> GameResult<()> {
+  fn draw(&self, _ctx: &mut Context) -> GameResult<()> {
     Ok(())
   }
 
-  fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
+  fn draw_offset(&self, _ctx: &mut Context, _offset: &Point) -> GameResult<()> {
     Ok(())
   }
 }
