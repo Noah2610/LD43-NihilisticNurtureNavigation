@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use settings::score::*;
+use settings::player;
 use persons::children::ChildType;
 
 pub type ScoreType = u32;
@@ -29,8 +30,19 @@ impl Score {
       (self.times_saved_children.values().sum::<ScoreType>() * CHILD_SCORE_REWARD)
   }
 
-  pub fn semantic(&self) -> String {
+  pub fn semantic_score(&self) -> String {
     format!("Score: {}", self.score())
+  }
+
+  pub fn semantic_player(&self) -> String {
+    format!("{}: +{}", player::NAME, self.times_saved_player() * PLAYER_SCORE_REWARD)
+  }
+
+  pub fn semantic_children(&self) -> Vec<String> {
+    // TODO: Sort by score?
+    self.times_saved_children().iter()
+      .map( |(child, n)| format!("{}: +{}", child.name(), n * CHILD_SCORE_REWARD) )
+      .collect()
   }
 
   pub fn times_saved_player(&self) -> ScoreType {

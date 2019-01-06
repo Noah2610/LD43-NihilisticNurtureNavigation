@@ -21,6 +21,9 @@ pub mod res {
   pub const AUDIO:             &str = "/audio/";
   pub const MISSING_IMAGE:     &str = "/images/missing.png";
   pub const FONTS:             &str = "/fonts/";
+  pub mod fonts {
+    pub const DEFAULT: &str = "/fonts/vcr_osd_mono.ttf";
+  }
 }
 
 pub mod camera {
@@ -29,6 +32,7 @@ pub mod camera {
 
 pub mod player {
   use score::ScoreType;
+  pub const NAME: &str = "Player";
   pub const IMAGES: &str = "/images/player/";
   pub const SPEED_INCREASE: f32 = 600.0;
   pub const SPEED_DECREASE_X: f32 = 600.0;
@@ -75,7 +79,12 @@ pub mod interactables {
 
 pub mod menus {
   pub const IMAGES: &str = "/images/menus/";
-  pub mod title {
+  pub mod title { }
+  pub mod stats {
+    use noframe::color::{ self, Color };
+    pub const FONT_SIZE_SCORE: u32 = 24;
+    pub const FONT_SIZE_SAVED: u32 = 16;
+    pub const FONT_COLOR: Color = color::BLACK;
   }
 }
 

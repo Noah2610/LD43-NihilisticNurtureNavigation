@@ -8,6 +8,7 @@ mod helpers;
 use ggez::{
   Context,
   GameResult,
+  graphics,
 };
 use noframe::geo::prelude::*;
 
@@ -22,20 +23,20 @@ pub struct StatsMenu {
   animation:    Animation,
   buttons:      Vec<Button>,
   clicked:      Option<ButtonType>,
-  score:        Score,
+  texts:        StatsTexts,
 }
 
 impl StatsMenu {
-  pub fn new(ctx: &mut Context, window_size: Size, score: Score) -> Self {
-    Self {
-      point:     Point::new(0.0, window_size.w),
-      size:      window_size.clone(),
-      origin:    Origin::TopLeft,
-      animation: new_animation(ctx),
-      buttons:   new_buttons(ctx, &window_size),
-      clicked:   None,
-      score,
-    }
+  pub fn new(ctx: &mut Context, window_size: Size, score: Score) -> GameResult<Self> {
+    Ok(Self {
+      point:      Point::new(0.0, window_size.w),
+      size:       window_size.clone(),
+      origin:     Origin::TopLeft,
+      animation:  new_animation(ctx),
+      buttons:    new_buttons(ctx, &window_size),
+      clicked:    None,
+      texts:      StatsTexts::new(ctx, score, &window_size)?,
+    })
   }
 }
 
@@ -55,6 +56,12 @@ impl Mask for StatsMenu {
 }
 
 impl Menu for StatsMenu {
+  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.texts.draw(ctx)?;
+    self.draw_menu(ctx)?;
+    Ok(())
+  }
+
   fn buttons(&self) -> &Vec<Button> {
     &self.buttons
   }

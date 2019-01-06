@@ -469,7 +469,7 @@ impl Level {
     let score = self.score.score();
     if self.prev_score != score {
       self.prev_score = score;
-      self.score_text = graphics::Text::new(ctx, &self.score.semantic(), &self.font)?;
+      self.score_text = graphics::Text::new(ctx, &self.score.semantic_score(), &self.font)?;
     }
     Ok(&self.score_text)
   }

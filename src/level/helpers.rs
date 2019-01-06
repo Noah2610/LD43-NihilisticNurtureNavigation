@@ -23,7 +23,7 @@ use menu::toolbox::ToolboxMenu;
 use score::prelude::*;
 
 pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameResult<Level> {
-  let font = graphics::Font::new(ctx, ::join_str(res::FONTS, "vcr_osd_mono.ttf"), FONT_SIZE)?;
+  let font = graphics::Font::new(ctx, res::fonts::DEFAULT, FONT_SIZE)?;
   let level_name = ::semantic(filename);
   let level_name_text = graphics::Text::new(ctx, &::semantic(filename), &font)?;
   let score_text = graphics::Text::new(ctx, "Score: 0", &font)?;

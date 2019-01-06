@@ -185,7 +185,7 @@ impl LevelManager {
     if let Some(level) = &mut self.level {
       level.update(ctx)?;
       if level.next_level {
-        self.stats_menu = Some(StatsMenu::new(ctx, self.window_size.clone(), level.score().clone()));
+        self.stats_menu = Some(StatsMenu::new(ctx, self.window_size.clone(), level.score().clone())?);
       }
     }
     Ok(())
