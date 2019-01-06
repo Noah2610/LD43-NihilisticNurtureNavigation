@@ -1,3 +1,8 @@
+pub mod prelude {
+  pub use super::Button;
+  pub use super::button_type::ButtonType;
+}
+
 pub mod button_type;
 
 pub use self::button_type::ButtonType;

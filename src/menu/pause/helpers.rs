@@ -3,6 +3,7 @@ use noframe::geo::prelude::*;
 
 use settings::res::*;
 use super::super::prelude::*;
+use animation::prelude::*;
 
 pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
   let size = Size::new(128.0, 64.0);
@@ -51,4 +52,17 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
       ]
     )
       ]
+}
+
+pub fn new_title(ctx: &mut Context, window_size: &Size) -> AnimationRect {
+  AnimationRect::new(
+    window_size.center() - Point::new(0.0, 192.0),
+    Size::new(256.0, 96.0),
+    Origin::Center,
+    Animation::new(
+      ctx,
+      vec![MISSING_IMAGE.to_string()],
+      vec![1000]
+    )
+  )
 }

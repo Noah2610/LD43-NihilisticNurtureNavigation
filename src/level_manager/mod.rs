@@ -1,3 +1,5 @@
+mod helpers;
+
 use std::collections::hash_map::HashMap;
 
 use ggez::{
@@ -8,13 +10,14 @@ use ggez::{
 };
 use noframe::geo::prelude::*;
 
+use self::helpers::*;
 use level::Level;
 use settings::level_manager::*;
 use settings::res;
 use animation::Animation;
 use animation::Facing;
 use score::Score;
-use menu::buttons::ButtonType;
+use menu::buttons::prelude::*;
 use menu::pause::prelude::*;
 use menu::stats::prelude::*;
 
@@ -29,6 +32,7 @@ pub struct LevelManager {
   scores:           HashMap<&'static str, Score>,
   paused:           bool,
   pause_menu:       PauseMenu,
+  pause_button:     Button,
   stats_menu:       Option<StatsMenu>,
   final_stats_menu: Option<StatsMenu>,
   pub to_title:     bool,
@@ -47,6 +51,7 @@ impl LevelManager {
       scores:           HashMap::new(),
       paused:           false,
       pause_menu:       PauseMenu::new(ctx, window_size.clone()),
+      pause_button:     new_pause_button(ctx, &window_size),
       stats_menu:       None,
       final_stats_menu: None,
       to_title:         false,
@@ -158,6 +163,9 @@ impl LevelManager {
     if self.paused {
       self.pause_menu.mouse_down(x, y);
     }
+    if self.pause_button.intersects_point(&Point::new(x as NumType, y as NumType)) {
+      self.toggle_pause();
+    }
     if let Some(stats_menu) = &mut self.stats_menu {
       stats_menu.mouse_down(x, y);
     }
@@ -209,6 +217,7 @@ impl LevelManager {
 
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.update_pause_menu(ctx)?;
+    self.pause_button.update()?;
     self.update_stats_menu(ctx)?;
     self.update_final_stats_menu()?;
     self.update_level(ctx)?;
@@ -324,6 +333,7 @@ impl LevelManager {
     if self.paused {
       self.pause_menu.draw(ctx)?;
     }
+    self.pause_button.draw(ctx)?;
     if let Some(stats_menu) = &mut self.stats_menu {
       stats_menu.draw(ctx)?;
     }
@@ -341,15 +351,5 @@ impl LevelManager {
       level.draw(ctx)?;
     }
     Ok(())
-  }
-}
-
-fn new_background(ctx: &mut Context, n: usize) -> Option<Animation> {
-  match n {
-    _ => Some(Animation::new(
-        ctx,
-        vec![::join_str(res::BACKGROUND_IMAGES, "default.png")],
-        vec![1000]
-    ))
   }
 }

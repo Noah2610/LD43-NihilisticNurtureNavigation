@@ -11,6 +11,7 @@ pub enum ButtonType {
   ThingRight,
   BloatLeft,
   BloatRight,
+  IngamePause,
 
   // PAUSE
   PauseResume,

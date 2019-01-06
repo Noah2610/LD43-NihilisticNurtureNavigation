@@ -5,11 +5,15 @@ pub mod prelude {
 
 mod helpers;
 
-use ggez::Context;
+use ggez::{
+  Context,
+  GameResult,
+};
 use noframe::geo::prelude::*;
 
 use self::helpers::*;
 use super::prelude::*;
+use animation::AnimationRect;
 
 pub struct PauseMenu {
   point:        Point,
@@ -17,6 +21,7 @@ pub struct PauseMenu {
   origin:       Origin,
   buttons:      Vec<Button>,
   clicked:      Option<ButtonType>,
+  title:        AnimationRect,
 }
 
 impl PauseMenu {
@@ -27,26 +32,31 @@ impl PauseMenu {
       origin:    Origin::TopLeft,
       buttons:   new_buttons(ctx, &window_size),
       clicked:   None,
+      title:     new_title(ctx, &window_size),
     }
   }
 }
 
 impl Mask for PauseMenu {
-  fn point(&self) -> &Point {
-    &self.point
-  }
-  fn point_mut(&mut self) -> &mut Point {
-    &mut self.point
-  }
-  fn size(&self) -> &Size {
-    &self.size
-  }
-  fn origin(&self) -> &Origin {
-    &self.origin
-  }
+  fn point(&self)         -> &Point     { &self.point     }
+  fn point_mut(&mut self) -> &mut Point { &mut self.point }
+  fn size(&self)          -> &Size      { &self.size      }
+  fn origin(&self)        -> &Origin    { &self.origin    }
 }
 
 impl Menu for PauseMenu {
+  fn update(&mut self) -> GameResult<()> {
+    self.title.update()?;
+    self.update_menu()?;
+    Ok(())
+  }
+
+  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.title.draw(ctx)?;
+    self.draw_menu(ctx)?;
+    Ok(())
+  }
+
   fn buttons(&self) -> &Vec<Button> {
     &self.buttons
   }
