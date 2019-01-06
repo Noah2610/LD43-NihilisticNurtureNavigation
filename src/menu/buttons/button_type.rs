@@ -1,7 +1,9 @@
 #[derive(Clone, Debug)]
 pub enum ButtonType {
   // TITLE
-  Start,
+  TitleStart,
+  TitleLevelSelect,
+  TitleQuit,
 
   // INGAME
   NextLevel,

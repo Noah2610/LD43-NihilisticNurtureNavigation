@@ -163,7 +163,7 @@ impl LevelManager {
     if self.paused {
       self.pause_menu.mouse_down(x, y);
     }
-    if self.pause_button.intersects_point(&Point::new(x as NumType, y as NumType)) {
+    if self.level.is_some() && self.pause_button.intersects_point(&Point::new(x as NumType, y as NumType)) {
       self.toggle_pause();
     }
     if let Some(stats_menu) = &mut self.stats_menu {
@@ -217,7 +217,9 @@ impl LevelManager {
 
   pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.update_pause_menu(ctx)?;
-    self.pause_button.update()?;
+    if self.level.is_some() {
+      self.pause_button.update()?;
+    }
     self.update_stats_menu(ctx)?;
     self.update_final_stats_menu()?;
     self.update_level(ctx)?;
@@ -333,7 +335,9 @@ impl LevelManager {
     if self.paused {
       self.pause_menu.draw(ctx)?;
     }
-    self.pause_button.draw(ctx)?;
+    if self.level.is_some() {
+      self.pause_button.draw(ctx)?;
+    }
     if let Some(stats_menu) = &mut self.stats_menu {
       stats_menu.draw(ctx)?;
     }

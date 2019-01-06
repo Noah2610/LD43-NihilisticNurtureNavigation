@@ -34,9 +34,9 @@ impl TitleMenu {
   pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
     Self {
       point,
-      size,
+      size:      size.clone(),
       origin:    Origin::TopLeft,
-      buttons:   new_buttons(ctx),
+      buttons:   new_buttons(ctx, &size),
       animation: new_animation(ctx),
       clicked: None
     }

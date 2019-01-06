@@ -87,8 +87,23 @@ impl GameState {
   }
 
   fn update_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
-    if let Some(ButtonType::Start) = self.menu_manager.title.get_clicked() {
+    let mut start_game   = false;
+    let mut level_select = false;
+    let mut quit         = false;
+    if let Some(clicked) = &self.menu_manager.title.get_clicked() {
+      match clicked {
+        ButtonType::TitleStart       => start_game   = true,
+        ButtonType::TitleLevelSelect => level_select = true,
+        ButtonType::TitleQuit        => quit         = true,
+        _ => ()
+      }
+    }
+    if start_game {
       self.start_game(ctx)?;
+    } else if level_select {
+      // self.level_select(ctx)?;  // TODO
+    } else if quit {
+      ctx.quit()?;
     }
     self.menu_manager.title.update()?;
     Ok(())
