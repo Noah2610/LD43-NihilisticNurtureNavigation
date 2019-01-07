@@ -109,8 +109,10 @@ pub mod level {
 
 pub mod level_manager {
   pub const AUDIO_FORMAT: &str = "ogg";
-  pub const LEVEL_NAMES: [&'static str; 2] = ["jump_pad_one_way", "test_one"];
-  pub const SONG_NAMES:  [&'static str; 2] = ["ingame_1", "ingame_2"];
+  pub const LEVEL_NAMES: [&'static str; 10] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+  pub const SONG_NAMES:  [&'static str; 10] = ["ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_1", "ingame_2"];
+
+
 
   pub mod controls {
     use ggez::event::Keycode;

@@ -147,8 +147,10 @@ impl event::EventHandler for GameState {
       ctx.quit().expect("Should quit Context");
     }
     if let Scene::Title = self.scene {
-      if let Keycode::Return = keycode {
-        self.start_game(ctx).expect("Should start game");
+      match keycode {
+        Keycode::Return => self.start_game(ctx).expect("Should start game"),
+        Keycode::L      => self.menu_manager.show_level_select(),  // TODO: TEMPORARY!!!
+        _               => ()
       }
     }
   }

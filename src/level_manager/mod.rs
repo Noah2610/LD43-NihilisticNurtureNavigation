@@ -80,7 +80,6 @@ impl LevelManager {
       let prev_level_index_opt = if self.level_index > 0 { Some(self.level_index - 1) } else { None };
       if let Some(prev_level_index) = prev_level_index_opt {
         if !self.scores.contains_key(&prev_level_index) {
-          println!("INSERT");
           self.scores.insert(prev_level_index, level.score().clone());
         }
       }
