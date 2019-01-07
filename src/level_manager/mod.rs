@@ -29,13 +29,14 @@ pub struct LevelManager {
   song_names:       Vec<&'static str>,
   background:       Option<Animation>,
   window_size:      Size,
-  scores:           HashMap<&'static str, Score>,
+  scores:           HashMap<usize, Score>,
   paused:           bool,
   pause_menu:       PauseMenu,
   pause_button:     Button,
   stats_menu:       Option<StatsMenu>,
   final_stats_menu: Option<StatsMenu>,
   pub to_title:     bool,
+  pub beat_game:    bool,
 }
 
 impl LevelManager {
@@ -55,6 +56,7 @@ impl LevelManager {
       stats_menu:       None,
       final_stats_menu: None,
       to_title:         false,
+      beat_game:        false,
     }
   }
 
@@ -66,13 +68,19 @@ impl LevelManager {
     }
   }
 
+  pub fn load_level(&mut self, ctx: &mut Context, level_index: usize) -> GameResult<()> {
+    self.level_index = level_index;
+    self.next_level(ctx)?;
+    Ok(())
+  }
+
   pub fn next_level(&mut self, ctx: &mut Context) -> GameResult<()> {
     // Save the current level's score
     if let Some(level) = &mut self.level {
       let prev_level_index_opt = if self.level_index > 0 { Some(self.level_index - 1) } else { None };
       if let Some(prev_level_index) = prev_level_index_opt {
-        if let Some(level_name) = self.level_names.get(prev_level_index) {
-          self.scores.insert(level_name, level.score().clone());
+        if !self.scores.contains_key(&prev_level_index) {
+          self.scores.insert(prev_level_index, level.score().clone());
         }
       }
     }
@@ -110,6 +118,7 @@ impl LevelManager {
   }
 
   fn beat_final_level(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.beat_game = true;
     self.final_stats_menu = Some(
       StatsMenu::new(
         ctx,

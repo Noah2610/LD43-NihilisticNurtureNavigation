@@ -7,7 +7,7 @@ pub enum ButtonType {
 
   // TITLE/LEVEL_SELECT
   LevelSelectBack,
-  LevelSelectLevel(&'static str),
+  LevelSelectLevel(usize),
 
   // INGAME
   NextLevel,

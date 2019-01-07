@@ -90,10 +90,14 @@ impl GameState {
     let mut quit         = false;
     if let Some(clicked) = self.menu_manager.get_clicked() {
       match clicked {
-        ButtonType::TitleStart       => start_game   = true,
-        ButtonType::TitleQuit        => quit         = true,
+        ButtonType::TitleStart => start_game   = true,
+        ButtonType::TitleQuit  => quit         = true,
         _ => ()
       }
+    }
+    if let Some(level_index) = self.menu_manager.load_level {
+      self.menu_manager.load_level = None;
+      self.start_level(ctx, level_index)?;
     }
     if start_game {
       self.start_game(ctx)?;
@@ -105,8 +109,15 @@ impl GameState {
   }
 
   fn start_game(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.level_manager.next_level(ctx)?;
     self.title_song.stop();
+    self.level_manager.next_level(ctx)?;
+    self.scene = Scene::Ingame;
+    Ok(())
+  }
+
+  fn start_level(&mut self, ctx: &mut Context, level_index: usize) -> GameResult<()> {
+    self.title_song.stop();
+    self.level_manager.load_level(ctx, level_index)?;
     self.scene = Scene::Ingame;
     Ok(())
   }

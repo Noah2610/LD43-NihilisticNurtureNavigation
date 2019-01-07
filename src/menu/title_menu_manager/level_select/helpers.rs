@@ -63,7 +63,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Butt
            top_left,
            size.clone(),
            Origin::TopLeft,
-           ButtonType::LevelSelectLevel(name),
+           ButtonType::LevelSelectLevel(i),
            vec![::join_str(buttons::IMAGES, "gray.png")],
            vec![1000],
            Some(text_param)

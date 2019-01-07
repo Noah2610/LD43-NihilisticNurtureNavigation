@@ -24,18 +24,26 @@ enum MenuType {
 }
 
 pub struct TitleMenuManager {
-  current:          MenuType,
-  pub title:        TitleMenu,
-  pub level_select: LevelSelectMenu,
+  current:           MenuType,
+  show_level_select: bool,
+  pub load_level:    Option<usize>,
+  pub title:         TitleMenu,
+  pub level_select:  LevelSelectMenu,
 }
 
 impl TitleMenuManager {
   pub fn new(ctx: &mut Context, size: Size) -> GameResult<Self> {
     Ok(Self {
-      current:      MenuType::Title,
-      title:        TitleMenu::new(ctx, size.clone()),
-      level_select: LevelSelectMenu::new(ctx, size.clone())?,
+      current:           MenuType::Title,
+      show_level_select: false,
+      load_level:        None,
+      title:             TitleMenu::new(ctx, size.clone()),
+      level_select:      LevelSelectMenu::new(ctx, size.clone())?,
     })
+  }
+
+  pub fn show_level_select(&mut self) {
+    self.show_level_select = true;
   }
 
   pub fn get_clicked(&self) -> &Option<ButtonType> {
@@ -55,11 +63,11 @@ impl TitleMenuManager {
   pub fn update(&mut self) -> GameResult<()> {
     if let Some(clicked) = self.get_clicked().clone() {
       match clicked {
-        ButtonType::TitleLevelSelect => self.current = MenuType::LevelSelect,
-        ButtonType::LevelSelectBack  => self.current = MenuType::Title,
+        ButtonType::TitleLevelSelect    => self.current    = MenuType::LevelSelect,
+        ButtonType::LevelSelectBack     => self.current    = MenuType::Title,
+        ButtonType::LevelSelectLevel(i) => self.load_level = Some(i),
         _                            => (),
       };
-      println!("{:?}", clicked);
     }
     match &self.current {
       MenuType::Title       => self.title.update()?,
