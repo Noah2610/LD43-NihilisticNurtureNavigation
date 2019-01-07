@@ -77,7 +77,11 @@ pub mod interactables {
 
 pub mod menus {
   pub const IMAGES: &str = "/images/menus/";
-  pub mod title { }
+  pub mod title {
+    pub mod level_select {
+      pub const FONT_SIZE: u32 = 16;
+    }
+  }
   pub mod stats {
     use noframe::color::{ self, Color };
     pub const FONT_SIZE_SCORE: u32 = 24;
@@ -105,8 +109,8 @@ pub mod level {
 
 pub mod level_manager {
   pub const AUDIO_FORMAT: &str = "ogg";
-  pub const LEVEL_NAMES: [&'static str; 3] = ["jump_pad_one_way", "test_one", "test_two"];
-  pub const SONG_NAMES:  [&'static str; 3] = ["ingame_1", "ingame_1", "ingame_2"];
+  pub const LEVEL_NAMES: [&'static str; 28] = ["jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_two", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one", "jump_pad_one_way", "test_one"];
+  pub const SONG_NAMES:  [&'static str; 28] = ["ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_2.5", "ingame_3", "ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_1", "ingame_2"];
 
   pub mod controls {
     use ggez::event::Keycode;

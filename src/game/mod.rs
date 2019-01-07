@@ -19,8 +19,7 @@ use noframe::input_manager::InputManager;
 use settings::game::*;
 use settings::res;
 use level_manager::LevelManager;
-use menu::Menu;
-use menu::title::TitleMenuManager;
+use menu::title_menu_manager::prelude::*;
 use menu::buttons::ButtonType;
 use frames_counter::FramesCounter;
 
@@ -58,7 +57,7 @@ impl GameState {
       level_manager: LevelManager::new(ctx, window_size.clone()),
       running:       true,
       last_update:   Instant::now(),
-      menu_manager:  TitleMenuManager::new(ctx, window_size.clone()),
+      menu_manager:  TitleMenuManager::new(ctx, window_size.clone())?,
       scene:         Scene::Title,
       title_song:    title_song,
       fps:           FramesCounter::new(),
@@ -88,24 +87,20 @@ impl GameState {
 
   fn update_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
     let mut start_game   = false;
-    let mut level_select = false;
     let mut quit         = false;
-    if let Some(clicked) = &self.menu_manager.title.get_clicked() {
+    if let Some(clicked) = self.menu_manager.get_clicked() {
       match clicked {
         ButtonType::TitleStart       => start_game   = true,
-        ButtonType::TitleLevelSelect => level_select = true,
         ButtonType::TitleQuit        => quit         = true,
         _ => ()
       }
     }
     if start_game {
       self.start_game(ctx)?;
-    } else if level_select {
-      // self.level_select(ctx)?;  // TODO
     } else if quit {
       ctx.quit()?;
     }
-    self.menu_manager.title.update()?;
+    self.menu_manager.update()?;
     Ok(())
   }
 
@@ -122,7 +117,7 @@ impl GameState {
   }
 
   fn draw_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.menu_manager.title.draw(ctx)?;
+    self.menu_manager.draw(ctx)?;
     Ok(())
   }
 }
@@ -155,7 +150,7 @@ impl event::EventHandler for GameState {
   fn mouse_button_down_event(&mut self, _ctx: &mut Context, _btn: MouseButton, x: i32, y: i32) {
     // self.input_manager.add_mouse_down(btn, x, y);
     match self.scene {
-      Scene::Title  => self.menu_manager.title.mouse_down(x, y),
+      Scene::Title  => self.menu_manager.mouse_down(x, y),
       Scene::Ingame => self.level_manager.mouse_down(x, y),
     }
   }

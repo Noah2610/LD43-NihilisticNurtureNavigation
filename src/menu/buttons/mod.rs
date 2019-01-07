@@ -4,15 +4,17 @@ pub mod prelude {
 }
 
 pub mod button_type;
+mod button_text;
 
 pub use self::button_type::ButtonType;
 
 use ggez::{
   GameResult,
-  Context
+  Context,
 };
 use noframe::geo::prelude::*;
 
+use self::button_text::prelude::*;
 use animation::Animation;
 use animation::Facing;
 
@@ -21,31 +23,36 @@ pub struct Button {
   size:            Size,
   origin:          Origin,
   animation:       Animation,
-  pub button_type: ButtonType
+  pub button_type: ButtonType,
+  text:            Option<ButtonText>,
 }
 
 impl Button {
-  pub fn new(ctx: &mut Context, point: Point, size: Size, button_type: ButtonType, images: Vec<String>, delays: Vec<u64>) -> Self {
-    Self::new_with_origin(
-      ctx,
-      point,
-      size,
-      Origin::TopLeft,
-      button_type,
-      images,
-      delays
-      )
-  }
-
-  pub fn new_with_origin(ctx: &mut Context, point: Point, size: Size, origin: Origin, button_type: ButtonType, images: Vec<String>, delays: Vec<u64>) -> Self {
+  pub fn new(
+    ctx:             &mut Context,
+    point:           Point,
+    size:            Size,
+    origin:          Origin,
+    button_type:     ButtonType,
+    images:          Vec<String>,
+    delays:          Vec<u64>,
+    button_text_opt: Option<ButtonTextTuple>
+  ) -> Self {
     Self {
-      point,
-      size,
+      point: point.clone(),
+      size:  size.clone(),
       origin,
       animation: Animation::new(
         ctx, images, delays
-        ),
-        button_type
+      ),
+      button_type,
+      text: button_text_opt
+        .and_then( |tuple| Some( ButtonText::new(
+              tuple.0,  // point
+              tuple.1,  // size,
+              tuple.2,  // origin
+              tuple.3   // text
+        ))),
     }
   }
 
@@ -64,7 +71,11 @@ impl Button {
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     let size = self.size().clone();
     let top_left = self.top_left();
-    self.animation_mut().draw(ctx, &top_left, &size, &Facing::Right)
+    self.animation_mut().draw(ctx, &top_left, &size, &Facing::Right)?;
+    if let Some(text) = &mut self.text {
+      text.draw(ctx)?;
+    }
+    Ok(())
   }
 }
 

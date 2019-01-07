@@ -5,6 +5,10 @@ pub enum ButtonType {
   TitleLevelSelect,
   TitleQuit,
 
+  // TITLE/LEVEL_SELECT
+  LevelSelectBack,
+  LevelSelectLevel(&'static str),
+
   // INGAME
   NextLevel,
   LarryLeft,

@@ -5,7 +5,7 @@ pub mod prelude {
   pub use animation::prelude::*;
 }
 
-pub mod title;
+pub mod title_menu_manager;
 pub mod toolbox;
 pub mod pause;
 pub mod stats;

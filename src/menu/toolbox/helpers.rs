@@ -12,9 +12,11 @@ pub fn new_next_level_button(ctx: &mut Context, point: &Point, size: &Size) -> B
     ctx,
     Point::new(size.w - 160.0, point.y),
     Size::new(128.0, 64.0),
+    Origin::TopLeft,
     ButtonType::NextLevel,
     vec![::join_str(buttons::IMAGES, "next_level.png")],
-    vec![1000]
+    vec![1000],
+    None
   )
 }
 
@@ -24,49 +26,61 @@ pub fn new_buttons(ctx: &mut Context, point: &Point) -> Vec<Button> {
       ctx,
       Point::new(32.0, point.y),
       Size::new(64.0, 64.0),
+      Origin::TopLeft,
       ButtonType::LarryLeft,
       vec![::join_str(buttons::IMAGES, "child_left.png")],
-      vec![1000]
+      vec![1000],
+      None
     ),
     Button::new(
       ctx,
       Point::new(160.0, point.y),
       Size::new(64.0, 64.0),
+      Origin::TopLeft,
       ButtonType::LarryRight,
       vec![::join_str(buttons::IMAGES, "child_right.png")],
-      vec![1000]
+      vec![1000],
+      None
     ),
     Button::new(
       ctx,
       Point::new(288.0, point.y),
       Size::new(64.0, 64.0),
+      Origin::TopLeft,
       ButtonType::ThingLeft,
       vec![::join_str(buttons::IMAGES, "child_left.png")],
-      vec![1000]
+      vec![1000],
+      None
     ),
     Button::new(
       ctx,
       Point::new(416.0, point.y),
       Size::new(64.0, 64.0),
+      Origin::TopLeft,
       ButtonType::ThingRight,
       vec![::join_str(buttons::IMAGES, "child_right.png")],
-      vec![1000]
+      vec![1000],
+      None
     ),
     Button::new(
       ctx,
       Point::new(544.0, point.y),
       Size::new(64.0, 64.0),
+      Origin::TopLeft,
       ButtonType::BloatLeft,
       vec![::join_str(buttons::IMAGES, "child_left.png")],
-      vec![1000]
+      vec![1000],
+      None
     ),
     Button::new(
       ctx,
       Point::new(672.0, point.y),
       Size::new(64.0, 64.0),
+      Origin::TopLeft,
       ButtonType::BloatRight,
       vec![::join_str(buttons::IMAGES, "child_right.png")],
-      vec![1000]
+      vec![1000],
+      None
     )
       ]
 }
@@ -97,5 +111,5 @@ pub fn new_closeups(ctx: &mut Context, point: &Point) -> Vec<Closeup> {
         vec![1000]
       )
     )
-  ]
+      ]
 }

@@ -20,8 +20,10 @@ pub fn new_pause_button(ctx: &mut Context, _window_size: &Size) -> Button {
     ctx,
     Point::new(4.0, 4.0),
     Size::new(32.0, 32.0),
+    Origin::TopLeft,
     ButtonType::IngamePause,
     vec![MISSING_IMAGE.to_string()],
-    vec![1000]
+    vec![1000],
+    None
   )
 }

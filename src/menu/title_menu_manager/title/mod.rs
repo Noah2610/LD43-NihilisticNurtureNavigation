@@ -4,40 +4,26 @@ use ggez::Context;
 use noframe::geo::prelude::*;
 
 use self::helpers::*;
-use super::Menu;
-use super::buttons::Button;
-use super::ButtonType;
+use menu::prelude::*;
 use animation::Animation;
-
-pub struct TitleMenuManager {
-  pub title: TitleMenu
-}
-
-impl TitleMenuManager {
-  pub fn new(ctx: &mut Context, size: Size) -> Self {
-    Self {
-      title: TitleMenu::new(ctx, Point::new(0.0, 0.0), size)
-    }
-  }
-}
 
 pub struct TitleMenu {
   point:       Point,
   size:        Size,
   origin:      Origin,
-  buttons:     Vec<Button>,
   animation:   Animation,
+  buttons:     Vec<Button>,
   clicked:     Option<ButtonType>
 }
 
 impl TitleMenu {
-  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
+  pub fn new(ctx: &mut Context, size: Size) -> Self {
     Self {
-      point,
+      point:     Point::new(0.0, 0.0),
       size:      size.clone(),
       origin:    Origin::TopLeft,
-      buttons:   new_buttons(ctx, &size),
       animation: new_animation(ctx),
+      buttons:   new_buttons(ctx, &size),
       clicked: None
     }
   }

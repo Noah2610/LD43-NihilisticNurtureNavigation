@@ -10,46 +10,37 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
   let padding = 16.0;
 
   vec![
-    Button::new_with_origin(
+    Button::new(
       ctx,
       window_size.center() - Point::new(0.0, size.h + padding),
       size.clone(),
       Origin::Center,
       ButtonType::PauseResume,
-      vec![
-      MISSING_IMAGE.to_string()
-      ],
-      vec![
-      1000
-      ]
+      vec![MISSING_IMAGE.to_string()],
+      vec![1000],
+      None
     ),
 
-    Button::new_with_origin(
+    Button::new(
       ctx,
       window_size.center(),
       size.clone(),
       Origin::Center,
       ButtonType::PauseReset,
-      vec![
-      MISSING_IMAGE.to_string()
-      ],
-      vec![
-      1000
-      ]
+      vec![MISSING_IMAGE.to_string()],
+      vec![1000],
+      None
     ),
 
-    Button::new_with_origin(
+    Button::new(
       ctx,
       window_size.center() + Point::new(0.0, size.h + padding),
       size.clone(),
       Origin::Center,
       ButtonType::PauseToTitle,
-      vec![
-      MISSING_IMAGE.to_string()
-      ],
-      vec![
-      1000
-      ]
+      vec![MISSING_IMAGE.to_string()],
+      vec![1000],
+      None
     )
       ]
 }

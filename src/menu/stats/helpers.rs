@@ -122,7 +122,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec
   let mut vec = Vec::new();
 
   if !is_final {
-    vec.push(Button::new_with_origin(
+    vec.push(Button::new(
         ctx,
         window_size.center() + Point::new(BUTTON_SIZE.w + BUTTON_PADDING, BUTTON_OFFSET_Y),
         BUTTON_SIZE.clone(),
@@ -133,11 +133,12 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec
         ],
         vec![
         1000
-        ]
+        ],
+        None
     ));
 
     vec.push(
-      Button::new_with_origin(
+      Button::new(
         ctx,
         window_size.center() + Point::new(0.0, BUTTON_OFFSET_Y),
         BUTTON_SIZE.clone(),
@@ -148,13 +149,14 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec
         ],
         vec![
         1000
-        ]
+        ],
+        None
       )
     );
   }
 
   vec.push(
-    Button::new_with_origin(
+    Button::new(
       ctx,
       window_size.center() + if !is_final {
         Point::new(-(BUTTON_SIZE.w + BUTTON_PADDING), BUTTON_OFFSET_Y)
@@ -169,7 +171,8 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec
       ],
       vec![
       1000
-      ]
+      ],
+      None
     )
   );
 
