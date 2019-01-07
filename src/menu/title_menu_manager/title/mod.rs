@@ -8,24 +8,30 @@ use menu::prelude::*;
 use animation::Animation;
 
 pub struct TitleMenu {
-  point:       Point,
-  size:        Size,
-  origin:      Origin,
-  animation:   Animation,
-  buttons:     Vec<Button>,
-  clicked:     Option<ButtonType>
+  point:             Point,
+  size:              Size,
+  origin:            Origin,
+  animation:         Animation,
+  buttons:           Vec<Button>,
+  clicked:           Option<ButtonType>,
+  show_level_select: bool,
 }
 
 impl TitleMenu {
   pub fn new(ctx: &mut Context, size: Size) -> Self {
     Self {
-      point:     Point::new(0.0, 0.0),
-      size:      size.clone(),
-      origin:    Origin::TopLeft,
-      animation: new_animation(ctx),
-      buttons:   new_buttons(ctx, &size),
-      clicked: None
+      point:             Point::new(0.0, 0.0),
+      size:              size.clone(),
+      origin:            Origin::TopLeft,
+      animation:         new_animation(ctx),
+      buttons:           new_buttons(ctx, &size),
+      clicked:           None,
+      show_level_select: false,
     }
+  }
+
+  pub fn show_level_select(&mut self) {
+    self.show_level_select = true;
   }
 }
 
@@ -37,11 +43,20 @@ impl Mask for TitleMenu {
 }
 
 impl Menu for TitleMenu {
-  fn buttons(&self) -> &Vec<Button> {
-    &self.buttons
+  fn buttons(&self) -> Vec<&Button> {
+    self.buttons.iter()
+      .filter( |button| if let ButtonType::TitleLevelSelect = button.button_type {
+        self.show_level_select
+      } else { true })
+      .collect()
   }
-  fn buttons_mut(&mut self) -> &mut Vec<Button> {
-    &mut self.buttons
+  fn buttons_mut(&mut self) -> Vec<&mut Button> {
+    let show_level_select = self.show_level_select;
+    self.buttons.iter_mut()
+      .filter( |button| if let ButtonType::TitleLevelSelect = button.button_type {
+        show_level_select
+      } else { true })
+      .collect()
   }
   fn animation(&self) -> Option<&Animation> {
     Some(&self.animation)

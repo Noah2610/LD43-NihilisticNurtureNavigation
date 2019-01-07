@@ -80,6 +80,7 @@ impl LevelManager {
       let prev_level_index_opt = if self.level_index > 0 { Some(self.level_index - 1) } else { None };
       if let Some(prev_level_index) = prev_level_index_opt {
         if !self.scores.contains_key(&prev_level_index) {
+          println!("INSERT");
           self.scores.insert(prev_level_index, level.score().clone());
         }
       }
@@ -317,7 +318,7 @@ impl LevelManager {
     self.level            = None;
     self.song             = None;
     self.background       = None;
-    self.scores           = HashMap::new();
+    //self.scores           = HashMap::new();
     self.paused           = false;
     self.stats_menu       = None;
     self.final_stats_menu = None;

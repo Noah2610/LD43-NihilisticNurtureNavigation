@@ -118,11 +118,11 @@ impl Mask for ToolboxMenu {
 }
 
 impl Menu for ToolboxMenu {
-  fn buttons(&self) -> &Vec<Button> {
-    &self.buttons
+  fn buttons(&self) -> Vec<&Button> {
+    self.buttons.iter().map( |button| button ).collect()
   }
-  fn buttons_mut(&mut self) -> &mut Vec<Button> {
-    &mut self.buttons
+  fn buttons_mut(&mut self) -> Vec<&mut Button> {
+    self.buttons.iter_mut().map( |button| button ).collect()
   }
   fn animation(&self) -> Option<&Animation> {
     None

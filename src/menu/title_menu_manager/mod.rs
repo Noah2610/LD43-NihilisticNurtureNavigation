@@ -25,7 +25,6 @@ enum MenuType {
 
 pub struct TitleMenuManager {
   current:           MenuType,
-  show_level_select: bool,
   pub load_level:    Option<usize>,
   pub title:         TitleMenu,
   pub level_select:  LevelSelectMenu,
@@ -35,7 +34,6 @@ impl TitleMenuManager {
   pub fn new(ctx: &mut Context, size: Size) -> GameResult<Self> {
     Ok(Self {
       current:           MenuType::Title,
-      show_level_select: false,
       load_level:        None,
       title:             TitleMenu::new(ctx, size.clone()),
       level_select:      LevelSelectMenu::new(ctx, size.clone())?,
@@ -43,7 +41,7 @@ impl TitleMenuManager {
   }
 
   pub fn show_level_select(&mut self) {
-    self.show_level_select = true;
+    self.title.show_level_select();
   }
 
   pub fn get_clicked(&self) -> &Option<ButtonType> {

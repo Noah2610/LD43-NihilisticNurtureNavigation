@@ -24,8 +24,8 @@ use animation::Animation;
 use animation::Facing;
 
 pub trait Menu: Mask {
-  fn buttons(&self) -> &Vec<Button>;
-  fn buttons_mut(&mut self) -> &mut Vec<Button>;
+  fn buttons(&self) -> Vec<&Button>;
+  fn buttons_mut(&mut self) -> Vec<&mut Button>;
   fn animation(&self) -> Option<&Animation>;
   fn animation_mut(&mut self) -> Option<&mut Animation>;
   fn clicked(&mut self, btn_type: ButtonType);

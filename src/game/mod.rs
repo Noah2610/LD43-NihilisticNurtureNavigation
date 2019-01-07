@@ -86,6 +86,9 @@ impl GameState {
   }
 
   fn update_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if self.level_manager.beat_game {
+      self.menu_manager.show_level_select();
+    }
     let mut start_game   = false;
     let mut quit         = false;
     if let Some(clicked) = self.menu_manager.get_clicked() {
