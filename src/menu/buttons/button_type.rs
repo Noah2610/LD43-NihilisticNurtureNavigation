@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Clone, Debug)]
 pub enum ButtonType {
   // TITLE
@@ -28,4 +30,34 @@ pub enum ButtonType {
   StatsNext,
   StatsReset,
   StatsToTitle,
+}
+
+impl fmt::Display for ButtonType {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "{}", match self {
+      ButtonType::TitleStart          => "TitleStart",
+      ButtonType::TitleLevelSelect    => "TitleLevelSelect",
+      ButtonType::TitleQuit           => "TitleQuit",
+
+      ButtonType::LevelSelectBack     => "LevelSelectBack",
+      ButtonType::LevelSelectLevel(n) => "LevelSelectLevel",
+
+      ButtonType::NextLevel           => "NextLevel",
+      ButtonType::LarryLeft           => "LarryLeft",
+      ButtonType::LarryRight          => "LarryRight",
+      ButtonType::ThingLeft           => "ThingLeft",
+      ButtonType::ThingRight          => "ThingRight",
+      ButtonType::BloatLeft           => "BloatLeft",
+      ButtonType::BloatRight          => "BloatRight",
+      ButtonType::IngamePause         => "IngamePause",
+
+      ButtonType::PauseResume         => "PauseResume",
+      ButtonType::PauseToTitle        => "PauseToTitle",
+      ButtonType::PauseReset          => "PauseReset",
+
+      ButtonType::StatsNext           => "StatsNext",
+      ButtonType::StatsReset          => "StatsReset",
+      ButtonType::StatsToTitle        => "StatsToTitle",
+    })
+  }
 }

@@ -16,14 +16,11 @@ pub fn new_background(ctx: &mut Context, n: usize) -> Option<Animation> {
 }
 
 pub fn new_pause_button(ctx: &mut Context, _window_size: &Size) -> Button {
-  Button::new(
-    ctx,
-    Point::new(4.0, 4.0),
-    Size::new(32.0, 32.0),
-    Origin::TopLeft,
-    ButtonType::IngamePause,
-    vec![MISSING_IMAGE.to_string()],
-    vec![1000],
-    None
-  )
+  ButtonBuilder::new(ctx)
+    .point(Point::new(4.0, 4.0))
+    .size(Size::new(32.0, 32.0))
+    .origin(Origin::TopLeft)
+    .button_type(ButtonType::IngamePause)
+    .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+    .build().expect("Should build IngamePause Button")
 }

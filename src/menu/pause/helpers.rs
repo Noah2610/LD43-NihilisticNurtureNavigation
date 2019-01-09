@@ -2,47 +2,38 @@ use ggez::Context;
 use noframe::geo::prelude::*;
 
 use settings::res::*;
-use super::super::prelude::*;
+use menu::buttons::prelude::*;
 use animation::prelude::*;
 
 pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
   let size = Size::new(128.0, 64.0);
   let padding = 16.0;
 
-  vec![
-    Button::new(
-      ctx,
-      window_size.center() - Point::new(0.0, size.h + padding),
-      size.clone(),
-      Origin::Center,
-      ButtonType::PauseResume,
-      vec![MISSING_IMAGE.to_string()],
-      vec![1000],
-      None
-    ),
+  let mut btns = Vec::new();
 
-    Button::new(
-      ctx,
-      window_size.center(),
-      size.clone(),
-      Origin::Center,
-      ButtonType::PauseReset,
-      vec![MISSING_IMAGE.to_string()],
-      vec![1000],
-      None
-    ),
+  btns.push(ButtonBuilder::new(ctx)
+            .point(window_size.center() - Point::new(0.0, size.h + padding))
+            .size(size.clone())
+            .origin(Origin::Center)
+            .button_type(ButtonType::PauseResume)
+            .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+            .build().expect("Should build PauseResume Button"));
+  btns.push(ButtonBuilder::new(ctx)
+            .point(window_size.center())
+            .size(size.clone())
+            .origin(Origin::Center)
+            .button_type(ButtonType::PauseReset)
+            .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+            .build().expect("Should build PauseReset Button"));
+  btns.push(ButtonBuilder::new(ctx)
+            .point(window_size.center() + Point::new(0.0, size.h + padding))
+            .size(size.clone())
+            .origin(Origin::Center)
+            .button_type(ButtonType::PauseToTitle)
+            .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+            .build().expect("Should build PauseToTitle Button"));
 
-    Button::new(
-      ctx,
-      window_size.center() + Point::new(0.0, size.h + padding),
-      size.clone(),
-      Origin::Center,
-      ButtonType::PauseToTitle,
-      vec![MISSING_IMAGE.to_string()],
-      vec![1000],
-      None
-    )
-      ]
+  btns
 }
 
 pub fn new_title(ctx: &mut Context, window_size: &Size) -> AnimationRect {

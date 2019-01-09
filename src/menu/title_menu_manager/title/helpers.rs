@@ -20,36 +20,29 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
   let padding = 128.0;
   let size = Size::new(128.0, 64.0);
 
-  vec![
-    Button::new(
-      ctx,
-      window_size.center() + Point::new(0.0, offset_y),
-      size.clone(),
-      Origin::Center,
-      ButtonType::TitleStart,
-      vec![::join_str(buttons::IMAGES, "startgame_title.png")],
-      vec![1000],
-      None
-    ),
-    Button::new(
-      ctx,
-      window_size.center() + Point::new(size.w + padding, offset_y),
-      size.clone(),
-      Origin::Center,
-      ButtonType::TitleLevelSelect,
-      vec![MISSING_IMAGE.to_string()],
-      vec![1000],
-      None
-    ),
-    Button::new(
-      ctx,
-      window_size.center() + Point::new(-(size.w + padding), offset_y),
-      size.clone(),
-      Origin::Center,
-      ButtonType::TitleQuit,
-      vec![MISSING_IMAGE.to_string()],
-      vec![1000],
-      None
-    )
-  ]
+  let mut btns = Vec::new();
+
+  btns.push(ButtonBuilder::new(ctx)
+            .point(window_size.center() + Point::new(0.0, offset_y))
+            .size(size.clone())
+            .origin(Origin::Center)
+            .button_type(ButtonType::TitleStart)
+            .animation_from(vec![::join_str(buttons::IMAGES, "startgame_title.png")], vec![1000])
+            .build().expect("Should build TitleStart Button"));
+  btns.push(ButtonBuilder::new(ctx)
+            .point(window_size.center() + Point::new(size.w + padding, offset_y))
+            .size(size.clone())
+            .origin(Origin::Center)
+            .button_type(ButtonType::TitleLevelSelect)
+            .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+            .build().expect("Should build TitleLevelSelect Button"));
+  btns.push(ButtonBuilder::new(ctx)
+            .point(window_size.center() + Point::new(-(size.w + padding), offset_y))
+            .size(size.clone())
+            .origin(Origin::Center)
+            .button_type(ButtonType::TitleQuit)
+            .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+            .build().expect("Should build TitleQuit Button"));
+
+  btns
 }

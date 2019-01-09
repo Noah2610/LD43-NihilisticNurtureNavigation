@@ -1,9 +1,11 @@
 pub mod prelude {
   pub use super::Button;
   pub use super::button_type::ButtonType;
+  pub use super::builder::ButtonBuilder;
 }
 
 pub mod button_type;
+pub mod builder;
 mod button_text;
 
 pub use self::button_type::ButtonType;
@@ -29,30 +31,27 @@ pub struct Button {
 
 impl Button {
   pub fn new(
-    ctx:             &mut Context,
     point:           Point,
     size:            Size,
     origin:          Origin,
     button_type:     ButtonType,
-    images:          Vec<String>,
-    delays:          Vec<u64>,
-    button_text_opt: Option<ButtonTextTuple>
+    animation:       Animation,
+    text:            Option<ButtonText>
   ) -> Self {
     Self {
       point: point.clone(),
       size:  size.clone(),
       origin,
-      animation: Animation::new(
-        ctx, images, delays
-      ),
+      animation,
       button_type,
-      text: button_text_opt
-        .and_then( |tuple| Some( ButtonText::new(
-              tuple.0,  // point
-              tuple.1,  // size,
-              tuple.2,  // origin
-              tuple.3   // text
-        ))),
+      text,
+      // text: button_text_opt
+      //   .and_then( |tuple| Some( ButtonText::new(
+      //         tuple.0,  // point
+      //         tuple.1,  // size,
+      //         tuple.2,  // origin
+      //         tuple.3   // text
+      //   ))),
     }
   }
 
@@ -62,6 +61,14 @@ impl Button {
 
   pub fn animation_mut(&mut self) -> &mut Animation {
     &mut self.animation
+  }
+
+  pub fn mouse_in(&mut self) {
+    unimplemented!();  // TODO
+  }
+
+  pub fn mouse_out(&mut self) {
+    unimplemented!();  // TODO
   }
 
   pub fn update(&mut self) -> GameResult<()> {

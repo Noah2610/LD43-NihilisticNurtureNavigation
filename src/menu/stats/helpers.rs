@@ -7,7 +7,8 @@ use noframe::geo::prelude::*;
 
 use settings::res::*;
 use settings::menus::stats::*;
-use super::super::prelude::*;
+use animation::prelude::*;
+use menu::buttons::prelude::*;
 use score::prelude::*;
 
 const BUTTON_SIZE:     Size    = Size { w: 128.0, h: 64.0 };
@@ -122,58 +123,39 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec
   let mut vec = Vec::new();
 
   if !is_final {
-    vec.push(Button::new(
-        ctx,
-        window_size.center() + Point::new(BUTTON_SIZE.w + BUTTON_PADDING, BUTTON_OFFSET_Y),
-        BUTTON_SIZE.clone(),
-        Origin::Center,
-        ButtonType::StatsNext,
-        vec![
-        MISSING_IMAGE.to_string()
-        ],
-        vec![
-        1000
-        ],
-        None
-    ));
+    vec.push(
+      ButtonBuilder::new(ctx)
+      .point(window_size.center() + Point::new(BUTTON_SIZE.w + BUTTON_PADDING, BUTTON_OFFSET_Y))
+      .size(BUTTON_SIZE.clone())
+      .origin(Origin::Center)
+      .button_type(ButtonType::StatsNext)
+      .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+      .build().expect("Should build StatsNext Button")
+    );
 
     vec.push(
-      Button::new(
-        ctx,
-        window_size.center() + Point::new(0.0, BUTTON_OFFSET_Y),
-        BUTTON_SIZE.clone(),
-        Origin::Center,
-        ButtonType::StatsReset,
-        vec![
-        MISSING_IMAGE.to_string()
-        ],
-        vec![
-        1000
-        ],
-        None
-      )
+      ButtonBuilder::new(ctx)
+      .point(window_size.center() + Point::new(0.0, BUTTON_OFFSET_Y))
+      .size(BUTTON_SIZE.clone())
+      .origin(Origin::Center)
+      .button_type(ButtonType::StatsReset)
+      .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+      .build().expect("Should build StatsReset Button")
     );
   }
 
   vec.push(
-    Button::new(
-      ctx,
-      window_size.center() + if !is_final {
-        Point::new(-(BUTTON_SIZE.w + BUTTON_PADDING), BUTTON_OFFSET_Y)
-      } else {
-        Point::new(0.0, BUTTON_OFFSET_Y)
-      },
-      BUTTON_SIZE.clone(),
-      Origin::Center,
-      ButtonType::StatsToTitle,
-      vec![
-      MISSING_IMAGE.to_string()
-      ],
-      vec![
-      1000
-      ],
-      None
-    )
+    ButtonBuilder::new(ctx)
+    .point(window_size.center() + if !is_final {
+      Point::new(-(BUTTON_SIZE.w + BUTTON_PADDING), BUTTON_OFFSET_Y)
+    } else {
+      Point::new(0.0, BUTTON_OFFSET_Y)
+    })
+    .size(BUTTON_SIZE.clone())
+    .origin(Origin::Center)
+    .button_type(ButtonType::StatsToTitle)
+    .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+    .build().expect("Should build StatsToTitle Button")
   );
 
   vec

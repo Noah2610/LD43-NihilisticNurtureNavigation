@@ -1,6 +1,5 @@
 pub mod prelude {
   pub use super::ButtonText;
-  pub use super::ButtonTextTuple;
 }
 
 use ggez::{
@@ -9,9 +8,6 @@ use ggez::{
   graphics::{ self, Point2, Text },
 };
 use noframe::geo::prelude::*;
-
-//                          point  size  origin  text
-pub type ButtonTextTuple = (Point, Size, Origin, Text);
 
 pub struct ButtonText {
   point:  Point,

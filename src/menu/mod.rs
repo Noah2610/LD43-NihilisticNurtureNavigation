@@ -1,7 +1,6 @@
 pub mod prelude {
   pub use super::Menu;
-  pub use super::buttons::Button;
-  pub use super::buttons::ButtonType;
+  pub use super::buttons::prelude::*;
   pub use animation::prelude::*;
 }
 
@@ -33,13 +32,43 @@ pub trait Menu: Mask {
   fn clear_clicked(&mut self);
 
   fn mouse_down(&mut self, x: i32, y: i32) {
-    let point = Point::new(x as f32, y as f32);
-    for i in 0 .. self.buttons().len() {
-      let btn_type = self.buttons()[i].button_type.clone();
-      if self.buttons()[i].intersects_point(&point) {
-        self.clicked(btn_type);
+    for btn_type in {
+      self.buttons_intersecting_point(Point::new(x as NumType, y as NumType)).iter()
+        .map( |btn| btn.button_type.clone() ).collect::<Vec<ButtonType>>()
+    } {
+      self.clicked(btn_type);
+    }
+  }
+
+  fn mouse_move(&mut self, x: i32, y: i32, xrel: i32, yrel: i32) {
+    let point = Point::new(x as NumType, y as NumType);
+    for btn in self.buttons_mut() {
+      if btn.intersects_point(&point) {
+        btn.mouse_in();
+      } else {
+        btn.mouse_out();
       }
     }
+  }
+
+  fn buttons_intersecting_point(&self, point: Point) -> Vec<&Button> {
+    let mut btns = Vec::new();
+    for btn in self.buttons() {
+      if btn.intersects_point(&point) {
+        btns.push(btn);
+      }
+    }
+    btns
+  }
+
+  fn buttons_intersecting_point_mut(&mut self, point: Point) -> Vec<&mut Button> {
+    let mut btns = Vec::new();
+    for btn in self.buttons_mut() {
+      if btn.intersects_point(&point) {
+        btns.push(btn);
+      }
+    }
+    btns
   }
 
   fn update(&mut self) -> GameResult<()> {
