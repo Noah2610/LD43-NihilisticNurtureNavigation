@@ -14,6 +14,7 @@ use self::helpers::*;
 use level::Level;
 use settings::level_manager::*;
 use settings::res;
+use settings::game::MUTED;
 use animation::Animation;
 use animation::Facing;
 use score::Score;
@@ -104,7 +105,7 @@ impl LevelManager {
       song.set_volume(0.5);
       song.set_repeat(true);
       song.play()?;
-      if muted { song.pause(); }
+      if muted || MUTED { song.pause(); }
       self.song = Some( song );
     }
     // Load background animation

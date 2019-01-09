@@ -68,13 +68,17 @@ impl GameState {
   }
 
   pub fn init(&mut self, _ctx: &mut Context) -> GameResult<()> {
-    self.title_song.play()?;
+    if !MUTED {
+      self.title_song.play()?;
+    }
     Ok(())
   }
 
   fn update_ingame(&mut self, ctx: &mut Context) -> GameResult<()> {
     if self.level_manager.to_title {
-      self.title_song.play()?;  // TODO: Doesnt play song?
+      if !MUTED {
+        self.title_song.play()?;  // TODO: Doesnt play song?
+      }
       self.level_manager.to_title = false;
       self.scene = Scene::Title;
     }
