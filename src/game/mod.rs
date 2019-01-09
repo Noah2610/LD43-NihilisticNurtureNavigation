@@ -37,7 +37,7 @@ pub struct GameState {
   running:       bool,
   last_update:   Instant,
   scene:         Scene,
-  title_song:    audio::Source,
+  title_song:    Option<audio::Source>,
   fps:           FramesCounter,
   ups:           FramesCounter,
 
@@ -46,10 +46,6 @@ pub struct GameState {
 
 impl GameState {
   pub fn new(ctx: &mut Context, window_size: Size) -> GameResult<Self> {
-    let mut title_song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.ogg"))?;
-    title_song.set_volume(0.5);
-    title_song.set_repeat(true);
-
     Ok(Self {
       window_size:   window_size.clone(),
       window_rect:   Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft),
@@ -59,7 +55,7 @@ impl GameState {
       last_update:   Instant::now(),
       menu_manager:  TitleMenuManager::new(ctx, window_size.clone())?,
       scene:         Scene::Title,
-      title_song:    title_song,
+      title_song:    None,
       fps:           FramesCounter::new(),
       ups:           FramesCounter::new(),
 
@@ -67,18 +63,35 @@ impl GameState {
     })
   }
 
-  pub fn init(&mut self, _ctx: &mut Context) -> GameResult<()> {
+  pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.play_song(ctx)?;
+    Ok(())
+  }
+
+  fn play_song(&mut self, ctx: &mut Context) -> GameResult<()> {
     if !MUTED {
-      self.title_song.play()?;
+      if let Some(song) = &mut self.title_song {
+        song.stop();
+      }
+      let mut title_song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.ogg"))?;
+      title_song.set_volume(0.5);
+      title_song.set_repeat(true);
+      title_song.play()?;
+      self.title_song = Some(title_song);
     }
     Ok(())
   }
 
+  fn stop_song(&mut self) {
+    if let Some(song) = &mut self.title_song {
+      song.stop();
+    }
+    self.title_song = None;
+  }
+
   fn update_ingame(&mut self, ctx: &mut Context) -> GameResult<()> {
     if self.level_manager.to_title {
-      if !MUTED {
-        self.title_song.play()?;  // TODO: Doesnt play song?
-      }
+      self.play_song(ctx)?;
       self.level_manager.to_title = false;
       self.scene = Scene::Title;
     }
@@ -116,14 +129,14 @@ impl GameState {
   }
 
   fn start_game(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.title_song.stop();
+    self.stop_song();
     self.level_manager.next_level(ctx)?;
     self.scene = Scene::Ingame;
     Ok(())
   }
 
   fn start_level(&mut self, ctx: &mut Context, level_index: usize) -> GameResult<()> {
-    self.title_song.stop();
+    self.stop_song();
     self.level_manager.load_level(ctx, level_index)?;
     self.scene = Scene::Ingame;
     Ok(())
