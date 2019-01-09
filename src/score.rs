@@ -79,6 +79,11 @@ impl Score {
   pub fn saved_child(&mut self, child_type: ChildType) {
     *self.times_saved_children.entry(child_type).or_insert(0) += 1;
   }
+
+  pub fn clear(&mut self) {
+    self.times_saved_player = 0;
+    self.times_saved_children.clear();
+  }
 }
 
 impl From<Vec<&Score>> for Score {

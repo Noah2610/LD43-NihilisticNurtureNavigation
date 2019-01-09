@@ -89,6 +89,7 @@ impl Level {
     self.walls         = walls;
     self.interactables = interactables;
     self.next_level    = false;
+    self.score.clear();
     Ok(())
   }
 
