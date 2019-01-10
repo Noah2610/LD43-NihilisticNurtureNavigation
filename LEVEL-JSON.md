@@ -4,7 +4,8 @@
 {
   "id":       0,
   "color":    "red",
-  "state":    "Active|Inactive|Trigger"
+  "state":    "Active|Inactive|Trigger",
+  "strength": 600.0
 }
 ```
 
