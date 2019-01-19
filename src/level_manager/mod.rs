@@ -71,7 +71,7 @@ impl LevelManager {
     if let Some(start) = self.level_start {
       let dur = Instant::now().duration_since(start);
       let time = TimeBuilder::new()
-        .seconds(dur.as_secs() as u32)
+        .seconds(dur.as_secs())
         .build();
       Some(time)
     } else {
