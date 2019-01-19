@@ -240,6 +240,7 @@ impl LevelManager {
     if self.final_stats_menu.is_some() { return Ok(()); }
     if let Some(level) = &mut self.level {
       level.reset(ctx)?;
+      self.level_start = Some(Instant::now());
     }
     self.paused = false;
     self.stats_menu = None;
