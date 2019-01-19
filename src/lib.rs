@@ -2,6 +2,8 @@ extern crate rand;
 extern crate json;
 extern crate ggez;
 extern crate noframe;
+#[macro_use]
+extern crate climer;
 
 mod settings;
 mod game;

@@ -1,6 +1,7 @@
 mod helpers;
 
 use std::collections::hash_map::HashMap;
+use std::time::{ Instant, Duration };
 
 use ggez::{
   GameResult,
@@ -9,6 +10,7 @@ use ggez::{
   audio,
 };
 use noframe::geo::prelude::*;
+use climer::time::{ Time, TimeBuilder };
 
 use self::helpers::*;
 use level::Level;
@@ -38,6 +40,8 @@ pub struct LevelManager {
   final_stats_menu: Option<StatsMenu>,
   pub to_title:     bool,
   pub beat_game:    bool,
+
+  level_start:      Option<Instant>,
 }
 
 impl LevelManager {
@@ -58,6 +62,20 @@ impl LevelManager {
       final_stats_menu: None,
       to_title:         false,
       beat_game:        false,
+
+      level_start:      None,
+    }
+  }
+
+  pub fn time(&self) -> Option<impl std::fmt::Display> {
+    if let Some(start) = self.level_start {
+      let dur = Instant::now().duration_since(start);
+      let time = TimeBuilder::new()
+        .seconds(dur.as_secs() as u32)
+        .build();
+      Some(time)
+    } else {
+      None
     }
   }
 
@@ -115,6 +133,9 @@ impl LevelManager {
     } else {
       self.beat_final_level(ctx)?;
     }
+
+    self.level_start = Some(Instant::now());
+
     Ok(())
   }
 
