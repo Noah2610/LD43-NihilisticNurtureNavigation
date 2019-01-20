@@ -1,12 +1,14 @@
 use ggez::{
   Context,
   GameResult,
+  audio,
 };
 
 use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
 use noframe::geo::mask::misc::Side;
 
+use settings::res;
 use settings::interactables::jump_pad::*;
 use animation::Animation;
 use animation::Facing;
@@ -44,7 +46,9 @@ pub struct JumpPad {
   state:       State,
   animations:  JumpPadAnimations,
   intersected: Vec<IdType>,
-  id:          IdType
+  id:          IdType,
+
+  sfx:         Option<audio::Source>,
 }
 
 impl JumpPad {
@@ -56,7 +60,9 @@ impl JumpPad {
       state,
       animations:  JumpPadAnimations::new(ctx, color),
       intersected: Vec::new(),
-      id
+      id,
+
+      sfx: None,
     }
   }
 
@@ -147,7 +153,12 @@ impl Interactable for JumpPad {
     self.intersected.remove(index);
   }
 
-  fn trigger<T: Person>(&mut self, person: &mut T) {
+  fn trigger<T: Person>(&mut self, ctx: &mut Context, person: &mut T) {
+    self.sfx = Some(audio::Source::new(ctx, ::join_str(res::AUDIO, "sfx/lenge_long.wav")).expect("Load sfx"));
+    if let Some(sfx) = &mut self.sfx {
+      sfx.play().expect("Play sfx");
+    }
+
     match self.state {
       State::Active | State::Trigger => {
         self.state = State::Trigger;

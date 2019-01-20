@@ -72,7 +72,7 @@ impl Interactable for Solidifier {
     self.intersected.remove(index);
   }
 
-  fn trigger<T: Person>(&mut self, person: &mut T) {
+  fn trigger<T: Person>(&mut self, _ctx: &mut Context, person: &mut T) {
     person.solidify();
   }
 }

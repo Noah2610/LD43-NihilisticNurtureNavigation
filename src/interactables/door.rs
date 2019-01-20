@@ -140,7 +140,7 @@ impl Interactable for Door {
     self.intersected.remove(index);
   }
 
-  fn trigger<T: Person>(&mut self, _person: &mut T) {
+  fn trigger<T: Person>(&mut self, _ctx: &mut Context, _person: &mut T) {
     match self.state {
       State::Open   => self.state = State::Closing,
       State::Closed => self.state = State::Opening,

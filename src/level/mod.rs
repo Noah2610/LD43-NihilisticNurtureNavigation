@@ -208,13 +208,13 @@ impl Level {
     for i in 0 .. self.interactables.switches.len() {
       { let mut switch = &mut self.interactables.switches[i];
         if switch.intersects(&self.player) {
-          switch.trigger_once(&mut self.player);
+          switch.trigger_once(ctx, &mut self.player);
         } else {
           switch.set_intersected(&self.player, false);
         }
         for child in &mut self.children {
           if switch.intersects(child) {
-            switch.trigger_once(child);
+            switch.trigger_once(ctx, child);
           } else {
             switch.set_intersected(&*child, false);
           }
@@ -230,13 +230,13 @@ impl Level {
         jump_pad.toggle_state();
       }
       if jump_pad.intersects_center(&self.player) {
-        jump_pad.trigger_once(&mut self.player);
+        jump_pad.trigger_once(ctx, &mut self.player);
       } else {
         jump_pad.set_intersected(&self.player, false);
       }
       for child in &mut self.children {
         if jump_pad.intersects_center(child) {
-          jump_pad.trigger_once(child);
+          jump_pad.trigger_once(ctx, child);
         } else {
           jump_pad.set_intersected(&*child, false);
         }
@@ -246,7 +246,7 @@ impl Level {
 
     for door in &mut self.interactables.doors {
       if ids_to_trigger.contains(&door.id()) {
-        door.trigger(&mut self.player);  // We don't use the player, but something needs to be passed...
+        door.trigger(ctx, &mut self.player);  // We don't use the player, but something needs to be passed...
       }
       door.update(ctx)?;
     }
@@ -255,11 +255,11 @@ impl Level {
     for solidifier in &mut self.interactables.solidifiers {
       if solidifier.intersects(&self.player) {
         player_in_solidifier = true;
-        solidifier.trigger_once(&mut self.player);
+        solidifier.trigger_once(ctx, &mut self.player);
       }
       for child in &mut self.children {
         if solidifier.intersects(child) {
-          solidifier.trigger_once(child);
+          solidifier.trigger_once(ctx, child);
         }
       }
     }
@@ -269,13 +269,13 @@ impl Level {
 
     if let Some(goal) = &mut self.interactables.goal {
       if goal.intersects(&self.player) {
-        goal.trigger_once(&mut self.player);
+        goal.trigger_once(ctx, &mut self.player);
       } else {
         goal.set_intersected(&self.player, false);
       }
       for child in &mut self.children {
         if goal.intersects(&*child) {
-          goal.trigger_once(child);
+          goal.trigger_once(ctx, child);
         } else {
           goal.set_intersected(&*child, false);
         }

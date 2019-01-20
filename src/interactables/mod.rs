@@ -17,6 +17,7 @@ pub mod prelude {
   pub use super::goal::{ Goal, self };
 }
 
+use ggez::Context;
 use noframe::entity::prelude::*;
 
 use persons::Person;
@@ -26,7 +27,7 @@ pub trait Interactable: Entity {
   fn get_intersected(&self) -> &Vec<IdType>;
   fn add_intersected(&mut self, id: IdType);
   fn rm_intersected_at(&mut self, index: usize);
-  fn trigger<T: Person>(&mut self, person: &mut T);
+  fn trigger<T: Person>(&mut self, ctx: &mut Context, person: &mut T);
 
   fn set_intersected<T: Person>(&mut self, person: &T, state: bool) {
     if state {
@@ -45,9 +46,9 @@ pub trait Interactable: Entity {
       .any( |&p| person.has_id(p) )
   }
 
-  fn trigger_once<T: Person>(&mut self, person: &mut T) {
+  fn trigger_once<T: Person>(&mut self, ctx: &mut Context, person: &mut T) {
     if self.is_intersected(person) { return; }
     self.set_intersected(person, true);
-    self.trigger(person);
+    self.trigger(ctx, person);
   }
 }

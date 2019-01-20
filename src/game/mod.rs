@@ -74,7 +74,8 @@ impl GameState {
       if let Some(song) = &mut self.title_song {
         song.stop();
       }
-      let mut title_song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.ogg"))?;
+      //let mut title_song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"titletheme.ogg"))?;
+      let mut title_song = audio::Source::new(ctx, ::join_str(res::AUDIO, &"sfx/lenge_long.wav"))?;
       title_song.set_volume(0.5);
       title_song.set_repeat(true);
       title_song.play()?;

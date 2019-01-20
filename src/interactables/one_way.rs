@@ -107,5 +107,5 @@ impl Interactable for OneWay {
     self.intersected.remove(index);
   }
 
-  fn trigger<T: Person>(&mut self, _person: &mut T) { }
+  fn trigger<T: Person>(&mut self, _ctx: &mut Context, _person: &mut T) { }
 }

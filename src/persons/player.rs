@@ -1,7 +1,8 @@
 use ggez::{
   GameResult,
   Context,
-  event::Keycode
+  event::Keycode,
+  audio,
 };
 
 use noframe::geo::prelude::*;
@@ -9,6 +10,7 @@ use noframe::entity::prelude::*;
 use noframe::deltatime::Deltatime;
 
 use settings::player::*;
+use settings::res;
 use super::Person;
 use super::Axis;
 use super::AnimState;
@@ -34,7 +36,10 @@ pub struct Player {
   has_jumped:       bool,
   id:               IdType,
   solid:            bool,
-  dt:               Deltatime
+  dt:               Deltatime,
+
+  play_jump_sound:  bool,
+  jump_sound:       Option<audio::Source>,
 }
 
 impl Player {
@@ -55,7 +60,10 @@ impl Player {
       has_jumped:       false,
       id:               generate_id(),
       solid:            false,
-      dt:               Deltatime::new()
+      dt:               Deltatime::new(),
+
+      play_jump_sound:  false,
+      jump_sound:       None,
     }
   }
 
@@ -102,6 +110,7 @@ impl Player {
   }
 
   fn jump(&mut self) {
+    self.play_jump_sound = true;
     if self.is_jumping { return; }
     self.has_jumped = true;
     self.is_jumping = true;
@@ -134,6 +143,19 @@ impl Player {
       _ => WalkDirection::Still,
     };
   }
+
+  fn handle_sfx(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if !self.play_jump_sound {
+      return Ok(());
+    }
+
+    self.play_jump_sound = false;
+    self.jump_sound = Some(audio::Source::new(ctx, ::join_str(res::AUDIO, "sfx/lenge.wav"))?);
+    if let Some(sfx) = &mut self.jump_sound {
+      sfx.play()?;
+    }
+    Ok(())
+  }
 }
 
 impl Mask for Player {
@@ -152,7 +174,8 @@ impl Mask for Player {
 }
 
 impl Entity for Player {
-  fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.handle_sfx(ctx)?;
     self.handle_anim_state();
     self.animations.get_by_state_mut(&self.anim_state).update()?;
     self.handle_decrease_velocity();

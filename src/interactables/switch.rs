@@ -157,7 +157,7 @@ impl Interactable for Switch {
     self.intersected.remove(index);
   }
 
-  fn trigger<T: Person>(&mut self, _person: &mut T) {
+  fn trigger<T: Person>(&mut self, _ctx: &mut Context, _person: &mut T) {
     match &self.state {
       State::On  => self.state = State::TurningOff,
       State::Off => self.state = State::TurningOn,
