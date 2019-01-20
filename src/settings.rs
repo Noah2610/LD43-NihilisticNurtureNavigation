@@ -68,7 +68,7 @@ pub mod interactables {
   pub const IMAGES: &str = "/images/interactables/";
 
   pub mod jump_pad {
-    pub const JUMP_SPEED: f32 = 600.0;
+    pub const JUMP_SPEED: f32 = 650.0;
     // 0.5  => starting (and ending) in center
     // 0.25 => starting 1/4 into it from the left and ending 1/4 before the end
     pub const HITBOX_PERCENT: f32 = 0.4;

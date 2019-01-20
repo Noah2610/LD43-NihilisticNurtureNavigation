@@ -1,4 +1,5 @@
 use std::time::{ Instant, Duration };
+use std::io::{ self, Write };
 
 use ggez::{
   Context,
@@ -144,12 +145,13 @@ impl GameState {
 
   fn update_log(&mut self, ctx: &mut Context) {
     let now = Instant::now();
-    if now - self.last_log > Duration::from_secs(1) {
+    if now - self.last_log > Duration::from_millis(100) {
       // println!("{} UPS / {} FPS",
       //          self.ups.avg(), self.fps.avg());
       if let Scene::Ingame = self.scene {
         if let Some(time) = self.level_manager.time() {
-          println!("{}", time);
+          print!("\r{}", time);
+          io::stdout().flush();
         }
       }
       self.last_log = Instant::now();

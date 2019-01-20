@@ -69,11 +69,7 @@ impl LevelManager {
 
   pub fn time(&self) -> Option<impl std::fmt::Display> {
     if let Some(start) = self.level_start {
-      let dur = Instant::now().duration_since(start);
-      let time = TimeBuilder::new()
-        .seconds(dur.as_secs())
-        .build();
-      Some(time)
+      Some(Time::from(Instant::now().duration_since(start)))
     } else {
       None
     }
