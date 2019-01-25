@@ -47,9 +47,9 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
 
   let mut lvl = Level {
     json_data:   data,
-    window_rect: Rect::new(Point::new(0.0, 0.0), size.clone(), Origin::TopLeft),
+    window_rect: Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft),
     camera:      Camera::new(window_size.clone()),
-    camera_rect: Rect::new(Point::new(0.0, 0.0), size, Origin::TopLeft),
+    camera_rect: Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft),
     player,
     children,
     walls,
