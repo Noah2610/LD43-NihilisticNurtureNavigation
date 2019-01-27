@@ -37,7 +37,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Butt
     .size(back_btn_size)
     .origin(Origin::BottomLeft)
     .button_type(ButtonType::LevelSelectBack)
-    .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+    .animation_from(vec![::join_str(buttons::IMAGES, "return.png")], vec![1000])
     .build().expect("Should build LevelSelectBack Button");
 
   Ok(LEVEL_NAMES.iter().enumerate()

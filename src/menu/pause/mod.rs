@@ -13,6 +13,7 @@ use noframe::geo::prelude::*;
 
 use self::helpers::*;
 use super::prelude::*;
+use animation::Animation;
 use animation::AnimationRect;
 
 pub struct PauseMenu {
@@ -22,17 +23,19 @@ pub struct PauseMenu {
   buttons:      Vec<Button>,
   clicked:      Option<ButtonType>,
   title:        AnimationRect,
+  animation:    Animation,
 }
 
 impl PauseMenu {
   pub fn new(ctx: &mut Context, window_size: Size) -> Self {
     Self {
-      point:     Point::new(0.0, window_size.w),
+      point:     Point::new(0.0, 0.0),
       size:      window_size.clone(),
       origin:    Origin::TopLeft,
       buttons:   new_buttons(ctx, &window_size),
       clicked:   None,
       title:     new_title(ctx, &window_size),
+      animation: new_animation(ctx, &window_size),
     }
   }
 }
@@ -64,10 +67,10 @@ impl Menu for PauseMenu {
     self.buttons.iter_mut().map( |button| button ).collect()
   }
   fn animation(&self) -> Option<&Animation> {
-    None
+    Some(&self.animation)
   }
   fn animation_mut(&mut self) -> Option<&mut Animation> {
-    None
+    Some(&mut self.animation)
   }
   fn clicked(&mut self, btn_type: ButtonType) {
     self.clicked = Some(btn_type);
