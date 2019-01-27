@@ -4,6 +4,8 @@ mod person_animations;
 
 use noframe::geo::prelude::*;
 use noframe::entity::prelude::*;
+use noframe::deltatime::Deltatime;
+
 use gravity::Gravity;
 use id_generator::IdGenerator;
 
@@ -27,7 +29,7 @@ enum WalkDirection {
 }
 
 pub trait Person: Entity + Velocity + Gravity + IdGenerator {
-  fn reset_dt(&mut self);
+  fn reset_dt(&mut self, dt: &Deltatime);
   fn is_solid(&self) -> bool;
   fn solidify(&mut self);
   fn unsolidify(&mut self);

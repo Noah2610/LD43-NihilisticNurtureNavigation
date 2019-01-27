@@ -177,8 +177,8 @@ impl Gravity for Child {
 }
 
 impl Person for Child {
-  fn reset_dt(&mut self) {
-    self.dt.reset();
+  fn reset_dt(&mut self, dt: &Deltatime) {
+    self.dt = dt.clone();
   }
 
   fn moved_axes(&self) -> &Vec<Axis> {

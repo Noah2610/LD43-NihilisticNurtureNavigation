@@ -9,6 +9,7 @@ use ggez::{
   audio,
 };
 use noframe::geo::prelude::*;
+use noframe::deltatime::Deltatime;
 
 use self::helpers::*;
 use level::Level;
@@ -38,6 +39,7 @@ pub struct LevelManager {
   final_stats_menu: Option<StatsMenu>,
   pub to_title:     bool,
   pub beat_game:    bool,
+  dt:               Deltatime,
 }
 
 impl LevelManager {
@@ -58,6 +60,7 @@ impl LevelManager {
       final_stats_menu: None,
       to_title:         false,
       beat_game:        false,
+      dt:               Deltatime::new(),
     }
   }
 
@@ -133,7 +136,7 @@ impl LevelManager {
 
   pub fn keys_pressed(&mut self, _ctx: &mut Context, keys: &Vec<Keycode>) {
     if let Some(level) = &mut self.level {
-      level.keys_pressed(keys);
+      level.keys_pressed(keys, &self.dt);
     }
   }
 
@@ -159,13 +162,13 @@ impl LevelManager {
     }
 
     if let Some(level) = &mut self.level {
-      level.keys_down(keys);
+      level.keys_down(keys, &self.dt);
     }
   }
 
   pub fn keys_up(&mut self, _ctx: &mut Context, keys: &Vec<Keycode>) {
     if let Some(level) = &mut self.level {
-      level.keys_up(keys);
+      level.keys_up(keys, &self.dt);
     }
   }
 
@@ -207,7 +210,7 @@ impl LevelManager {
     if self.stats_menu.is_some() || self.final_stats_menu.is_some() { return; }
     if self.paused {
       if let Some(level) = &mut self.level {
-        level.reset_dt();
+        level.reset_dt(&self.dt);
       }
       self.paused = false;
     } else {
@@ -233,6 +236,7 @@ impl LevelManager {
     self.update_stats_menu(ctx)?;
     self.update_final_stats_menu()?;
     self.update_level(ctx)?;
+    self.dt.update();
     Ok(())
   }
 
@@ -241,7 +245,7 @@ impl LevelManager {
       return Ok(());
     }
     if let Some(level) = &mut self.level {
-      level.update(ctx)?;
+      level.update(ctx, &self.dt)?;
       if level.next_level {
         self.stats_menu = Some(StatsMenu::new(ctx, self.window_size.clone(), level.score().clone(), false)?);
       }

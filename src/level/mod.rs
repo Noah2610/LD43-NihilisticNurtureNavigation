@@ -101,20 +101,20 @@ impl Level {
     &mut self.camera
   }
 
-  pub fn keys_pressed(&mut self, keycodes: &Vec<Keycode>) {
+  pub fn keys_pressed(&mut self, keycodes: &Vec<Keycode>, dt: &Deltatime) {
     for key in keycodes {
       match key {
-        Keycode::Up    => self.camera.point_mut().add(&Point::new(0.0, -CAMERA_SPEED * self.dt.secs())),
-        Keycode::Down  => self.camera.point_mut().add(&Point::new(0.0,  CAMERA_SPEED * self.dt.secs())),
-        Keycode::Left  => self.camera.point_mut().add(&Point::new(-CAMERA_SPEED * self.dt.secs(), 0.0)),
-        Keycode::Right => self.camera.point_mut().add(&Point::new( CAMERA_SPEED * self.dt.secs(), 0.0)),
+        Keycode::Up    => self.camera.point_mut().add(&Point::new(0.0, -CAMERA_SPEED * dt.secs())),
+        Keycode::Down  => self.camera.point_mut().add(&Point::new(0.0,  CAMERA_SPEED * dt.secs())),
+        Keycode::Left  => self.camera.point_mut().add(&Point::new(-CAMERA_SPEED * dt.secs(), 0.0)),
+        Keycode::Right => self.camera.point_mut().add(&Point::new( CAMERA_SPEED * dt.secs(), 0.0)),
         _              => ()
       };
     }
     self.player.keys_pressed(keycodes);
   }
 
-  pub fn keys_down(&mut self, keycodes: &Vec<Keycode>) {
+  pub fn keys_down(&mut self, keycodes: &Vec<Keycode>, dt: &Deltatime) {
     for &key in keycodes {
       self.player.key_down(&key);
       match key {
@@ -125,7 +125,7 @@ impl Level {
     }
   }
 
-  pub fn keys_up(&mut self, keycodes: &Vec<Keycode>) {
+  pub fn keys_up(&mut self, keycodes: &Vec<Keycode>, dt: &Deltatime) {
     for key in keycodes {
       self.player.key_up(key);
     }
@@ -153,11 +153,12 @@ impl Level {
     &self.level_name
   }
 
-  pub fn reset_dt(&mut self) {
-    self.dt.reset();
-    self.player.reset_dt();
+  pub fn reset_dt(&mut self, dt: &Deltatime) {
+    //self.dt.reset();
+    self.dt = dt.clone();
+    self.player.reset_dt(dt);
     self.children.iter_mut()
-      .for_each( |child| child.reset_dt() );
+      .for_each( |child| child.reset_dt(dt) );
   }
 
   fn add_score(&mut self) {
@@ -193,12 +194,12 @@ impl Level {
     }
   }
 
-  pub fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+  pub fn update(&mut self, ctx: &mut Context, dt: &Deltatime) -> GameResult<()> {
     self.update_interactables(ctx)?;
     self.update_children(ctx)?;
     self.update_player(ctx)?;
     self.update_toolbox()?;
-    self.dt.update();
+    //self.dt.update();
     Ok(())
   }
 
