@@ -399,6 +399,9 @@ impl Level {
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if let Some(goal) = &mut self.interactables.goal {
+      self.camera.draw(ctx, goal)?;
+    }
     self.draw_walls(ctx)?;
     self.draw_children(ctx)?;
     self.draw_player(ctx)?;

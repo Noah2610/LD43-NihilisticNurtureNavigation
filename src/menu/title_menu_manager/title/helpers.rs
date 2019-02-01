@@ -17,8 +17,8 @@ pub fn new_animation(ctx: &mut Context) -> Animation {
 
 pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
   let offset_y = 64.0;
-  let padding = 128.0;
-  let size = Size::new(128.0, 64.0);
+  let padding = 64.0;
+  let size = Size::new(64.0, 64.0);
 
   let mut btns = Vec::new();
 

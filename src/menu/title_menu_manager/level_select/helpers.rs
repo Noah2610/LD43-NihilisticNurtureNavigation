@@ -21,15 +21,15 @@ pub fn new_animation(ctx: &mut Context, _window_size: &Size) -> Animation {
 }
 
 pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Button>> {
-  let columns = 2.0;
+  let columns = 3.0;
   let window_rect = Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft);
-  let padding          = 8.0;
+  let padding          = 32.0;  //8.0;
   let border_padding   = 32.0;
-  let size             = Size::new((window_size.w - border_padding * 2.0 - padding * (columns - 1.0)) / (columns), 32.0);
+  let size             = Size::new((window_size.w - border_padding * 2.0 - padding * (columns - 1.0)) / (columns), 72.0 /*32.0*/);
   let back_btn_size    = Size::new(128.0, 64.0);
   let initial_top_left = Point::new(border_padding, border_padding);
   let font             = Font::new_px(ctx, fonts::DEFAULT, FONT_SIZE)?;
-  let text_offset      = Point::new(padding, size.h * 0.5);
+  let text_offset      = Point::new(/*padding*/ 128.0, size.h * 0.5);
   let entries_per_col  = ((window_size.h - back_btn_size.h - border_padding * 3.0) / (size.h + padding)) as usize;
 
   let back_button = ButtonBuilder::new(ctx)
@@ -52,7 +52,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Butt
           .size(size.clone())
           .origin(Origin::TopLeft)
           .button_type(ButtonType::LevelSelectLevel(i))
-          .animation_from(vec![::join_str(buttons::IMAGES, "gray.png")], vec![1000])
+          .animation_from(vec![::join_str(buttons::IMAGES, "level_select1.png")], vec![1000])
           .text_from(
             top_left + text_offset.clone(),
             Size::new(text.width() as NumType, text.height() as NumType),

@@ -9,7 +9,7 @@ use animation::prelude::*;
 
 pub fn new_animation(ctx: &mut Context, window_size: &Size) -> Animation {
   Animation::new(ctx,
-                 vec![::join_str(menus::IMAGES, "pause.png")],
+                 vec![::join_str(menus::IMAGES, "pause_opaque.png")],
                  vec![1000])
 }
 

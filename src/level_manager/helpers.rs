@@ -9,7 +9,7 @@ pub fn new_background(ctx: &mut Context, n: usize) -> Option<Animation> {
   match n {
     _ => Some(Animation::new(
         ctx,
-        vec![::join_str(res::BACKGROUND_IMAGES, "default.png")],
+        vec![::join_str(res::BACKGROUND_IMAGES, "bg4.png")],
         vec![1000]
     ))
   }
