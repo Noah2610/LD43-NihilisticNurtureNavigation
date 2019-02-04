@@ -22,6 +22,7 @@ pub enum Axis {
   Y
 }
 
+#[derive(PartialEq)]
 enum WalkDirection {
   Still,
   Left,
@@ -39,9 +40,11 @@ pub trait Person: Entity + Velocity + Gravity + IdGenerator {
   fn clear_moved_axes(&mut self);
   fn speed_decrease(&self) -> Point;
 
+  // NOTE: This is a very bad method...
   fn on_floor(&self) -> bool {
-    let range = 0.0 .. self.gravity_increase().y;
-    self.velocity().y >= range.start && self.velocity().y <= range.end  // Inclusive end
+    let range = 0.0 .. self.gravity_increase().y * 2.0;
+    let vel_y = self.velocity().y;
+    vel_y >= range.start && vel_y <= range.end  // Inclusive end
   }
 
   fn moved_on_axis(&mut self, axis: Axis) {

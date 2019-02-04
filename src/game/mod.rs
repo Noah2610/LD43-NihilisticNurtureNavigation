@@ -151,6 +151,22 @@ impl GameState {
     self.menu_manager.draw(ctx)?;
     Ok(())
   }
+
+  // TODO: TEMPORARY, FOR DEBUGGING
+  fn update_debug(&mut self) {
+    let now = Instant::now();
+    if now - self.last_log > Duration::from_secs(1) {
+      println!("{} UPS / {} FPS",
+               self.ups.avg(), self.fps.avg());
+      self.last_log = now;
+    }
+    // TODO: TEMPORARY ARTIFICIAL LAG!!!
+    for keycode in self.input_manager.keys_pressed() {
+      if let Keycode::O = keycode {
+        std::thread::sleep(Duration::new(0, 50_000_000));
+      }
+    }
+  }
 }
 
 impl event::EventHandler for GameState {
@@ -200,11 +216,8 @@ impl event::EventHandler for GameState {
       return Ok(());
     }
 
-    if now - self.last_log > Duration::from_secs(1) {
-      println!("{} UPS / {} FPS",
-               self.ups.avg(), self.fps.avg());
-      self.last_log = Instant::now();
-    }
+    // TODO: TEMPORARY, FOR DEBUGGING
+    self.update_debug();
 
     match self.scene {
       Scene::Title  => self.update_menu(ctx)?,

@@ -268,6 +268,7 @@ impl Level {
       self.player.unsolidify();
     }
 
+    // Check if persons intersect with goal
     if let Some(goal) = &mut self.interactables.goal {
       if goal.intersects_round(&self.player) {
         goal.trigger_once(&mut self.player);
@@ -275,7 +276,7 @@ impl Level {
         goal.set_intersected(&self.player, false);
       }
       for child in &mut self.children {
-        if goal.intersects_round(&*child) {
+        if child.is_not_walking() && goal.intersects_round(&*child) {
           goal.trigger_once(child);
         } else {
           goal.set_intersected(&*child, false);

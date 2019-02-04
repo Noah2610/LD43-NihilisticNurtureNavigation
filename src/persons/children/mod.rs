@@ -64,6 +64,14 @@ impl Child {
     }
   }
 
+  pub fn is_not_walking(&self) -> bool {
+    WalkDirection::Still == self.walk_direction && self.velocity.x == 0.0 && self.on_floor()
+  }
+
+  pub fn is_walking(&self) -> bool {
+    !self.is_not_walking()
+  }
+
   pub fn walk_right(&mut self) {
     if let WalkDirection::Still = self.walk_direction {
       self.walk_direction = WalkDirection::Right;
