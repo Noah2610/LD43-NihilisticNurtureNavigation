@@ -309,13 +309,18 @@ impl Level {
         })
       };
       let child = &mut self.children[i];
-      if child.velocity().x != 0.0 && new_pos.x == child.point().x {
+      // Stop walking when hitting a wall
+      if child.velocity().x != 0.0 && new_pos.x == child.point().x
+        // && child.on_floor()  // while walking on the floor  // TODO
+      {
         child.set_velocity_x(0.0);
         child.stop_walking();
       }
+      // Kill y velocity when standing on floor
       if child.velocity().y != 0.0 && new_pos.y == child.point().y {
         child.set_velocity_y(0.0);
       }
+      // Move to new position
       if &new_pos != child.point() {
         child.point_mut().set(&new_pos);
       }

@@ -12,7 +12,7 @@ pub mod game {
   pub const BG_COLOR: Color = [0.33, 0.33, 0.33, 1.0];
   pub const UPS: f32 = 60.0;
   pub const UPDATE_INTERVAL_MS: u64 = (1.0 / UPS * 1000.0) as u64;
-  pub const MUTED: bool = false;
+  pub const MUTED: bool = true;
 }
 
 pub mod res {
@@ -111,7 +111,7 @@ pub mod level {
 pub mod level_manager {
   pub const AUDIO_FORMAT: &str = "ogg";
   pub const LEVEL_NAMES: [&'static str; 10] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
-  pub const SONG_NAMES:  [&'static str; 10] = ["ingame_1", "ingame_2.5", "ingame_3", "ingame_2", "ingame_1", "ingame_2", "ingame_4", "ingame_3", "ingame_1", "ingame_2"];
+  pub const SONG_NAMES:  [&'static str; 10] = ["ingame_1", "ingame_2.5", "ingame_3", "ingame_4", "ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_4", "ingame_1"];
 
 
 
