@@ -9,7 +9,7 @@ use std::time::{ Instant, Duration };
 use ggez::{
   GameResult,
   Context,
-  graphics::{ self, Image }
+  graphics::{ self, Image, FilterMode }
 };
 
 use noframe::geo::prelude::*;
@@ -50,7 +50,9 @@ pub struct Animation {
 impl Animation {
   pub fn new(ctx: &mut Context, image_filepaths: Vec<String>, image_update_intervals_ms: Vec<u64>) -> Self {
     let images = image_filepaths.iter().map( |filepath| {
-      Image::new(ctx, filepath).expect(&format!("Couldn't load image: {}", filepath))
+      let mut img = Image::new(ctx, filepath).expect(&format!("Couldn't load image: {}", filepath));
+      img.set_filter(FilterMode::Nearest);
+      img
     }).collect::<Vec<Image>>();
 
     Self {

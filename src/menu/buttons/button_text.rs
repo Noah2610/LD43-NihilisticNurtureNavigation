@@ -5,7 +5,7 @@ pub mod prelude {
 use ggez::{
   GameResult,
   Context,
-  graphics::{ self, Point2, Text },
+  graphics::{ self, Point2, Text, FilterMode },
 };
 use noframe::geo::prelude::*;
 
@@ -17,7 +17,8 @@ pub struct ButtonText {
 }
 
 impl ButtonText {
-  pub fn new(point: Point, size: Size, origin: Origin, text: Text) -> Self {
+  pub fn new(point: Point, size: Size, origin: Origin, mut text: Text) -> Self {
+    text.set_filter(FilterMode::Nearest);
     Self {
       point,
       size,
