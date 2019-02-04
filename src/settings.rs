@@ -3,7 +3,8 @@ pub mod meta {
   pub const NAME:         &str = "Nihilistic Nurture Navigation";
   pub const WINDOW_TITLE: &str = NAME;
   pub const AUTHORS:      &str = "noahro, hoichael, williwiderstand";
-  pub const WINDOW_SIZE:  Size = Size { w: 1280.0, h: 720.0 };
+  //pub const WINDOW_SIZE:  Size = Size { w: 1280.0, h: 720.0 };
+  pub const WINDOW_SIZE:  Size = Size { w: 1542.0, h: 900.0 };
 }
 
 pub mod game {
@@ -110,7 +111,7 @@ pub mod level {
 pub mod level_manager {
   pub const AUDIO_FORMAT: &str = "ogg";
   pub const LEVEL_NAMES: [&'static str; 10] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
-  pub const SONG_NAMES:  [&'static str; 10] = ["ingame_1", "ingame_2.5", "ingame_3", "ingame_2", "ingame_1", "ingame_2", "ingame_2.5", "ingame_3", "ingame_1", "ingame_2"];
+  pub const SONG_NAMES:  [&'static str; 10] = ["ingame_1", "ingame_2.5", "ingame_3", "ingame_2", "ingame_1", "ingame_2", "ingame_4", "ingame_3", "ingame_1", "ingame_2"];
 
 
 

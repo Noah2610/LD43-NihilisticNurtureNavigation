@@ -208,13 +208,13 @@ impl Level {
 
     for i in 0 .. self.interactables.switches.len() {
       { let mut switch = &mut self.interactables.switches[i];
-        if switch.intersects(&self.player) {
+        if switch.intersects_round(&self.player) {
           switch.trigger_once(&mut self.player);
         } else {
           switch.set_intersected(&self.player, false);
         }
         for child in &mut self.children {
-          if switch.intersects(child) {
+          if switch.intersects_round(child) {
             switch.trigger_once(child);
           } else {
             switch.set_intersected(&*child, false);
@@ -254,12 +254,12 @@ impl Level {
 
     let mut player_in_solidifier = false;
     for solidifier in &mut self.interactables.solidifiers {
-      if solidifier.intersects(&self.player) {
+      if solidifier.intersects_round(&self.player) {
         player_in_solidifier = true;
         solidifier.trigger_once(&mut self.player);
       }
       for child in &mut self.children {
-        if solidifier.intersects(child) {
+        if solidifier.intersects_round(child) {
           solidifier.trigger_once(child);
         }
       }
@@ -269,13 +269,13 @@ impl Level {
     }
 
     if let Some(goal) = &mut self.interactables.goal {
-      if goal.intersects(&self.player) {
+      if goal.intersects_round(&self.player) {
         goal.trigger_once(&mut self.player);
       } else {
         goal.set_intersected(&self.player, false);
       }
       for child in &mut self.children {
-        if goal.intersects(&*child) {
+        if goal.intersects_round(&*child) {
           goal.trigger_once(child);
         } else {
           goal.set_intersected(&*child, false);
@@ -289,7 +289,7 @@ impl Level {
 
   fn update_children(&mut self, ctx: &mut Context) -> GameResult<()> {
     for i in 0 .. self.children.len() {
-      let new_pos = {
+      let mut new_pos = {
         let child = &self.children[i];
         child.get_move_while( |rect| {
           let intersects_wall = self.walls.iter().any( |wall| {
