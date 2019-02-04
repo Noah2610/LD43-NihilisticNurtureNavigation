@@ -1,0 +1,6 @@
+#!/bin/bash
+which cargo-watch &> /dev/null || exit 1
+cargo watch -c \
+  -s "bin/build --release" \
+  -i "resources/**" \
+  -i "bin/*"
