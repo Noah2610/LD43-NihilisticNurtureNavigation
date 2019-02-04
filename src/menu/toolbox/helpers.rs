@@ -2,9 +2,11 @@ use ggez::Context;
 use noframe::geo::prelude::*;
 
 use settings::buttons;
+use settings::child;
 use menu::buttons::prelude::*;
 use super::Closeup;
 use animation::Animation;
+use persons::children::ChildType;
 
 pub fn new_next_level_button(ctx: &mut Context, point: &Point, size: &Size) -> Button {
   ButtonBuilder::new(ctx)
@@ -16,15 +18,33 @@ pub fn new_next_level_button(ctx: &mut Context, point: &Point, size: &Size) -> B
     .build().expect("Should build NextLevel Button")
 }
 
-pub fn new_buttons(ctx: &mut Context, point: &Point) -> Vec<Button> {
-  let offset_x = 128.0;
+pub fn new_buttons(ctx: &mut Context, point: &Point, children: &Vec<ChildType>) -> Vec<Button> {
+  use self::ChildType::*;
+  use self::ButtonType::*;
 
-  [
-    ButtonType::LarryLeft, ButtonType::LarryRight,
-    ButtonType::ThingLeft, ButtonType::ThingRight,
-    ButtonType::BloatLeft, ButtonType::BloatRight,
-  ].iter().enumerate().map( |(i, button_type)| {
-    let x = 32.0 + offset_x * i as NumType;
+  let spacing = 128.0;
+  let offset  = 32.0;
+
+  let mut button_types = Vec::new();
+  for child_type in children {
+    match child_type {
+      Larry => {
+        button_types.push(LarryLeft);
+        button_types.push(LarryRight);
+      }
+      Thing => {
+        button_types.push(ThingLeft);
+        button_types.push(ThingRight);
+      }
+      Bloat => {
+        button_types.push(BloatLeft);
+        button_types.push(BloatRight);
+      }
+    }
+  }
+
+  button_types.iter().enumerate().map( |(i, button_type)| {
+    let x = offset + spacing * i as NumType;
     if i % 2 == 0 {
       ButtonBuilder::new(ctx)
         .point_from(x, point.y)
@@ -45,31 +65,35 @@ pub fn new_buttons(ctx: &mut Context, point: &Point) -> Vec<Button> {
   }).collect()
 }
 
-pub fn new_closeups(ctx: &mut Context, point: &Point) -> Vec<Closeup> {
-  vec![
+pub fn new_closeups(ctx: &mut Context, point: &Point, children: &Vec<ChildType>) -> Vec<Closeup> {
+  use self::ChildType::*;
+
+  let offset  = 96.0;
+  let spacing = 256.0;
+
+  children.iter().enumerate().map( |(i, child_type)| {
+    let x = offset + spacing * i as NumType;
+    let (images, intervals) = match child_type {
+      Larry => (
+        vec![::join_str(child::IMAGES, "larry_closeup_v2.png")],
+        vec![1000]
+      ),
+      Thing => (
+        vec![::join_str(child::IMAGES, "child_2_closeup.png")],
+        vec![1000]
+      ),
+      Bloat => (
+        vec![::join_str(child::IMAGES, "child_3_closeup.png")],
+        vec![1000]
+      ),
+    };
     Closeup::new(
-      Point::new(96.0, point.y),
+      Point::new(x, point.y),
       Animation::new(
         ctx,
-        vec![::join_str(::settings::child::IMAGES, "larry_closeup_v2.png")],
-        vec![1000]
-      )
-    ),
-    Closeup::new(
-      Point::new(352.0, point.y),
-      Animation::new(
-        ctx,
-        vec![::join_str(::settings::child::IMAGES, "child_2_closeup.png")],
-        vec![1000]
-      )
-    ),
-    Closeup::new(
-      Point::new(608.0, point.y),
-      Animation::new(
-        ctx,
-        vec![::join_str(::settings::child::IMAGES, "child_3_closeup.png")],
-        vec![1000]
+        images,
+        intervals
       )
     )
-      ]
+  }).collect()
 }

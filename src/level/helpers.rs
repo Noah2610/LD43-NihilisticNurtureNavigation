@@ -44,6 +44,12 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
   } else { panic!("Level JSON size (root) attribute not present") };
 
   let (player, children, walls, interactables) = load_json(ctx, &data)?;
+  let toolbox = ToolboxMenu::new(
+    ctx,
+    Point::new(0.0, window_size.h - 96.0),
+    Size::new(window_size.w, 64.0),
+    children.iter().map( |c| c.child_type.clone() ).collect()
+  );
 
   let mut lvl = Level {
     json_data:   data,
@@ -54,7 +60,7 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
     children,
     walls,
     interactables,
-    toolbox:     ToolboxMenu::new(ctx, Point::new(0.0, window_size.h - 96.0), Size::new(window_size.w, 64.0)),
+    toolbox,
     next_level:  false,
     font,
     level_name,

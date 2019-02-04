@@ -15,6 +15,7 @@ use super::buttons::Button;
 use super::ButtonType;
 use animation::Animation;
 use animation::Facing;
+use persons::children::ChildType;
 
 pub struct Closeup {
   pub point:     Point,
@@ -51,7 +52,7 @@ pub struct ToolboxMenu {
 }
 
 impl ToolboxMenu {
-  pub fn new(ctx: &mut Context, point: Point, size: Size) -> Self {
+  pub fn new(ctx: &mut Context, point: Point, size: Size, children: Vec<ChildType>) -> Self {
     Self {
       point:                   point.clone(),
       size:                    size.clone(),
@@ -61,9 +62,9 @@ impl ToolboxMenu {
       font:                    graphics::Font::new(ctx, ::join_str(res::FONTS, "vcr_osd_mono.ttf"), TO_SAVE_FONT_SIZE).expect("Should load font"),
       to_save_text:            None,
       next_level_button:       new_next_level_button(ctx, &point, &size),
-      buttons:                 new_buttons(ctx, &point),
+      buttons:                 new_buttons(ctx, &point, &children),
       clicked:                 None,
-      closeups:                new_closeups(ctx, &point),
+      closeups:                new_closeups(ctx, &point, &children),
     }
   }
 
