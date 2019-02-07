@@ -18,7 +18,7 @@ use id_generator::IdType;
 use interactables::prelude::*;
 use persons::player::Player;
 use persons::children::{ Child, ChildType };
-use wall::Wall;
+use wall::{ Wall, Walls };
 use menu::toolbox::ToolboxMenu;
 use score::prelude::*;
 
@@ -77,10 +77,10 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
   Ok(lvl)
 }
 
-pub fn load_json(ctx: &mut Context, data: &json::JsonValue) -> GameResult<(Player, Vec<Child>, Vec<Wall>, InteractablesContainer)> {
+pub fn load_json(ctx: &mut Context, data: &json::JsonValue) -> GameResult<(Player, Vec<Child>, Walls, InteractablesContainer)> {
   let mut player_opt = None;
   let mut children = Vec::new();
-  let mut walls = Vec::new();
+  let mut walls = Walls::new(ctx);
   let mut interactables = InteractablesContainer::new();
 
   data["instances"].members().for_each( |data| {

@@ -18,7 +18,7 @@ use settings::level::*;
 use persons::Person;
 use persons::player::Player;
 use persons::children::{ Child, ChildType };
-use wall::Wall;
+use wall::{ Wall, Walls };
 use interactables::prelude::*;
 use id_generator::prelude::*;
 use menu::Menu;
@@ -59,7 +59,7 @@ pub struct Level {
   camera_rect:     Rect,
   player:          Player,
   children:        Vec<Child>,
-  walls:           Vec<Wall>,
+  walls:           Walls,
   interactables:   InteractablesContainer,
   toolbox:         ToolboxMenu,
   pub next_level:  bool,
@@ -293,7 +293,7 @@ impl Level {
       let mut new_pos = {
         let child = &self.children[i];
         child.get_move_while( |rect| {
-          let intersects_wall = self.walls.iter().any( |wall| {
+          let intersects_wall = self.walls.walls.iter().any( |wall| {
             rect.intersects_round(wall)
           });
           let intersects_door = self.interactables.solid_doors().iter().any( |&door| {
@@ -355,7 +355,7 @@ impl Level {
     }
     // Move
     let new_pos = self.player.get_move_while( |rect| {
-      let intersects_wall = self.walls.iter().any( |wall| {
+      let intersects_wall = self.walls.walls.iter().any( |wall| {
         rect.intersects_round(wall)
       });
       let intersects_door = self.interactables.solid_doors().iter().any( |&door| {
@@ -418,9 +418,7 @@ impl Level {
   }
 
   fn draw_walls(&mut self, ctx: &mut Context) -> GameResult<()> {
-    for wall in &self.walls {
-      self.camera.draw(ctx, wall)?;
-    }
+    self.walls.draw_offset(ctx, &self.camera.top_left().inverted())?;
     Ok(())
   }
 
