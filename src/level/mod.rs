@@ -310,12 +310,14 @@ impl Level {
         })
       };
       let child = &mut self.children[i];
-      // Stop walking when hitting a wall
+      // Kill x velocity when hitting a wall
       if child.velocity().x != 0.0 && new_pos.x == child.point().x
-        // && child.on_floor()  // while walking on the floor  // TODO
       {
         child.set_velocity_x(0.0);
-        child.stop_walking();
+        // Stop walking when hitting a wall AND standing on floor
+        if child.on_floor() {
+          child.stop_walking();
+        }
       }
       // Kill y velocity when standing on floor
       if child.velocity().y != 0.0 && new_pos.y == child.point().y {
