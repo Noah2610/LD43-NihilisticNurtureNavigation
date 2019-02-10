@@ -1,0 +1,28 @@
+#!/bin/env ruby
+
+require "pathname"
+require "json"
+
+ROOT = Pathname.new(__FILE__).realpath.dirname.join("..")
+LEVELS_DIR = ROOT.join("resources/levels")
+TARGET_SIZE = {
+  w: 64,
+  h: 12,
+}
+
+LEVELS_DIR.children.each do |file|
+  data = JSON.load file, nil, symbolize_names: true, create_additions: false
+  data[:instances].map! do |instance|
+    if instance[:type] == "JumpPadInteractable"
+      size_diff = {
+        w: instance[:size][:w] - TARGET_SIZE[:w],
+        h: instance[:size][:h] - TARGET_SIZE[:h],
+      }
+      instance[:size] = TARGET_SIZE
+      instance[:position][:x] += size_diff[:w]
+      instance[:position][:y] += size_diff[:h]
+    end
+    next instance
+  end
+  file.write data.to_json
+end
