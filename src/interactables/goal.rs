@@ -13,21 +13,31 @@ use super::animations::goal;
 use persons::Person;
 use id_generator::prelude::*;
 
+#[derive(PartialEq)]
 enum State {
-  Main,
-  Trigger
+  Zero,
+  One,
+  Two,
+  Three,
+  Four,
 }
 
 struct GoalAnimations {
-  pub main:    Animation,
-  pub trigger: Animation
+  pub zero:  Animation,
+  pub one:   Animation,
+  pub two:   Animation,
+  pub three: Animation,
+  pub four:  Animation,
 }
 
 impl GoalAnimations {
   pub fn new(ctx: &mut Context) -> Self {
     Self {
-      main:    goal::new_main_animation(ctx),
-      trigger: goal::new_trigger_animation(ctx),
+      zero:  goal::new_zero_animation(ctx),
+      one:   goal::new_one_animation(ctx),
+      two:   goal::new_two_animation(ctx),
+      three: goal::new_three_animation(ctx),
+      four:  goal::new_four_animation(ctx),
     }
   }
 }
@@ -48,7 +58,7 @@ impl Goal {
       point,
       size,
       origin:      Origin::TopLeft,
-      state:       State::Main,
+      state:       State::Zero,
       animations:  GoalAnimations::new(ctx),
       intersected: Vec::new(),
       id:          generate_id()
@@ -56,16 +66,39 @@ impl Goal {
   }
 
   fn animation(&self) -> &Animation {
+    use self::State::*;
     match self.state {
-      State::Main    => &self.animations.main,
-      State::Trigger => &self.animations.trigger
+      Zero  => &self.animations.zero,
+      One   => &self.animations.one,
+      Two   => &self.animations.two,
+      Three => &self.animations.three,
+      Four  => &self.animations.four,
     }
   }
 
   fn animation_mut(&mut self) -> &mut Animation {
+    use self::State::*;
     match self.state {
-      State::Main    => &mut self.animations.main,
-      State::Trigger => &mut self.animations.trigger
+      Zero  => &mut self.animations.zero,
+      One   => &mut self.animations.one,
+      Two   => &mut self.animations.two,
+      Three => &mut self.animations.three,
+      Four  => &mut self.animations.four,
+    }
+  }
+
+  fn handle_animation(&mut self) {
+    use self::State::*;
+    let new_state = match self.intersected.len() {
+      0 => Zero,
+      1 => One,
+      2 => Two,
+      3 => Three,
+      4 => Four,
+      _ => Zero,
+    };
+    if new_state != self.state {
+      self.state = new_state;
     }
   }
 }
@@ -79,12 +112,7 @@ impl Mask for Goal {
 
 impl Entity for Goal {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-    if let State::Trigger = self.state {
-      if self.animations.trigger.played() > 1 {
-        self.animations.trigger.reset();
-        self.state = State::Main;
-      }
-    }
+    self.handle_animation();
     self.animation_mut().update()?;
     Ok(())
   }
