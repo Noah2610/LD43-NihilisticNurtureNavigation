@@ -44,11 +44,12 @@ pub struct JumpPad {
   state:       State,
   animations:  JumpPadAnimations,
   intersected: Vec<IdType>,
-  id:          IdType
+  id:          IdType,
+  strength:    f32,
 }
 
 impl JumpPad {
-  pub fn new(ctx: &mut Context, point: Point, size: Size, id: IdType, color: &str, state: State) -> Self {
+  pub fn new(ctx: &mut Context, point: Point, size: Size, id: IdType, color: &str, state: State, strength: Option<f32>) -> Self {
     Self {
       point,
       size,
@@ -56,7 +57,8 @@ impl JumpPad {
       state,
       animations:  JumpPadAnimations::new(ctx, color),
       intersected: Vec::new(),
-      id
+      id,
+      strength:    strength.unwrap_or(JUMP_SPEED),
     }
   }
 
@@ -152,7 +154,7 @@ impl Interactable for JumpPad {
       State::Active | State::Trigger => {
         self.state = State::Trigger;
         self.animations.trigger.reset();
-        person.set_velocity_y(-JUMP_SPEED);
+        person.set_velocity_y(-self.strength);
         // person.set_velocity_x(0.0);
         person.stop_walking();
       }

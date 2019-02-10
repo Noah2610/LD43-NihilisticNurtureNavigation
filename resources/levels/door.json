@@ -1,1 +1,0 @@
-{"size":{"w":960,"h":540},"instances":[{"type":"Wall","position":{"x":128,"y":160},"size":{"w":32,"h":32}},{"type":"DoorInteractable","position":{"x":288,"y":288},"size":{"w":32,"h":32},"additional":{"state":"Open"}},{"type":"Player","position":{"x":128,"y":128},"size":{"w":32,"h":32}}]}

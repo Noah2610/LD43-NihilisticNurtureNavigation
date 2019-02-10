@@ -92,7 +92,7 @@ pub fn load_json(ctx: &mut Context, data: &json::JsonValue) -> GameResult<(Playe
       let err_msg = "Couldn't load level JSON data: size";
       Some(Size::new(data["size"]["w"].as_f32().expect(err_msg), data["size"]["h"].as_f32().expect(err_msg)))
     } else { None };
-    let ( state_opt, id_opt, color_opt, triggers_opt ) = if data.has_key("additional") {
+    let ( state_opt, id_opt, color_opt, triggers_opt, strength_opt ) = if data.has_key("additional") {
       (
         if data["additional"].has_key("state") {
           Some( data["additional"]["state"].as_str().expect("Couldn't load level JSON data: state") )
@@ -107,9 +107,12 @@ pub fn load_json(ctx: &mut Context, data: &json::JsonValue) -> GameResult<(Playe
           Some( data["additional"]["triggers"].members()
                 .map( |id| id.as_u32().expect("Couldn't load level JSON data: triggers id") )
                 .collect::<Vec<IdType>>() )
+        } else { None },
+        if data["additional"].has_key("strength") {
+          Some( data["additional"]["strength"].as_f32().expect("Couldn't load level JSON data: strength") )
         } else { None }
       )
-    } else { ( None, None, None, None ) };
+    } else { ( None, None, None, None, None ) };
 
     match data["type"].as_str().expect("Couldn't load level JSON data: type") {
       "Player" => {
@@ -175,7 +178,8 @@ pub fn load_json(ctx: &mut Context, data: &json::JsonValue) -> GameResult<(Playe
             size_opt.expect(err_msg),
             id_opt.expect(err_msg),
             color_opt.expect(err_msg),
-            state
+            state,
+            strength_opt
           )
         );
       }
