@@ -68,6 +68,10 @@ impl Child {
     WalkDirection::Still == self.walk_direction && self.velocity.x == 0.0 && self.on_floor()
   }
 
+  pub fn state_is_still(&self) -> bool {
+    WalkDirection::Still == self.walk_direction
+  }
+
   pub fn is_walking(&self) -> bool {
     !self.is_not_walking()
   }

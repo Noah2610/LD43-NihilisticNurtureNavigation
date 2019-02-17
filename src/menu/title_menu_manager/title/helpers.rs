@@ -23,7 +23,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
   let mut btns = Vec::new();
 
   btns.push(ButtonBuilder::new(ctx)
-            .point(window_size.center() + Point::new(0.0, offset_y))
+            .point(window_size.center() + Point::new(size.w + padding, offset_y))
             .size(size.clone())
             .origin(Origin::Center)
             .button_type(ButtonType::TitleStart)
@@ -31,7 +31,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
             .animation_from(vec![::join_str(buttons::IMAGES, "play.png")], vec![1000])
             .build().expect("Should build TitleStart Button"));
   btns.push(ButtonBuilder::new(ctx)
-            .point(window_size.center() + Point::new(size.w + padding, offset_y))
+            .point(window_size.center() + Point::new(0.0, offset_y))
             .size(size.clone())
             .origin(Origin::Center)
             .button_type(ButtonType::TitleLevelSelect)
@@ -42,7 +42,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
             .size(size.clone())
             .origin(Origin::Center)
             .button_type(ButtonType::TitleQuit)
-            .animation_from(vec![::join_str(buttons::IMAGES, "return.png")], vec![1000])
+            .animation_from(vec![::join_str(buttons::IMAGES, "exit.png")], vec![1000])
             .build().expect("Should build TitleQuit Button"));
 
   btns

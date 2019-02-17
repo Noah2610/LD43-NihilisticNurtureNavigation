@@ -276,7 +276,7 @@ impl Level {
         goal.set_intersected(&self.player, false);
       }
       for child in &mut self.children {
-        if child.is_not_walking() && goal.intersects_round(&*child) {
+        if child.state_is_still() && goal.intersects_round(&*child) {
           goal.trigger_once(child);
         } else {
           goal.set_intersected(&*child, false);

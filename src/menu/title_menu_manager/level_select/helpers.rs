@@ -15,7 +15,7 @@ use menu::prelude::*;
 pub fn new_animation(ctx: &mut Context, _window_size: &Size) -> Animation {
   Animation::new(
     ctx,
-    vec![::join_str(menus::IMAGES, "title.png")],
+    vec![::join_str(buttons::IMAGES, "black.png")],
     vec![1000]
   )
 }
@@ -25,8 +25,8 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Butt
   let window_rect = Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft);
   let padding          = 32.0;  //8.0;
   let border_padding   = 32.0;
-  let size             = Size::new((window_size.w - border_padding * 2.0 - padding * (columns - 1.0)) / (columns), 72.0 /*32.0*/);
-  let back_btn_size    = Size::new(128.0, 64.0);
+  let size             = Size::new((window_size.w - border_padding * 2.0 - padding * (columns - 1.0)) / (columns), 80.0, /*72.0*/ /*32.0*/);
+  let back_btn_size    = Size::new(64.0, 64.0);
   let initial_top_left = Point::new(border_padding, border_padding);
   let font             = Font::new_px(ctx, fonts::DEFAULT, FONT_SIZE)?;
   let text_offset      = Point::new(/*padding*/ 128.0, size.h * 0.5);
@@ -42,17 +42,23 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Butt
 
   Ok(LEVEL_NAMES.iter().enumerate()
      .map( |(i, name)| {
+       println!("{}", name);
        let col = i / entries_per_col;
        let top_left = initial_top_left.clone() +
          Point::new((size.w + padding) * col as NumType,
          (size.h + padding) * (i - col * entries_per_col) as NumType);
        let text = Text::new(ctx, &format!("{}) {}", i + 1, &::semantic(&name.replace(".json", ""))), &font)?;
+       let mut image_filename_n = col + 1;
+       if image_filename_n < 1 || image_filename_n > 3 {
+         image_filename_n = 1;
+       }
+       let image_filename = &format!("level_select{}.png", image_filename_n);
        Ok(ButtonBuilder::new(ctx)
           .point(top_left.clone())
           .size(size.clone())
           .origin(Origin::TopLeft)
           .button_type(ButtonType::LevelSelectLevel(i))
-          .animation_from(vec![::join_str(buttons::IMAGES, "level_select1.png")], vec![1000])
+          .animation_from(vec![::join_str(buttons::IMAGES, image_filename)], vec![1000])
           .text_from(
             top_left + text_offset.clone(),
             Size::new(text.width() as NumType, text.height() as NumType),

@@ -183,7 +183,7 @@ impl event::EventHandler for GameState {
       match keycode {
         Keycode::Return => self.start_game(ctx).expect("Should start game"),
         Keycode::L      => self.menu_manager.show_level_select(),  // TODO: TEMPORARY!!!
-        _               => ()
+        _               => (),
       }
     }
   }

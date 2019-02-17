@@ -33,7 +33,7 @@ pub fn new_background(ctx: &mut Context, n: usize) -> Option<Animation> {
       4 => Some("bg3.5.png"),
       _ => None,
     },
-    _ => None,
+    _ => Some("bg4.1.png"),
   } .and_then( |img| Some(Animation::new(
         ctx,
         vec![::join_str(BACKGROUND_IMAGES, img)],
