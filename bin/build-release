@@ -1,0 +1,104 @@
+#!/bin/bash
+# This script builds Linux and Windows release builds of the game
+# and zips all necessary files together into the release/ directory.
+
+set -e
+
+ROOT="$( cd $( dirname "$0" )/..; pwd )"
+RES_DIR="$ROOT/resources"
+SDL2_DLL="$ROOT/SDL2.dll"
+TARGET_DIR="$ROOT/target"
+WINDOWS_TARGET="x86_64-pc-windows-gnu"
+RELEASE_DIR="$ROOT/release"
+BASE_ZIP_NAME="LD43-NihilisticNurtureNavigation"
+BIN_NAME="LD43"
+
+function error {
+  echo -e '\e[1;31;40m'"$1"'\e[0m'
+  exit 1
+}
+
+function msg {
+  echo -e '\e[1;33;40m'"$1"'\e[0m'
+}
+
+function get_version_for_dir {
+  [ -z "$1" ] && exit 1
+  existing_zips=($( find $1 -iname "*.zip" ))
+  highest_num=-1
+  re=".*${BASE_ZIP_NAME}.*-([0-9]+)\.zip$"
+  for zipfile in ${existing_zips[@]}; do
+    if [[ "$zipfile" =~ $re ]]; then
+      num=${BASH_REMATCH[1]}
+      [ $num -gt $highest_num ] && highest_num=$num
+    fi
+  done
+  version=$(( $highest_num + 1 ))
+  echo "$version"
+}
+
+function build_linux {
+  msg "Building Linux release"
+  cd $ROOT
+  cargo build --release
+
+  msg "Copying files for Linux build"
+  mkdir -p $RELEASE_DIR/linux
+  cd $RELEASE_DIR/linux
+  version=$( get_version_for_dir $RELEASE_DIR/linux )
+  zipped_dirname="${BASE_ZIP_NAME}-Linux-${version}"
+  mkdir -p $zipped_dirname
+  cp $TARGET_DIR/release/$BIN_NAME $zipped_dirname
+  cp -r $RES_DIR $zipped_dirname
+
+  msg "Zipping files for Linux build"
+  zip -r ${zipped_dirname}.zip $zipped_dirname
+  rm -rf $zipped_dirname
+
+  msg "Linux zip is available here:"
+  echo "$RELEASE_DIR/linux/${zipped_dirname}.zip"
+}
+
+function build_windows {
+  [ ! -f "$SDL2_DLL" ] && error "SDL2.dll is not in project's root"
+
+  msg "Building Windows release"
+  cd $ROOT
+  cargo build --release --target "$WINDOWS_TARGET"
+
+  msg "Copying files for Windows build"
+  mkdir -p $RELEASE_DIR/windows
+  cd $RELEASE_DIR/windows
+  version=$( get_version_for_dir $RELEASE_DIR/windows )
+  zipped_dirname="${BASE_ZIP_NAME}-Windows-${version}"
+  mkdir -p $zipped_dirname
+  cp $TARGET_DIR/$WINDOWS_TARGET/release/${BIN_NAME}.exe $zipped_dirname
+  cp -r $RES_DIR $zipped_dirname
+  cp $SDL2_DLL $zipped_dirname
+
+  msg "Zipping files for Windows build"
+  zip -r ${zipped_dirname}.zip $zipped_dirname
+  rm -rf $zipped_dirname
+
+  msg "Windows zip is available here:"
+  echo "$RELEASE_DIR/windows/${zipped_dirname}.zip"
+}
+
+if [ -z "$1" ]; then
+  build_linux && build_windows
+else
+  case "$1" in
+    all|both)
+      build_linux && build_windows
+      ;;
+    lin*)
+      build_linux
+      ;;
+    win*)
+      build_windows
+      ;;
+    *)
+      msg "Build for which target?\n'linux' or 'windows' or 'all'/'both'"
+      ;;
+  esac
+fi
