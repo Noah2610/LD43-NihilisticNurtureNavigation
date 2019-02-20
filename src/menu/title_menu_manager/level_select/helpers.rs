@@ -42,7 +42,6 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Butt
 
   Ok(LEVEL_NAMES.iter().enumerate()
      .map( |(i, name)| {
-       println!("{}", name);
        let col = i / entries_per_col;
        let top_left = initial_top_left.clone() +
          Point::new((size.w + padding) * col as NumType,
