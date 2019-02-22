@@ -34,16 +34,17 @@ impl Score {
     format!("Score: {}", self.score())
   }
 
-  pub fn semantic_player(&self) -> String {
-    format!(
-      "{}: {}",
-      player::NAME,
-      self.semantic_score_for(self.times_saved_player(), PLAYER_SCORE_REWARD)
-    )
+  pub fn semantic_player(&self) -> Option<String> {
+    if self.times_saved_player > 0 {
+      Some(format!(
+          "{}: {}",
+          player::NAME,
+          self.semantic_score_for(self.times_saved_player, PLAYER_SCORE_REWARD)
+      ))
+    } else { None }
   }
 
   pub fn semantic_children(&self) -> Vec<String> {
-    // TODO: Sort by score?
     self.times_saved_children().iter()
       .map( |(child, &n)| format!("{}: {}", child.name(), self.semantic_score_for(n, CHILD_SCORE_REWARD)) )
       .collect()

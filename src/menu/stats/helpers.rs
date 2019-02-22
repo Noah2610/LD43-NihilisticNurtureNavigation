@@ -7,12 +7,13 @@ use noframe::geo::prelude::*;
 
 use settings::res::*;
 use settings::menus::stats::*;
+use settings::buttons;
 use animation::prelude::*;
 use menu::buttons::prelude::*;
 use score::prelude::*;
 
-const BUTTON_SIZE:     Size    = Size { w: 128.0, h: 64.0 };
-const BUTTON_PADDING:  NumType = 16.0;
+const BUTTON_SIZE:     Size    = Size { w: 64.0, h: 64.0 };
+const BUTTON_PADDING:  NumType = 64.0;
 const BUTTON_OFFSET_Y: NumType = 128.0;
 
 enum TextOrigin {
@@ -59,7 +60,7 @@ impl StatsText {
 
 pub struct StatsTexts {
   score:          StatsText,
-  saved_player:   StatsText,
+  saved_player:   Option<StatsText>,
   saved_children: Vec<StatsText>,
 }
 
@@ -74,21 +75,28 @@ impl StatsTexts {
     let score_text = StatsText::new(
       graphics::Text::new(ctx, &score.semantic_score(), &font_score)?,
       window_size.center() + Point::new(-offset_x, -BUTTON_OFFSET_Y),
-      TextOrigin::Left,
-      );
+      TextOrigin::Left
+    );
 
-    let saved_player = StatsText::new(
-      graphics::Text::new(ctx, &score.semantic_player(), &font_saved)?,
-      window_size.center() + Point::new(offset_x, -BUTTON_OFFSET_Y),
-      TextOrigin::Right,
-      );
+    let saved_player = if let Some(score) = &score.semantic_player() {
+      Some(StatsText::new(
+        graphics::Text::new(ctx, score, &font_saved)?,
+        window_size.center() + Point::new(offset_x, -BUTTON_OFFSET_Y),
+        TextOrigin::Right
+      ))
+    } else {
+      None
+    };
 
     let mut saved_children = Vec::new();
     for (i, s) in score.semantic_children().iter().enumerate() {
+      let i_plus = if let Some(_) = saved_player {
+        1
+      } else { 0 };
       saved_children.push(
         StatsText::new(
           graphics::Text::new(ctx, &s, &font_saved)?,
-          window_size.center() + Point::new(offset_x, -BUTTON_OFFSET_Y + padding * (i + 1) as NumType),
+          window_size.center() + Point::new(offset_x, -BUTTON_OFFSET_Y + padding * (i + i_plus) as NumType),
           TextOrigin::Right,
           )
       );
@@ -103,7 +111,9 @@ impl StatsTexts {
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.score.draw(ctx)?;
-    self.saved_player.draw(ctx)?;
+    if let Some(saved_player) = &mut self.saved_player {
+      saved_player.draw(ctx)?;
+    }
     for child in &mut self.saved_children {
       child.draw(ctx)?;
     }
@@ -129,7 +139,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec
       .size(BUTTON_SIZE.clone())
       .origin(Origin::Center)
       .button_type(ButtonType::StatsNext)
-      .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+      .animation_from(vec![::join_str(buttons::IMAGES, "play.png")], vec![1000])
       .build().expect("Should build StatsNext Button")
     );
 
@@ -139,7 +149,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec
       .size(BUTTON_SIZE.clone())
       .origin(Origin::Center)
       .button_type(ButtonType::StatsReset)
-      .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+      .animation_from(vec![::join_str(buttons::IMAGES, "retry.png")], vec![1000])
       .build().expect("Should build StatsReset Button")
     );
   }
@@ -154,7 +164,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec
     .size(BUTTON_SIZE.clone())
     .origin(Origin::Center)
     .button_type(ButtonType::StatsToTitle)
-    .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+    .animation_from(vec![::join_str(buttons::IMAGES, "return.png")], vec![1000])
     .build().expect("Should build StatsToTitle Button")
   );
 

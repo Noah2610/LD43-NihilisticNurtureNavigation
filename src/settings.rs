@@ -146,7 +146,7 @@ pub mod level_manager {
 
 pub mod score {
   use score::ScoreType;
-  pub const PLAYER_SCORE_REWARD: ScoreType = 100;
-  pub const CHILD_SCORE_REWARD:  ScoreType = 300;
-  pub const SCORE_CHAR_LEN:      u8        = 3;
+  pub const PLAYER_SCORE_REWARD: ScoreType = 10;
+  pub const CHILD_SCORE_REWARD:  ScoreType = 30;
+  pub const SCORE_CHAR_LEN:      u8        = 2;
 }
