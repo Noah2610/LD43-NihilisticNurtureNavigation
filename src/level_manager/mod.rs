@@ -80,11 +80,11 @@ impl LevelManager {
 
   pub fn next_level(&mut self, ctx: &mut Context) -> GameResult<()> {
     // Save the current level's score
+    let curr_level_index_opt = self.get_current_level_index();
     if let Some(level) = &mut self.level {
-      let prev_level_index_opt = if self.level_index > 0 { Some(self.level_index - 1) } else { None };
-      if let Some(prev_level_index) = prev_level_index_opt {
-        if !self.scores.contains_key(&prev_level_index) {
-          self.scores.insert(prev_level_index, level.score().clone());
+      if let Some(curr_level_index) = curr_level_index_opt {
+        if !self.scores.contains_key(&curr_level_index) {
+          self.scores.insert(curr_level_index, level.score().clone());
         }
       }
     }
@@ -99,17 +99,27 @@ impl LevelManager {
     }
     // Load audio
     let mut muted = false;
-    if let Some(song) = &self.song {
-      muted = song.paused();
-      song.stop();
-    }
     if let Some(song_name) = self.song_names.get(self.level_index) {
-      let mut song = audio::Source::new(ctx, format!("{}{}.{}", res::AUDIO, song_name, AUDIO_FORMAT))?;
-      song.set_volume(0.5);
-      song.set_repeat(true);
-      song.play()?;
-      if muted || MUTED { song.pause(); }
-      self.song = Some( song );
+      let mut is_same = false;
+      if let Some(curr_song) = &self.song {
+        if let Some(curr_level_index) = self.get_current_level_index() {
+          if let Some(curr_song_name) = self.song_names.get(curr_level_index) {
+            is_same = curr_song_name == song_name;
+          }
+        }
+        muted = curr_song.paused();
+        if !is_same {
+          curr_song.stop();
+        }
+      }
+      if !is_same {
+        let mut song = audio::Source::new(ctx, format!("{}{}.{}", res::AUDIO, song_name, AUDIO_FORMAT))?;
+        song.set_volume(0.5);
+        song.set_repeat(true);
+        song.play()?;
+        if muted || MUTED { song.pause(); }
+        self.song = Some( song );
+      }
     }
     // Load background animation
     self.background = new_background(ctx, self.level_index);
@@ -193,6 +203,14 @@ impl LevelManager {
   pub fn mouse_drag(&mut self, xrel: i32, yrel: i32) {
     if let Some(level) = &mut self.level {
       level.camera_mut().move_by(&Point::new(xrel as NumType, yrel as NumType).inverted());
+    }
+  }
+
+  fn get_current_level_index(&self) -> Option<usize> {
+    if self.level_index > 0 {
+      Some(self.level_index - 1)
+    } else {
+      None
     }
   }
 
