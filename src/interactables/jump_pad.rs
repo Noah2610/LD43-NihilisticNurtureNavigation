@@ -155,7 +155,7 @@ impl Interactable for JumpPad {
         self.state = State::Trigger;
         self.animations.trigger.reset();
         person.set_velocity_y(-self.strength);
-        // person.set_velocity_x(0.0);
+        person.velocity_mut().x *= X_VELOCITY_MULT;
         person.stop_walking();
       }
       _ => ()
