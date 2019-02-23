@@ -52,7 +52,8 @@ pub struct ToolboxMenu {
 }
 
 impl ToolboxMenu {
-  pub fn new(ctx: &mut Context, point: Point, size: Size, children: Vec<ChildType>) -> Self {
+  pub fn new(ctx: &mut Context, point: Point, size: Size, mut children: Vec<ChildType>) -> Self {
+    children.sort();
     Self {
       point:                   point.clone(),
       size:                    size.clone(),

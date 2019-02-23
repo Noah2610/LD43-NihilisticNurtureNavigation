@@ -2,6 +2,7 @@ use ggez::Context;
 use noframe::geo::prelude::*;
 
 use settings::res::{ MISSING_IMAGE, BACKGROUND_IMAGES };
+use settings::buttons;
 use animation::prelude::*;
 use menu::buttons::prelude::*;
 
@@ -44,9 +45,9 @@ pub fn new_background(ctx: &mut Context, n: usize) -> Option<Animation> {
 pub fn new_pause_button(ctx: &mut Context, _window_size: &Size) -> Button {
   ButtonBuilder::new(ctx)
     .point(Point::new(4.0, 4.0))
-    .size(Size::new(32.0, 32.0))
+    .size(Size::new(36.0, 36.0))
     .origin(Origin::TopLeft)
     .button_type(ButtonType::IngamePause)
-    .animation_from(vec![MISSING_IMAGE.to_string()], vec![1000])
+    .animation_from(vec![::join_str(buttons::IMAGES, "pause.png")], vec![1000])
     .build().expect("Should build IngamePause Button")
 }

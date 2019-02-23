@@ -3,7 +3,6 @@ use noframe::geo::prelude::*;
 
 use settings::menus::IMAGES;
 use settings::buttons;
-use settings::res::MISSING_IMAGE;
 use menu::prelude::*;
 use animation::Animation;
 
@@ -27,7 +26,6 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
             .size(size.clone())
             .origin(Origin::Center)
             .button_type(ButtonType::TitleStart)
-            //.animation_from(vec![::join_str(buttons::IMAGES, "startgame_title.png")], vec![1000])
             .animation_from(vec![::join_str(buttons::IMAGES, "play.png")], vec![1000])
             .build().expect("Should build TitleStart Button"));
   btns.push(ButtonBuilder::new(ctx)
@@ -35,7 +33,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
             .size(size.clone())
             .origin(Origin::Center)
             .button_type(ButtonType::TitleLevelSelect)
-            .animation_from(vec![::join_str(buttons::IMAGES, "level_menu5.png")], vec![1000])
+            .animation_from(vec![::join_str(buttons::IMAGES, "level_menu2.png")], vec![1000])
             .build().expect("Should build TitleLevelSelect Button"));
   btns.push(ButtonBuilder::new(ctx)
             .point(window_size.center() + Point::new(-(size.w + padding), offset_y))
