@@ -2,11 +2,13 @@ mod defaults {
   use ggez::Context;
   use noframe::geo::prelude::*;
   use animation::Animation;
+  use animation::Facing;
   use settings::res::MISSING_IMAGE;
 
   pub const POINT:  Point  = Point { x: 0.0,  y: 0.0  };
   pub const SIZE:   Size   = Size  { w: 64.0, h: 64.0 };
   pub const ORIGIN: Origin = Origin::TopLeft;
+  pub const FACING: Facing = Facing::Right;
 
   pub fn animation(ctx: &mut Context) -> Animation {
     Animation::new(
@@ -29,6 +31,7 @@ use super::Button;
 use super::button_type::ButtonType;
 use super::button_text::ButtonText;
 use animation::Animation;
+use animation::Facing;
 
 pub struct ButtonBuilder<'a> {
   ctx:         &'a mut Context,
@@ -37,6 +40,7 @@ pub struct ButtonBuilder<'a> {
   origin:      Origin,
   animation:   Animation,
   button_type: Option<ButtonType>,
+  facing:      Facing,
   text:        Option<ButtonText>,
 }
 
@@ -50,6 +54,7 @@ impl<'a> ButtonBuilder<'a> {
       origin:      defaults::ORIGIN,
       animation,
       button_type: None,
+      facing:      defaults::FACING,
       text:        None,
     }
   }
@@ -89,6 +94,11 @@ impl<'a> ButtonBuilder<'a> {
     self
   }
 
+  pub fn facing(mut self, facing: Facing) -> Self {
+    self.facing = facing;
+    self
+  }
+
   pub fn text(mut self, text: ButtonText) -> Self {
     self.text = Some(text);
     self
@@ -105,6 +115,7 @@ impl<'a> ButtonBuilder<'a> {
         self.origin,
         self.button_type.unwrap(),
         self.animation,
+        self.facing,
         self.text
     ))
   }

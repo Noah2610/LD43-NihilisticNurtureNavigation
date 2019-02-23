@@ -26,6 +26,7 @@ pub struct Button {
   origin:          Origin,
   animation:       Animation,
   pub button_type: ButtonType,
+  facing:          Facing,
   text:            Option<ButtonText>,
 }
 
@@ -36,6 +37,7 @@ impl Button {
     origin:          Origin,
     button_type:     ButtonType,
     animation:       Animation,
+    facing:          Facing,
     text:            Option<ButtonText>
   ) -> Self {
     Self {
@@ -44,6 +46,7 @@ impl Button {
       origin,
       animation,
       button_type,
+      facing,
       text,
       // text: button_text_opt
       //   .and_then( |tuple| Some( ButtonText::new(
@@ -78,7 +81,8 @@ impl Button {
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     let size = self.size().clone();
     let top_left = self.top_left();
-    self.animation_mut().draw(ctx, &top_left, &size, &Facing::Right)?;
+    let facing = self.facing.clone();
+    self.animation_mut().draw(ctx, &top_left, &size, &facing)?;
     if let Some(text) = &mut self.text {
       text.draw(ctx)?;
     }

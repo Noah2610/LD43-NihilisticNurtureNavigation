@@ -14,6 +14,7 @@ use ggez::{
 
 use noframe::geo::prelude::*;
 
+#[derive(Clone)]
 pub enum Facing {
   Left,
   Right

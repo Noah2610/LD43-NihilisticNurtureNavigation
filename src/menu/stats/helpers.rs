@@ -97,8 +97,8 @@ impl StatsTexts {
         StatsText::new(
           graphics::Text::new(ctx, &s, &font_saved)?,
           window_size.center() + Point::new(offset_x, -BUTTON_OFFSET_Y + padding * (i + i_plus) as NumType),
-          TextOrigin::Right,
-          )
+          TextOrigin::Right
+        )
       );
     }
 
@@ -139,7 +139,8 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size, is_final: bool) -> Vec
       .size(BUTTON_SIZE.clone())
       .origin(Origin::Center)
       .button_type(ButtonType::StatsNext)
-      .animation_from(vec![::join_str(buttons::IMAGES, "play.png")], vec![1000])
+      .animation_from(vec![::join_str(buttons::IMAGES, "return.png")], vec![1000])
+      .facing(Facing::Left)
       .build().expect("Should build StatsNext Button")
     );
 

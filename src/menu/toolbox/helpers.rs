@@ -5,7 +5,7 @@ use settings::buttons;
 use settings::child;
 use menu::buttons::prelude::*;
 use super::Closeup;
-use animation::Animation;
+use animation::prelude::*;
 use persons::children::ChildType;
 
 pub fn new_next_level_button(ctx: &mut Context, point: &Point, size: &Size) -> Button {
@@ -51,7 +51,8 @@ pub fn new_buttons(ctx: &mut Context, point: &Point, children: &Vec<ChildType>) 
         .size_from(64.0, 64.0)
         .origin(Origin::TopLeft)
         .button_type(button_type.clone())
-        .animation_from(vec![::join_str(buttons::IMAGES, "child_left.png")], vec![1000])
+        .animation_from(vec![::join_str(buttons::IMAGES, "child_right2.png")], vec![1000])
+        .facing(Facing::Left)
         .build()
     } else {
       ButtonBuilder::new(ctx)
@@ -59,7 +60,7 @@ pub fn new_buttons(ctx: &mut Context, point: &Point, children: &Vec<ChildType>) 
         .size_from(64.0, 64.0)
         .origin(Origin::TopLeft)
         .button_type(button_type.clone())
-        .animation_from(vec![::join_str(buttons::IMAGES, "child_right.png")], vec![1000])
+        .animation_from(vec![::join_str(buttons::IMAGES, "child_right2.png")], vec![1000])
         .build()
     }.expect(&format!("Should build {} Button", button_type))
   }).collect()
