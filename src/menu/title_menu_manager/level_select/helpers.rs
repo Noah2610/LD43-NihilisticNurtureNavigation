@@ -29,7 +29,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Butt
   let back_btn_size    = Size::new(64.0, 64.0);
   let initial_top_left = Point::new(border_padding, border_padding);
   let font             = Font::new_px(ctx, fonts::DEFAULT, FONT_SIZE)?;
-  let text_offset      = Point::new(/*padding*/ 128.0, size.h * 0.5);
+  let text_offset      = Point::new(/*padding*/ 144.0, size.h * 0.5);
   let entries_per_col  = ((window_size.h - back_btn_size.h - border_padding * 3.0) / (size.h + padding)) as usize;
 
   let back_button = ButtonBuilder::new(ctx)

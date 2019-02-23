@@ -15,7 +15,7 @@ use self::helpers::*;
 use level::Level;
 use settings::level_manager::*;
 use settings::res;
-use settings::game::MUTED;
+use settings::game::{ MUTED, VOLUME };
 use animation::Animation;
 use animation::Facing;
 use score::Score;
@@ -101,6 +101,7 @@ impl LevelManager {
     let mut muted = false;
     if let Some(song_name) = self.song_names.get(self.level_index) {
       let mut is_same = false;
+      let mut curr_song_stopped = true;
       if let Some(curr_song) = &self.song {
         if let Some(curr_level_index) = self.get_current_level_index() {
           if let Some(curr_song_name) = self.song_names.get(curr_level_index) {
@@ -108,13 +109,14 @@ impl LevelManager {
           }
         }
         muted = curr_song.paused();
+        curr_song_stopped = curr_song.stopped();
         if !is_same {
           curr_song.stop();
         }
       }
-      if !is_same {
+      if !is_same || curr_song_stopped {
         let mut song = audio::Source::new(ctx, format!("{}{}.{}", res::AUDIO, song_name, AUDIO_FORMAT))?;
-        song.set_volume(0.5);
+        song.set_volume(VOLUME);
         song.set_repeat(true);
         song.play()?;
         if muted || MUTED { song.pause(); }

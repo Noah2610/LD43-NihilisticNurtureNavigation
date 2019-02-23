@@ -5,7 +5,7 @@ use settings::interactables::*;
 pub fn new_main_animation(ctx: &mut Context) -> Animation {
   Animation::new(ctx,
                  vec![
-                 ::join_str(IMAGES, "oneway.png")
+                 ::join_str(IMAGES, "oneway2.png")
                  ], vec![
                  1000
                  ])

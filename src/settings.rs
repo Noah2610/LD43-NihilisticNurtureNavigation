@@ -13,6 +13,7 @@ pub mod game {
   pub const UPS: f32 = 60.0;
   pub const UPDATE_INTERVAL_MS: u64 = (1.0 / UPS * 1000.0) as u64;
   pub const MUTED: bool = false;
+  pub const VOLUME: f32 = 0.5;
 }
 
 pub mod res {
@@ -81,7 +82,7 @@ pub mod menus {
   pub const IMAGES: &str = "/images/menus/";
   pub mod title {
     pub mod level_select {
-      pub const FONT_SIZE: u32 = 16;
+      pub const FONT_SIZE: u32 = 24;
     }
   }
   pub mod stats {
@@ -131,8 +132,6 @@ pub mod level_manager {
     "ingame_4",
     "ingame_4",
   ];
-
-
 
   pub mod controls {
     use ggez::event::Keycode;
