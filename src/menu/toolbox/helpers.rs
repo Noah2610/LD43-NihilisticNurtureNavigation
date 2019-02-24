@@ -76,7 +76,7 @@ pub fn new_closeups(ctx: &mut Context, point: &Point, children: &Vec<ChildType>)
     let x = offset + spacing * i as NumType;
     let (images, intervals) = match child_type {
       Larry => (
-        vec![::join_str(child::IMAGES, "larry_closeup_v2.png")],
+        vec![::join_str(child::IMAGES, "child_1_closeup_2.png")],
         vec![1000]
       ),
       Thing => (
