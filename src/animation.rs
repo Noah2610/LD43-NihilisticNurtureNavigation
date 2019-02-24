@@ -5,6 +5,7 @@ pub mod prelude {
 }
 
 use std::time::{ Instant, Duration };
+use std::cmp;
 
 use ggez::{
   GameResult,
@@ -45,11 +46,25 @@ pub struct Animation {
   image_index:               usize,
   image_update_intervals_ms: Vec<u64>,
   times_played:              u32,
+  square:                    bool,
   last_update:               Instant,
 }
 
 impl Animation {
   pub fn new(ctx: &mut Context, image_filepaths: Vec<String>, image_update_intervals_ms: Vec<u64>) -> Self {
+    Self::new_with_details(ctx, image_filepaths, image_update_intervals_ms, false)
+  }
+
+  pub fn new_square(ctx: &mut Context, image_filepaths: Vec<String>, image_update_intervals_ms: Vec<u64>) -> Self {
+    Self::new_with_details(ctx, image_filepaths, image_update_intervals_ms, true)
+  }
+
+  fn new_with_details(
+    ctx:                       &mut Context,
+    image_filepaths:           Vec<String>,
+    image_update_intervals_ms: Vec<u64>,
+    square:                    bool
+  ) -> Self {
     let images = image_filepaths.iter().map( |filepath| {
       let mut img = Image::new(ctx, filepath).expect(&format!("Couldn't load image: {}", filepath));
       img.set_filter(FilterMode::Nearest);
@@ -58,10 +73,11 @@ impl Animation {
 
     Self {
       images,
-      image_index: 0,
+      image_index:  0,
       image_update_intervals_ms,
       times_played: 0,
-      last_update: Instant::now()
+      square,
+      last_update:  Instant::now()
     }
   }
 
@@ -94,8 +110,23 @@ impl Animation {
   }
 
   pub fn draw(&self, ctx: &mut Context, point: &Point, size: &Size, facing: &Facing) -> GameResult<()>{
+    let mut square_offset = Point::new(0.0, 0.0);
+    let size = if self.square {
+      let small = if size.w < size.h {
+        square_offset.y = (size.h - size.w) * 0.5;
+        size.w
+      } else {
+        square_offset.x = (size.w - size.h) * 0.5;
+        size.h
+      };
+      Size::new(small, small)
+    } else {
+      Size::new(size.w, size.h)
+    };
     let image = self.current_image();
-    let dest = graphics::Point2::from(point);
+    let dest = graphics::Point2::from(
+      &Point::combine(vec![point, &square_offset])
+    );
     let scale = Point::new(
       size.w / image.width()  as NumType * facing.num() as NumType,
       size.h / image.height() as NumType
@@ -106,13 +137,26 @@ impl Animation {
       offset: graphics::Point2::new(facing.offset_for_draw_param(), 0.0),
       .. Default::default()
     };
-    graphics::draw_ex(ctx, image, param)
+    graphics::draw_ex(ctx, self.current_image(), param)
   }
 
   pub fn draw_offset(&self, ctx: &mut Context, point: &Point, size: &Size, facing: &Facing, offset: &Point) -> GameResult<()> {
+    let mut square_offset = Point::new(0.0, 0.0);
+    let size = if self.square {
+      let small = if size.w < size.h {
+        square_offset.y = (size.h - size.w) * 0.5;
+        size.w
+      } else {
+        square_offset.x = (size.w - size.h) * 0.5;
+        size.h
+      };
+      Size::new(small, small)
+    } else {
+      Size::new(size.w, size.h)
+    };
     let image = self.current_image();
     let dest = graphics::Point2::from(
-      &Point::combine(vec![point, offset])
+      &Point::combine(vec![point, &square_offset, offset])
     );
     let scale = Point::new(
       size.w / image.width()  as NumType * facing.num() as NumType,
@@ -124,7 +168,7 @@ impl Animation {
       offset: graphics::Point2::new(facing.offset_for_draw_param(), 0.0),
       .. Default::default()
     };
-    graphics::draw_ex(ctx, image, param)
+    graphics::draw_ex(ctx, self.current_image(), param)
   }
 
   fn current_image(&self) -> &Image {
