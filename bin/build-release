@@ -10,8 +10,11 @@ SDL2_DLL="$ROOT/SDL2.dll"
 TARGET_DIR="$ROOT/target"
 WINDOWS_TARGET="x86_64-pc-windows-gnu"
 RELEASE_DIR="$ROOT/release"
-BASE_ZIP_NAME="LD43-NihilisticNurtureNavigation"
+#BASE_ZIP_NAME="LD43-NihilisticNurtureNavigation"
+BASE_ZIP_NAME="LD43-dev"
 BIN_NAME="LD43"
+#MIN_VERSION=-1
+MIN_VERSION=5
 
 function error {
   echo -e '\e[1;31;40m'"$1"'\e[0m'
@@ -25,7 +28,7 @@ function msg {
 function get_version_for_dir {
   [ -z "$1" ] && exit 1
   existing_zips=($( find $1 -iname "*.zip" ))
-  highest_num=-1
+  highest_num=$(( $MIN_VERSION - 1 ))
   re=".*${BASE_ZIP_NAME}.*-([0-9]+)\.zip$"
   for zipfile in ${existing_zips[@]}; do
     if [[ "$zipfile" =~ $re ]]; then
