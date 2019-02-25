@@ -12,7 +12,7 @@ pub mod game {
   pub const BG_COLOR: Color = [0.33, 0.33, 0.33, 1.0];
   pub const UPS: f32 = 60.0;
   pub const UPDATE_INTERVAL_MS: u64 = (1.0 / UPS * 1000.0) as u64;
-  pub const MUTED: bool = false;
+  pub const MUTED: bool = true;
   pub const VOLUME: f32 = 0.5;
   pub const SAVEFILE: &str = "save.json";
 }
@@ -177,4 +177,9 @@ pub mod score {
   pub const PLAYER_SCORE_REWARD: ScoreType = 10;
   pub const CHILD_SCORE_REWARD:  ScoreType = 30;
   pub const SCORE_CHAR_LEN:      u8        = 2;
+}
+
+pub mod color_rect {
+  use noframe::color::*;
+  pub const DEFAULT_COLOR: Color = BLACK;
 }
