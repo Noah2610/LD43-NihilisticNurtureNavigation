@@ -57,7 +57,7 @@ pub fn new_title(ctx: &mut Context, window_size: &Size) -> ImageText {
     .point(window_size.center() - Point::new(0.0, 192.0))
     .size_from(256.0, 96.0)
     .origin(Origin::Center)
-    .bg_color([0.5, 0.5, 0.5, 1.0])
+    .bg_color(TITLE_BG_COLOR)
     .text(Text::new(ctx, "Paused", &font).expect("Create text"))
     .text_color(TITLE_FONT_COLOR)
     .text_origin(TextOrigin::Center)
