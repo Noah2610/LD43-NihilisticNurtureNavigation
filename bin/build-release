@@ -14,7 +14,7 @@ RELEASE_DIR="$ROOT/release"
 BASE_ZIP_NAME="LD43-dev"
 BIN_NAME="LD43"
 #MIN_VERSION=-1
-MIN_VERSION=5
+MIN_VERSION=7
 
 function error {
   echo -e '\e[1;31;40m'"$1"'\e[0m'
