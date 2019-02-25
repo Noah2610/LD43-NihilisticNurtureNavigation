@@ -33,6 +33,10 @@ impl ColorRectBuilder {
     self.size = size;
     self
   }
+  pub fn size_from(mut self, w: NumType, h: NumType) -> Self {
+    self.size = Size::new(w, h);
+    self
+  }
   pub fn origin(mut self, origin: Origin) -> Self {
     self.origin = origin;
     self

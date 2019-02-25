@@ -1,6 +1,17 @@
 pub mod builder;
 
+pub mod prelude {
+  pub use super::ColorRect;
+  pub use super::ColorRectBuilder;
+}
+
 pub use self::builder::ColorRectBuilder;
+
+use ggez::{
+  Context,
+  GameResult,
+  graphics,
+};
 
 use noframe::geo::prelude::*;
 use noframe::color::Color;
@@ -28,4 +39,17 @@ impl Mask for ColorRect {
 
 impl Entity for ColorRect {
   fn color(&self) -> Color { self.color }
+
+  fn draw(&self, ctx: &mut Context) -> GameResult<()> {
+    let color = graphics::get_color(ctx);
+    let point = self.top_left();
+    let size  = self.size();
+    let rect  = [
+      point.x, point.y,
+      size.w,  size.h
+    ];
+    self.draw_rect(ctx, rect)?;
+    graphics::set_color(ctx, color)?;
+    Ok(())
+  }
 }

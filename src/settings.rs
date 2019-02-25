@@ -100,8 +100,8 @@ pub mod menus {
   }
   pub mod stats {
     use noframe::color::{ self, Color };
-    pub const FONT_SIZE_SCORE: u32 = 24;
-    pub const FONT_SIZE_SAVED: u32 = 16;
+    pub const FONT_SIZE_SCORE: u32 = 32;
+    pub const FONT_SIZE_SAVED: u32 = 24;
     pub const FONT_COLOR: Color = color::BLACK;
   }
 }
