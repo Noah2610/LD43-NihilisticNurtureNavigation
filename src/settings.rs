@@ -104,6 +104,12 @@ pub mod menus {
     pub const FONT_SIZE_SAVED: u32 = 24;
     pub const FONT_COLOR: Color = color::BLACK;
   }
+  pub mod pause {
+    use noframe::color::Color;
+    pub const TITLE_FONT_SIZE:  u32   = 32;
+    pub const TITLE_BG_COLOR:   Color = [0.5, 0.5, 0.5, 1.0];
+    pub const TITLE_FONT_COLOR: Color = [0.0, 0.0, 0.0, 1.0];
+  }
 }
 
 pub mod buttons {

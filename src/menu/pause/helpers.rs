@@ -1,12 +1,17 @@
-use ggez::Context;
+use ggez::{
+  Context,
+  graphics::{ Text, Font },
+};
 use noframe::geo::prelude::*;
 
 use settings::res::*;
 use settings::menus;
 use settings::buttons;
+use settings::menus::pause::*;
 use menu::buttons::prelude::*;
 use animation::prelude::*;
 use color_rect::prelude::*;
+use image_text::prelude::*;
 
 pub fn new_color_rect(window_size: &Size) -> ColorRect {
   ColorRectBuilder::new()
@@ -46,15 +51,15 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
   btns
 }
 
-pub fn new_title(ctx: &mut Context, window_size: &Size) -> AnimationRect {
-  AnimationRect::new(
-    window_size.center() - Point::new(0.0, 192.0),
-    Size::new(256.0, 96.0),
-    Origin::Center,
-    Animation::new(
-      ctx,
-      vec![MISSING_IMAGE.to_string()],
-      vec![1000]
-      )
-    )
+pub fn new_title(ctx: &mut Context, window_size: &Size) -> ImageText {
+  let font = Font::new(ctx, fonts::DEFAULT, TITLE_FONT_SIZE).expect("Create font");
+  ImageTextBuilder::new()
+    .point(window_size.center() - Point::new(0.0, 192.0))
+    .size_from(256.0, 96.0)
+    .origin(Origin::Center)
+    .bg_color([0.5, 0.5, 0.5, 1.0])
+    .text(Text::new(ctx, "Paused", &font).expect("Create text"))
+    .text_color(TITLE_FONT_COLOR)
+    .text_origin(TextOrigin::Center)
+    .build()
 }

@@ -48,13 +48,6 @@ impl Button {
       button_type,
       facing,
       text,
-      // text: button_text_opt
-      //   .and_then( |tuple| Some( ButtonText::new(
-      //         tuple.0,  // point
-      //         tuple.1,  // size,
-      //         tuple.2,  // origin
-      //         tuple.3   // text
-      //   ))),
     }
   }
 

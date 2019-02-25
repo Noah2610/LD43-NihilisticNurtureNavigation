@@ -17,11 +17,12 @@ use super::prelude::*;
 use animation::Animation;
 use animation::AnimationRect;
 use color_rect::ColorRect;
+use image_text::ImageText;
 
 pub struct PauseMenu {
   buttons:      Vec<Button>,
   clicked:      Option<ButtonType>,
-  title:        AnimationRect,
+  title:        ImageText,
   rect:         ColorRect,
 }
 
@@ -45,7 +46,6 @@ impl Mask for PauseMenu {
 
 impl Menu for PauseMenu {
   fn update(&mut self) -> GameResult<()> {
-    self.title.update()?;
     self.update_menu()?;
     Ok(())
   }

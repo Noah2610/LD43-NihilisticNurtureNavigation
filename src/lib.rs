@@ -5,16 +5,17 @@ extern crate ggez;
 extern crate noframe;
 
 mod animation;
+mod color_rect;
 mod frames_counter;
 mod game;
 mod gravity;
 mod id_generator;
+mod image_text;
 mod interactables;
 mod level;
 mod level_manager;
 mod menu;
 mod persons;
-mod color_rect;
 mod score;
 mod settings;
 mod wall;
