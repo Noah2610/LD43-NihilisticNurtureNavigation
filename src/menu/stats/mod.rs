@@ -1,6 +1,8 @@
 pub mod prelude {
-  pub use super::StatsMenu;
   pub use super::super::Menu;
+  pub use super::StatsMenu;
+  pub use super::helpers::StatsText;
+  pub use super::helpers::TextOrigin;
 }
 
 mod helpers;

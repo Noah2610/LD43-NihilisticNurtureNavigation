@@ -162,6 +162,8 @@ pub mod level_manager {
     "ingame_4",
   ];
 
+  pub const HIGHSCORE_FONT_SIZE: u32 = 16;
+
   pub mod controls {
     use ggez::event::Keycode;
     pub const MUTE:     Keycode = Keycode::M;
@@ -173,10 +175,14 @@ pub mod level_manager {
 }
 
 pub mod score {
+  use noframe::color::Color;
   use score::ScoreType;
   pub const PLAYER_SCORE_REWARD: ScoreType = 10;
   pub const CHILD_SCORE_REWARD:  ScoreType = 30;
   pub const SCORE_CHAR_LEN:      u8        = 2;
+  pub const SCORE_COLOR:         Color     = [0.8, 0.1, 0.1, 1.0];
+  pub const HIGHSCORE_COLOR:     Color     = [0.7, 0.2, 0.1, 1.0];
+  pub const NEW_HIGHSCORE_COLOR: Color     = [0.1, 0.5, 0.1, 1.0];
 }
 
 pub mod color_rect {

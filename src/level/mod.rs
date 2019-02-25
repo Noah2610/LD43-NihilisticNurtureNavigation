@@ -452,7 +452,9 @@ impl Level {
   }
 
   fn draw_level_name(&mut self, ctx: &mut Context) -> GameResult<()> {
-    let dest = graphics::Point2::from(&self.window_rect.top_right());
+    let dest = graphics::Point2::from(
+      &(Point::new(-8.0, 8.0) + self.window_rect.top_right())
+    );
     let param = graphics::DrawParam {
       dest,
       offset: graphics::Point2::new(1.0, 0.0),

@@ -9,26 +9,29 @@ use noframe::color::Color;
 use settings::res::*;
 use settings::menus::stats::*;
 use settings::buttons;
+use settings::score::{ SCORE_COLOR, HIGHSCORE_COLOR, NEW_HIGHSCORE_COLOR };
 use animation::prelude::*;
 use menu::buttons::prelude::*;
 use score::prelude::*;
 use color_rect::prelude::*;
 
-enum TextOrigin {
+pub enum TextOrigin {
   Left,
   Right,
+  Center,
 }
 
 impl TextOrigin {
   pub fn val(&self) -> f32 {
     match self {
-      TextOrigin::Left  => 0.0,
-      TextOrigin::Right => 1.0,
+      TextOrigin::Left   => 0.0,
+      TextOrigin::Right  => 1.0,
+      TextOrigin::Center => 0.5,
     }
   }
 }
 
-struct StatsText {
+pub struct StatsText {
   text:   graphics::Text,
   point:  Point,
   origin: TextOrigin,
@@ -82,7 +85,7 @@ impl StatsTexts {
       graphics::Text::new(ctx, &score.semantic_score(), &font_score)?,
       point_score.clone(),
       TextOrigin::Left,
-      Some([0.8, 0.1, 0.1, 1.0])
+      Some(SCORE_COLOR)
     );
 
     let highscore_text = if let Some(highscore) = highscore_opt {
@@ -90,10 +93,10 @@ impl StatsTexts {
       let color;
       if highscore >= score {
         text = highscore.semantic_highscore();
-        color = [0.7, 0.2, 0.1, 1.0];
+        color = HIGHSCORE_COLOR;
       } else {
         text = "New Highscore!".to_string();
-        color = [0.1, 0.5, 0.1, 1.0];
+        color = NEW_HIGHSCORE_COLOR;
       }
       Some(StatsText::new(
           graphics::Text::new(ctx, &text, &font_score)?,

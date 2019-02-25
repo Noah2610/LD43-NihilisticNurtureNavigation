@@ -5,6 +5,7 @@ use std::collections::hash_map::HashMap;
 use ggez::{
   GameResult,
   Context,
+  graphics,
   event::Keycode,
   audio,
 };
@@ -17,6 +18,7 @@ use level::Level;
 use settings::level_manager::*;
 use settings::res;
 use settings::game::{ MUTED, VOLUME };
+use settings::score::HIGHSCORE_COLOR;
 use animation::Animation;
 use animation::Facing;
 use score::Score;
@@ -38,6 +40,8 @@ pub struct LevelManager {
   pause_button:     Button,
   stats_menu:       Option<StatsMenu>,
   final_stats_menu: Option<StatsMenu>,
+  highscore_font:   graphics::Font,
+  highscore_text:   Option<StatsText>,
   pub to_title:     bool,
   pub beat_game:    bool,
   pub save_data:    Option<JsonValue>,
@@ -60,6 +64,8 @@ impl LevelManager {
       pause_button:     new_pause_button(ctx, &window_size),
       stats_menu:       None,
       final_stats_menu: None,
+      highscore_font:   graphics::Font::new(ctx, res::fonts::DEFAULT, HIGHSCORE_FONT_SIZE).expect("New highscore font"),
+      highscore_text:   None,
       to_title:         false,
       beat_game:        false,
       save_data:        None,
@@ -78,6 +84,7 @@ impl LevelManager {
     for (name, level_json) in json["levels"].entries() {
       if let Some(score) = Score::from_json(&level_json["score"]) {
         if let Some(index) = self.level_names.iter().position( |lvlname| lvlname == &name ) {
+          println!("INDEX: {}\nSCORE: {:#?}", index, score);
           self.scores.insert(index, score);
         }
       }
@@ -134,6 +141,10 @@ impl LevelManager {
   }
 
   pub fn next_level(&mut self, ctx: &mut Context) -> GameResult<()> {
+    // Remove highscore text from previous level
+    self.highscore_text = None;
+
+    // Remove StatsMenu from previous level
     self.stats_menu = None;
 
     // Load the next level
@@ -174,6 +185,22 @@ impl LevelManager {
       self.level_index += 1;
     } else {
       self.beat_final_level(ctx)?;
+    }
+
+    // Load the highscore for this level (if available)
+    self.set_highscore_text(ctx)?;
+
+    Ok(())
+  }
+
+  fn set_highscore_text(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if let Some(highscore) = self.highscore().map( |s| s.clone() ) {
+      self.highscore_text = Some(StatsText::new(
+          graphics::Text::new(ctx, &highscore.semantic_highscore(), &self.highscore_font)?,
+          Point::new(self.window_size.w / 2.0, 8.0),
+          TextOrigin::Center,
+          Some(HIGHSCORE_COLOR)
+      ));
     }
     Ok(())
   }
@@ -292,6 +319,7 @@ impl LevelManager {
     }
     self.paused = false;
     self.stats_menu = None;
+    self.set_highscore_text(ctx)?;
     Ok(())
   }
 
@@ -312,18 +340,17 @@ impl LevelManager {
       return Ok(());
     }
     let mut next_level = false;
-    let highscore_opt = if let Some(level_index) = self.get_current_level_index() {
-      self.scores.get(&level_index).map( |s| s.clone() )
-    } else { None };
+    let highscore_opt = self.highscore().map( |s| s.clone() );
     if let Some(level) = &mut self.level {
       level.update(ctx, &self.dt)?;
       if level.next_level {
+        level.next_level = false;
         next_level = true;
         self.stats_menu = Some(StatsMenu::new(
             ctx,
             self.window_size.clone(),
             level.score().clone(),
-            highscore_opt,
+            highscore_opt.map( |s| s.clone() ),
             false
         )?);
       }
@@ -334,6 +361,12 @@ impl LevelManager {
       self.save();
     }
     Ok(())
+  }
+
+  fn highscore(&self) -> Option<&Score> {
+    if let Some(level_index) = self.get_current_level_index() {
+      self.scores.get(&level_index)
+    } else { None }
   }
 
   fn update_pause_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -435,11 +468,12 @@ impl LevelManager {
     if self.level.is_some() {
       self.pause_button.draw(ctx)?;
     }
-    if let Some(stats_menu) = &mut self.stats_menu {
-      stats_menu.draw(ctx)?;
-    }
     if let Some(final_stats) = &mut self.final_stats_menu {
       final_stats.draw(ctx)?;
+    } else if let Some(stats_menu) = &mut self.stats_menu {
+      stats_menu.draw(ctx)?;
+    } else if let Some(highscore) = &self.highscore_text {
+      highscore.draw(ctx)?;
     }
     Ok(())
   }

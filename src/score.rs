@@ -42,13 +42,15 @@ impl Score {
 
   pub fn as_json(&self) -> Option<JsonValue> {
     if self.score() == 0 { return None; }
-    let mut data = object!{};
+    let mut data = object!{
+      "children" => object!{},
+    };
     if self.times_saved_player > 0 {
       data["player"] = self.times_saved_player.into();
     }
     for (child, &times) in &self.times_saved_children {
       if times > 0 {
-        data[child.short()] = times.into();
+        data["children"][child.short()] = times.into();
       }
     }
     Some(data)
