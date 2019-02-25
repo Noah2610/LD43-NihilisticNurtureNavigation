@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use json::JsonValue;
+
 use settings::score::*;
 use settings::player;
 use persons::children::ChildType;
@@ -23,6 +25,32 @@ impl Score {
       times_saved_player:   0,
       times_saved_children: HashMap::new(),
     }
+  }
+
+  pub fn from_json(json: &JsonValue) -> Option<Self> {
+    if !json.is_object() { return None; }
+    Some(Self {
+      times_saved_player: json["player"].as_u32().unwrap_or(0),  // as ScoreType
+      times_saved_children: json["children"].entries()
+        .filter_map( |(name, times)| if let Some(child) = ChildType::from_short(name) {
+          Some((child, times.as_u32().unwrap_or(0)))  // as ScoreType
+        } else { None })
+        .collect(),
+    })
+  }
+
+  pub fn as_json(&self) -> Option<JsonValue> {
+    if self.score() == 0 { return None; }
+    let mut data = object!{};
+    if self.times_saved_player > 0 {
+      data["player"] = self.times_saved_player.into();
+    }
+    for (child, &times) in &self.times_saved_children {
+      if times > 0 {
+        data[child.short()] = times.into();
+      }
+    }
+    Some(data)
   }
 
   pub fn score(&self) -> ScoreType {

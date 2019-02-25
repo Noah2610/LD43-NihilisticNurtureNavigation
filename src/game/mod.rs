@@ -1,4 +1,6 @@
 use std::time::{ Instant, Duration };
+use std::fs;
+use std::io::prelude::*;
 
 use ggez::{
   Context,
@@ -64,6 +66,7 @@ impl GameState {
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.load()?;
     self.play_song(ctx)?;
     Ok(())
   }
@@ -90,6 +93,9 @@ impl GameState {
   }
 
   fn update_ingame(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if self.level_manager.save_data.is_some() {
+      self.save()?;
+    }
     if self.level_manager.to_title {
       self.play_song(ctx)?;
       self.level_manager.to_title = false;
@@ -142,6 +148,41 @@ impl GameState {
     Ok(())
   }
 
+  fn save(&mut self) -> GameResult<()> {
+    let mut file = fs::File::create(SAVEFILE)?;
+    let mut data = object!{
+      "level_manager" => object!{},
+      "beat_game"     => self.level_manager.beat_game,
+    };
+    if self.level_manager.save_data.is_some() {
+      if let Some(level_manager_data) = &self.level_manager.save_data {
+        data["level_manager"] = level_manager_data.clone();
+      }
+      self.level_manager.save_data = None;
+    }
+    write!(file, "{}", data).expect("Should write to savefile");
+    Ok(())
+  }
+
+  fn load(&mut self) -> GameResult<()> {
+    if let Ok(mut file) = fs::File::open(SAVEFILE) {
+      let mut json_raw = String::new();
+      file.read_to_string(&mut json_raw)?;
+      let data = json::parse(&json_raw).expect("Should parse JSON string");
+
+      // LevelSelectMenu button
+      if let Some(beat_game) = data["beat_game"].as_bool() {
+        self.level_manager.beat_game = beat_game;
+      }
+
+      // Level Scores
+      if data["level_manager"].is_object() {
+        self.level_manager.load_level_json(&data["level_manager"]);
+      }
+    }
+    Ok(())
+  }
+
   fn draw_ingame(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.level_manager.draw(ctx)?;
     Ok(())
@@ -183,6 +224,8 @@ impl event::EventHandler for GameState {
       match keycode {
         Keycode::Return => self.start_game(ctx).expect("Should start game"),
         Keycode::L      => self.menu_manager.show_level_select(),  // TODO: TEMPORARY!!!
+        Keycode::N      => self.save().expect("Save debug"),       // TODO: TEMPORARY!!!
+        Keycode::M      => self.load().expect("Load debug"),       // TODO: TEMPORARY!!!
         _               => (),
       }
     }

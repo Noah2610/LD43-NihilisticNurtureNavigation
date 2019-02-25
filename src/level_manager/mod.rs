@@ -8,6 +8,7 @@ use ggez::{
   event::Keycode,
   audio,
 };
+use json::{ self, JsonValue };
 use noframe::geo::prelude::*;
 use noframe::deltatime::Deltatime;
 
@@ -39,6 +40,7 @@ pub struct LevelManager {
   final_stats_menu: Option<StatsMenu>,
   pub to_title:     bool,
   pub beat_game:    bool,
+  pub save_data:    Option<JsonValue>,
   dt:               Deltatime,
 }
 
@@ -60,8 +62,41 @@ impl LevelManager {
       final_stats_menu: None,
       to_title:         false,
       beat_game:        false,
+      save_data:        None,
       dt:               Deltatime::new(),
     }
+  }
+
+  pub fn load_level_json(&mut self, json: &JsonValue) {
+    // Set level_index
+    if let Some(level_index) = json["level_index"].as_usize() {
+      self.level_index = level_index;
+    }
+    // Delete existing scores (there shouldn't be any, as this should only be called at the start of the game)
+    self.scores = HashMap::new();
+    // Load scores from json
+    for (name, level_json) in json["levels"].entries() {
+      if let Some(score) = Score::from_json(&level_json["score"]) {
+        if let Some(index) = self.level_names.iter().position( |lvlname| lvlname == &name ) {
+          self.scores.insert(index, score);
+        }
+      }
+    }
+  }
+
+  fn save(&mut self) {
+    let mut data = object!{
+      "level_index" => self.level_index,
+      "levels"      => object!{},
+    };
+    for (&index, score) in &self.scores {
+      let name = self.level_names[index];
+      data["levels"][name] = object!{};
+      if let Some(score_json) = score.as_json() {
+        data["levels"][name]["score"] = score_json;
+      }
+    }
+    self.save_data = Some(data);
   }
 
   pub fn level(&mut self) -> Option<&mut Level> {
@@ -78,17 +113,27 @@ impl LevelManager {
     Ok(())
   }
 
-  pub fn next_level(&mut self, ctx: &mut Context) -> GameResult<()> {
-    // Save the current level's score
+  fn insert_level_score(&mut self) {
     let curr_level_index_opt = self.get_current_level_index();
     if let Some(level) = &mut self.level {
       if let Some(curr_level_index) = curr_level_index_opt {
-        if !self.scores.contains_key(&curr_level_index) {
-          self.scores.insert(curr_level_index, level.score().clone());
+        let score = level.score();
+        let mut insert_new_score = true;
+        if let Some(curr_score) = self.scores.get(&curr_level_index) {
+          if score.score() > curr_score.score() {
+            insert_new_score = true;   // Update existing score for level, if the new score is higher
+          } else {
+            insert_new_score = false;  // Don't update existing score for level, if the old score is higher
+          }
+        }
+        if insert_new_score {
+          self.scores.insert(curr_level_index, score.clone());
         }
       }
     }
+  }
 
+  pub fn next_level(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.stats_menu = None;
 
     // Load the next level
@@ -135,6 +180,7 @@ impl LevelManager {
 
   fn beat_final_level(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.beat_game = true;
+    self.save();
     self.final_stats_menu = Some(
       StatsMenu::new(
         ctx,
@@ -264,11 +310,18 @@ impl LevelManager {
     if self.to_title || self.paused || self.stats_menu.is_some() || self.final_stats_menu.is_some() {
       return Ok(());
     }
+    let mut next_level = false;
     if let Some(level) = &mut self.level {
       level.update(ctx, &self.dt)?;
       if level.next_level {
+        next_level = true;
         self.stats_menu = Some(StatsMenu::new(ctx, self.window_size.clone(), level.score().clone(), false)?);
       }
+    }
+    if next_level {
+      // NOTE: insert_level_score() THEN save()
+      self.insert_level_score();
+      self.save();
     }
     Ok(())
   }

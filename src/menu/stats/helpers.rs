@@ -74,7 +74,7 @@ impl StatsTexts {
 
     let score_text = StatsText::new(
       graphics::Text::new(ctx, &score.semantic_score(), &font_score)?,
-      window_size.center() + Point::new(-offset_x, -BUTTON_OFFSET_Y),
+      window_size.center() + Point::new(-offset_x, -BUTTON_OFFSET_Y - padding),
       TextOrigin::Left
     );
 

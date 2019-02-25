@@ -14,6 +14,7 @@ pub mod game {
   pub const UPDATE_INTERVAL_MS: u64 = (1.0 / UPS * 1000.0) as u64;
   pub const MUTED: bool = false;
   pub const VOLUME: f32 = 0.5;
+  pub const SAVEFILE: &str = "save.json";
 }
 
 pub mod res {
@@ -60,6 +61,18 @@ pub mod child {
   pub const MAX_VELOCITY_X: f32 = 80.0;
   pub const MAX_VELOCITY_Y: f32 = 1000.0;
   pub const GRAVITY_INCREASE: f32 = 800.0;
+
+  pub mod names {
+    pub const LARRY: &str = "Larry";
+    pub const BLOAT: &str = "Bloat";
+    pub const THING: &str = "The Thing";
+  }
+
+  pub mod shorts {
+    pub const LARRY: &str = "larry";
+    pub const BLOAT: &str = "bloat";
+    pub const THING: &str = "thing";
+  }
 }
 
 pub mod wall {

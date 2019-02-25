@@ -1,26 +1,51 @@
 use std::cmp::Ordering;
 
+use settings::child::{ names, shorts };
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ChildType {
   Larry,
+  Bloat,
   Thing,
-  Bloat
 }
 
 impl ChildType {
-  pub fn name(&self) -> String {
+  pub fn from_short(name: &str) -> Option<Self> {
+    use self::shorts::*;
+    use self::ChildType::*;
+    match name {
+      LARRY => Some(Larry),
+      BLOAT => Some(Bloat),
+      THING => Some(Thing),
+      _     => None,
+    }
+  }
+
+  pub fn short(&self) -> String {
+    use self::shorts::*;
+    use self::ChildType::*;
     match self {
-      ChildType::Larry => String::from("Larry"),
-      ChildType::Thing => String::from("The Thing"),
-      ChildType::Bloat => String::from("Bloat"),
+      Larry => String::from(LARRY),
+      Bloat => String::from(BLOAT),
+      Thing => String::from(THING),
+    }
+  }
+
+  pub fn name(&self) -> String {
+    use self::names::*;
+    use self::ChildType::*;
+    match self {
+      Larry => String::from(LARRY),
+      Bloat => String::from(BLOAT),
+      Thing => String::from(THING),
     }
   }
 
   pub fn order_index(&self) -> usize {
     match self {
       ChildType::Larry => 0,
-      ChildType::Thing => 2,
       ChildType::Bloat => 1,
+      ChildType::Thing => 2,
     }
   }
 }

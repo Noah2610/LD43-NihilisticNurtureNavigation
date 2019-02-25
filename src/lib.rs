@@ -1,4 +1,5 @@
 extern crate rand;
+#[macro_use]
 extern crate json;
 extern crate ggez;
 extern crate noframe;
