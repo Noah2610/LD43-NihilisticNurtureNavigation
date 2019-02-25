@@ -116,8 +116,8 @@ impl GameState {
     let mut quit         = false;
     if let Some(clicked) = self.menu_manager.get_clicked() {
       match clicked {
-        ButtonType::TitleStart => start_game   = true,
-        ButtonType::TitleQuit  => quit         = true,
+        ButtonType::TitleStart => start_game = true,
+        ButtonType::TitleQuit  => quit       = true,
         _ => ()
       }
     }

@@ -26,12 +26,12 @@ pub struct StatsMenu {
 }
 
 impl StatsMenu {
-  pub fn new(ctx: &mut Context, window_size: Size, score: Score, is_final: bool) -> GameResult<Self> {
+  pub fn new(ctx: &mut Context, window_size: Size, score: Score, highscore: Option<Score>, is_final: bool) -> GameResult<Self> {
     let rect = new_color_rect(window_size.clone());
     Ok(Self {
       buttons:        new_buttons(ctx, rect.point(), rect.size(), is_final),
       clicked:        None,
-      texts:          StatsTexts::new(ctx, score, rect.point(), rect.size())?,
+      texts:          StatsTexts::new(ctx, score, highscore, rect.point(), rect.size())?,
       final_thankyou: if is_final { Some(new_final_thankyou(ctx, &window_size)) } else { None },
       rect,
     })

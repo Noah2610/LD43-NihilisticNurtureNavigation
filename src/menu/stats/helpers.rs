@@ -4,7 +4,6 @@ use ggez::{
   graphics,
 };
 use noframe::geo::prelude::*;
-use noframe::geo::mask::misc::Side;
 use noframe::color::Color;
 
 use settings::res::*;
@@ -46,7 +45,7 @@ impl StatsText {
     }
   }
 
-  pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+  pub fn draw(&self, ctx: &mut Context) -> GameResult<()> {
     let dest = graphics::Point2::from(&self.point);
     let param = graphics::DrawParam {
       dest,
@@ -61,15 +60,17 @@ impl StatsText {
 
 pub struct StatsTexts {
   score:          StatsText,
+  highscore:      Option<StatsText>,
   saved_player:   Option<StatsText>,
   saved_children: Vec<StatsText>,
 }
 
 impl StatsTexts {
-  pub fn new(ctx: &mut Context, score: Score, point: &Point, size: &Size) -> GameResult<Self> {
+  pub fn new(ctx: &mut Context, score: Score, highscore_opt: Option<Score>, point: &Point, size: &Size) -> GameResult<Self> {
     let font_score = graphics::Font::new_px(ctx, fonts::DEFAULT, FONT_SIZE_SCORE)?;
     let font_saved = graphics::Font::new_px(ctx, fonts::DEFAULT, FONT_SIZE_SAVED)?;
     let offset = Point::new(32.0, 32.0);
+    let score_offset = Point::new(0.0, 8.0);
     let saved_offset = Point::new(0.0, 8.0);
     let point_score = point.clone() + offset.clone();
     let point_saved = Point::new(
@@ -79,10 +80,31 @@ impl StatsTexts {
 
     let score_text = StatsText::new(
       graphics::Text::new(ctx, &score.semantic_score(), &font_score)?,
-      point_score,
+      point_score.clone(),
       TextOrigin::Left,
       Some([0.8, 0.1, 0.1, 1.0])
     );
+
+    let highscore_text = if let Some(highscore) = highscore_opt {
+      let text;
+      let color;
+      if highscore >= score {
+        text = highscore.semantic_highscore();
+        color = [0.7, 0.2, 0.1, 1.0];
+      } else {
+        text = "New Highscore!".to_string();
+        color = [0.1, 0.5, 0.1, 1.0];
+      }
+      Some(StatsText::new(
+          graphics::Text::new(ctx, &text, &font_score)?,
+          Point::new(
+            point_score.x + score_offset.x,
+            point_score.y + score_offset.y + font_score.get_height() as NumType
+          ),
+          TextOrigin::Left,
+          Some(color)
+      ))
+    } else { None };
 
     let saved_player = if let Some(score) = &score.semantic_player() {
       Some(StatsText::new(
@@ -114,18 +136,22 @@ impl StatsTexts {
      }
 
     Ok(StatsTexts {
-      score: score_text,
+      score:     score_text,
+      highscore: highscore_text,
       saved_player,
       saved_children,
     })
   }
 
-  pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+  pub fn draw(&self, ctx: &mut Context) -> GameResult<()> {
     self.score.draw(ctx)?;
-    if let Some(saved_player) = &mut self.saved_player {
+    if let Some(highscore) = &self.highscore {
+      highscore.draw(ctx)?;
+    }
+    if let Some(saved_player) = &self.saved_player {
       saved_player.draw(ctx)?;
     }
-    for child in &mut self.saved_children {
+    for child in &self.saved_children {
       child.draw(ctx)?;
     }
     Ok(())

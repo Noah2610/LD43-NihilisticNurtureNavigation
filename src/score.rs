@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::cmp::Ordering;
 
 use json::JsonValue;
 
@@ -60,6 +61,10 @@ impl Score {
 
   pub fn semantic_score(&self) -> String {
     format!("Score: {}", self.score())
+  }
+
+  pub fn semantic_highscore(&self) -> String {
+    format!("Highscore: {}", self.score())
   }
 
   pub fn semantic_player(&self) -> Option<String> {
@@ -127,5 +132,17 @@ impl From<Vec<&Score>> for Score {
       }
     }
     score_acc
+  }
+}
+
+impl PartialEq for Score {
+  fn eq(&self, other: &Score) -> bool {
+    self.score() == other.score()
+  }
+}
+
+impl PartialOrd for Score {
+  fn partial_cmp(&self, other: &Score) -> Option<Ordering> {
+    Some(self.score().cmp(&other.score()))
   }
 }

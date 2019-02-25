@@ -120,7 +120,7 @@ impl LevelManager {
         let score = level.score();
         let mut insert_new_score = true;
         if let Some(curr_score) = self.scores.get(&curr_level_index) {
-          if score.score() > curr_score.score() {
+          if score > curr_score {
             insert_new_score = true;   // Update existing score for level, if the new score is higher
           } else {
             insert_new_score = false;  // Don't update existing score for level, if the old score is higher
@@ -186,6 +186,7 @@ impl LevelManager {
         ctx,
         self.window_size.clone(),
         Score::from(self.scores.values().collect::<Vec<&Score>>()),
+        None,  // TODO highscore
         true
       )?
     );
@@ -311,11 +312,20 @@ impl LevelManager {
       return Ok(());
     }
     let mut next_level = false;
+    let highscore_opt = if let Some(level_index) = self.get_current_level_index() {
+      self.scores.get(&level_index).map( |s| s.clone() )
+    } else { None };
     if let Some(level) = &mut self.level {
       level.update(ctx, &self.dt)?;
       if level.next_level {
         next_level = true;
-        self.stats_menu = Some(StatsMenu::new(ctx, self.window_size.clone(), level.score().clone(), false)?);
+        self.stats_menu = Some(StatsMenu::new(
+            ctx,
+            self.window_size.clone(),
+            level.score().clone(),
+            highscore_opt,
+            false
+        )?);
       }
     }
     if next_level {
