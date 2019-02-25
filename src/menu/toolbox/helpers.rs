@@ -14,7 +14,8 @@ pub fn new_next_level_button(ctx: &mut Context, point: &Point, size: &Size) -> B
     .size_from(128.0, 64.0)
     .origin(Origin::TopLeft)
     .button_type(ButtonType::NextLevel)
-    .animation_from(vec![::join_str(buttons::IMAGES, "next_level.png")], vec![1000])
+    .animation_from(vec![::join_str(buttons::IMAGES, "return.png")], vec![1000])
+    .facing(Facing::Left)
     .build().expect("Should build NextLevel Button")
 }
 
