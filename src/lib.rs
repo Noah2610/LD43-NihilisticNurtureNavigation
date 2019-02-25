@@ -61,6 +61,9 @@ pub fn join_str<'a>(str_one: &'a str, str_two: &'a str) -> String {
 }
 
 pub fn semantic(s: &str) -> String {
+  let s: String = s.chars()
+    .skip_while( |&c| c.is_digit(10) || c == '_' )
+    .collect();
   let mut upper_at = 0;
   s.chars().enumerate()
     .map( |(i, c)| {
@@ -76,6 +79,5 @@ pub fn semantic(s: &str) -> String {
       } else {
         l.to_ascii_lowercase()
       }
-    }
-    ).collect()
+    }).collect()
 }

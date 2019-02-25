@@ -125,7 +125,23 @@ pub mod level {
 
 pub mod level_manager {
   pub const AUDIO_FORMAT: &str = "ogg";
-  pub const LEVEL_NAMES: [&'static str; 15] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen"];
+  pub const LEVEL_NAMES: [&'static str; 15] = [
+    "01_one",
+    "02_two",
+    "03_three",
+    "04_four",
+    "05_five",
+    "06_six",
+    "07_seven",
+    "08_eight",
+    "09_nine",
+    "10_ten",
+    "11_eleven",
+    "12_twelve",
+    "13_thirteen",
+    "14_fourteen",
+    "15_fifteen",
+  ];
   pub const SONG_NAMES:  [&'static str; 15] = [
     "ingame_1.1",
     "ingame_1.1",
