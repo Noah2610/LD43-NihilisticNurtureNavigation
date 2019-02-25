@@ -17,10 +17,12 @@ ROOT="$( get_root_dir )"
 
 if cargo build "$@" && [ -d "$DIR_TO_COPY" ]; then
   if [ -d "$ROOT/target/debug" ]; then
+    rm -r "$ROOT/target/debug/resources"
     cp -r "$DIR_TO_COPY" "$ROOT/target/debug"
     [ -f "$SDL2_DLL" ] && cp "$SDL2_DLL" "$ROOT/target/debug"
   fi
   if [ -d "$ROOT/target/release" ]; then
+    rm -r "$ROOT/target/release/resources"
     cp -r "$DIR_TO_COPY" "$ROOT/target/release"
     [ -f "$SDL2_DLL" ] && cp "$SDL2_DLL" "$ROOT/target/release"
   fi
