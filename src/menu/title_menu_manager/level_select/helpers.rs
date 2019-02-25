@@ -11,13 +11,13 @@ use settings::buttons;
 use settings::level_manager::LEVEL_NAMES;
 use settings::menus::title::level_select::*;
 use menu::prelude::*;
+use color_rect::prelude::*;
 
-pub fn new_animation(ctx: &mut Context, _window_size: &Size) -> Animation {
-  Animation::new(
-    ctx,
-    vec![::join_str(buttons::IMAGES, "black.png")],
-    vec![1000]
-  )
+pub fn new_color_rect(window_size: &Size) -> ColorRect {
+  ColorRectBuilder::new()
+    .size(window_size.clone())
+    .color([0.0, 0.0, 0.0, 1.0])
+    .build()
 }
 
 pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Button>> {

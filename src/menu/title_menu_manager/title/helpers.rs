@@ -33,7 +33,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
             .size(size.clone())
             .origin(Origin::Center)
             .button_type(ButtonType::TitleLevelSelect)
-            .animation_from(vec![::join_str(buttons::IMAGES, "level_menu2.png")], vec![1000])
+            .animation_from(vec![::join_str(buttons::IMAGES, "level_menu.png")], vec![1000])
             .build().expect("Should build TitleLevelSelect Button"));
   btns.push(ButtonBuilder::new(ctx)
             .point(window_size.center() + Point::new(-(size.w + padding), offset_y))

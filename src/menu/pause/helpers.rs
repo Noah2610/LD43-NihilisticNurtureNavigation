@@ -6,11 +6,13 @@ use settings::menus;
 use settings::buttons;
 use menu::buttons::prelude::*;
 use animation::prelude::*;
+use color_rect::prelude::*;
 
-pub fn new_animation(ctx: &mut Context, window_size: &Size) -> Animation {
-  Animation::new(ctx,
-                 vec![::join_str(menus::IMAGES, "pause_opaque.png")],
-                 vec![1000])
+pub fn new_color_rect(window_size: &Size) -> ColorRect {
+  ColorRectBuilder::new()
+    .size(window_size.clone())
+    .color([0.0, 0.0, 0.0, 0.9])
+    .build()
 }
 
 pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {

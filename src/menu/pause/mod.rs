@@ -10,41 +10,37 @@ use ggez::{
   GameResult,
 };
 use noframe::geo::prelude::*;
+use noframe::entity::Entity;
 
 use self::helpers::*;
 use super::prelude::*;
 use animation::Animation;
 use animation::AnimationRect;
+use color_rect::ColorRect;
 
 pub struct PauseMenu {
-  point:        Point,
-  size:         Size,
-  origin:       Origin,
   buttons:      Vec<Button>,
   clicked:      Option<ButtonType>,
   title:        AnimationRect,
-  animation:    Animation,
+  rect:         ColorRect,
 }
 
 impl PauseMenu {
   pub fn new(ctx: &mut Context, window_size: Size) -> Self {
     Self {
-      point:     Point::new(0.0, 0.0),
-      size:      window_size.clone(),
-      origin:    Origin::TopLeft,
       buttons:   new_buttons(ctx, &window_size),
       clicked:   None,
       title:     new_title(ctx, &window_size),
-      animation: new_animation(ctx, &window_size),
+      rect:      new_color_rect(&window_size),
     }
   }
 }
 
 impl Mask for PauseMenu {
-  fn point(&self)         -> &Point     { &self.point     }
-  fn point_mut(&mut self) -> &mut Point { &mut self.point }
-  fn size(&self)          -> &Size      { &self.size      }
-  fn origin(&self)        -> &Origin    { &self.origin    }
+  fn point(&self)         -> &Point     { self.rect.point()     }
+  fn point_mut(&mut self) -> &mut Point { self.rect.point_mut() }
+  fn size(&self)          -> &Size      { self.rect.size()      }
+  fn origin(&self)        -> &Origin    { self.rect.origin()    }
 }
 
 impl Menu for PauseMenu {
@@ -55,6 +51,7 @@ impl Menu for PauseMenu {
   }
 
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.rect.draw(ctx)?;
     self.title.draw(ctx)?;
     self.draw_menu(ctx)?;
     Ok(())
@@ -67,10 +64,10 @@ impl Menu for PauseMenu {
     self.buttons.iter_mut().map( |button| button ).collect()
   }
   fn animation(&self) -> Option<&Animation> {
-    Some(&self.animation)
+    None
   }
   fn animation_mut(&mut self) -> Option<&mut Animation> {
-    Some(&mut self.animation)
+    None
   }
   fn clicked(&mut self, btn_type: ButtonType) {
     self.clicked = Some(btn_type);

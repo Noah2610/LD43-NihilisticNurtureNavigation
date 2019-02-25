@@ -5,40 +5,42 @@ use ggez::{
   GameResult,
 };
 use noframe::geo::prelude::*;
+use noframe::entity::Entity;
 
 use self::helpers::*;
 use menu::prelude::*;
+use color_rect::ColorRect;
 
 pub struct LevelSelectMenu {
-  point:     Point,
-  size:      Size,
-  origin:    Origin,
-  animation: Animation,
   buttons:   Vec<Button>,
   clicked:   Option<ButtonType>,
+  rect:      ColorRect,
 }
 
 impl LevelSelectMenu {
   pub fn new(ctx: &mut Context, size: Size) -> GameResult<Self> {
     Ok(Self {
-      point:     Point::new(0.0, 0.0),
-      size:      size.clone(),
-      origin:    Origin::TopLeft,
-      animation: new_animation(ctx, &size),
       buttons:   new_buttons(ctx, &size)?,
       clicked:   None,
+      rect:      new_color_rect(&size),
     })
   }
 }
 
 impl Mask for LevelSelectMenu {
-  fn point(&self)         -> &Point     { &self.point     }
-  fn point_mut(&mut self) -> &mut Point { &mut self.point }
-  fn size(&self)          -> &Size      { &self.size      }
-  fn origin(&self)        -> &Origin    { &self.origin    }
+  fn point(&self)         -> &Point     { self.rect.point()     }
+  fn point_mut(&mut self) -> &mut Point { self.rect.point_mut() }
+  fn size(&self)          -> &Size      { self.rect.size()      }
+  fn origin(&self)        -> &Origin    { self.rect.origin()    }
 }
 
 impl Menu for LevelSelectMenu {
+  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.rect.draw(ctx)?;
+    self.draw_menu(ctx)?;
+    Ok(())
+  }
+
   fn buttons(&self) -> Vec<&Button> {
     self.buttons.iter().map( |button| button ).collect()
   }
@@ -46,10 +48,10 @@ impl Menu for LevelSelectMenu {
     self.buttons.iter_mut().map( |button| button ).collect()
   }
   fn animation(&self) -> Option<&Animation> {
-    Some(&self.animation)
+    None
   }
   fn animation_mut(&mut self) -> Option<&mut Animation> {
-    Some(&mut self.animation)
+    None
   }
   fn clicked(&mut self, button_type: ButtonType) {
     self.clicked = Some(button_type);

@@ -84,7 +84,6 @@ impl LevelManager {
     for (name, level_json) in json["levels"].entries() {
       if let Some(score) = Score::from_json(&level_json["score"]) {
         if let Some(index) = self.level_names.iter().position( |lvlname| lvlname == &name ) {
-          println!("INDEX: {}\nSCORE: {:#?}", index, score);
           self.scores.insert(index, score);
         }
       }
