@@ -7,4 +7,22 @@ authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>", "hoichael", "williwide
 rand = "0.6.1"
 json = "0.11.13"
 ggez = "0.4.4"
-noframe = "*"
+noframe = "0.0.8"
+
+[profile.dev]
+opt-level        = 1
+debug            = true
+lto              = false
+debug-assertions = true
+codegen-units    = 16
+incremental      = true
+overflow-checks  = true
+
+[profile.release]
+opt-level        = 3
+debug            = false
+lto              = false
+debug-assertions = false
+codegen-units    = 1
+incremental      = true
+overflow-checks  = false
