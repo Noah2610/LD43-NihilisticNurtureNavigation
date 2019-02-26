@@ -69,7 +69,14 @@ pub struct StatsTexts {
 }
 
 impl StatsTexts {
-  pub fn new(ctx: &mut Context, score: Score, highscore_opt: Option<Score>, point: &Point, size: &Size) -> GameResult<Self> {
+  pub fn new(
+    ctx: &mut Context,
+    score: Score,
+    highscore_opt: Option<Score>,
+    point: &Point,
+    size: &Size,
+    is_final: bool
+  ) -> GameResult<Self> {
     let font_score = graphics::Font::new_px(ctx, fonts::DEFAULT, FONT_SIZE_SCORE)?;
     let font_saved = graphics::Font::new_px(ctx, fonts::DEFAULT, FONT_SIZE_SAVED)?;
     let offset = Point::new(32.0, 32.0);
@@ -78,11 +85,16 @@ impl StatsTexts {
     let point_score = point.clone() + offset.clone();
     let point_saved = Point::new(
       point.x + size.w - offset.x,
-      point.y + offset.y * 2.0 + font_score.get_height() as NumType
+      point_score.y + offset.y + font_score.get_height() as NumType
     );
 
+    let semantic_score = if is_final {
+      format!("Total Best Score: {}", score)
+    } else {
+      score.semantic_score()
+    };
     let score_text = StatsText::new(
-      graphics::Text::new(ctx, &score.semantic_score(), &font_score)?,
+      graphics::Text::new(ctx, &semantic_score, &font_score)?,
       point_score.clone(),
       TextOrigin::Left,
       Some(SCORE_COLOR)
@@ -112,7 +124,10 @@ impl StatsTexts {
     let saved_player = if let Some(score) = &score.semantic_player() {
       Some(StatsText::new(
         graphics::Text::new(ctx, score, &font_saved)?,
-        point_saved.clone(),  // TODO + highscore font height
+        point_saved.clone() + Point::new(
+          0.0,
+          if highscore_text.is_some() { font_score.get_height() as NumType } else { 0.0 }
+        ),
         TextOrigin::Right,
         None
       ))
@@ -122,7 +137,7 @@ impl StatsTexts {
 
      let mut saved_children = Vec::new();
      for (i, s) in score.semantic_children().iter().enumerate() {
-       let i_plus = if let Some(_) = saved_player {
+       let i_plus = if saved_player.is_some() {
          1
        } else { 0 };
        saved_children.push(
@@ -130,7 +145,9 @@ impl StatsTexts {
            graphics::Text::new(ctx, &s, &font_saved)?,
            point_saved.clone() + Point::new(
              saved_offset.x,
-             (font_saved.get_height() as NumType + saved_offset.y) * (i + i_plus) as NumType
+             if highscore_text.is_some() {
+               font_score.get_height() as NumType
+             } else { 0.0 } + (font_saved.get_height() as NumType + saved_offset.y) * (i + i_plus) as NumType
            ),
            TextOrigin::Right,
            None

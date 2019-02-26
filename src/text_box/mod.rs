@@ -1,6 +1,8 @@
 pub mod builder;
 
 pub mod prelude {
+  pub use ggez::graphics::{ Image, Text, Font };
+
   pub use super::TextBox;
   pub use super::TextBoxBuilder;
   pub use super::TextOrigin;

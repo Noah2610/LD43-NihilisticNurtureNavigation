@@ -66,7 +66,7 @@ impl GameState {
   }
 
   pub fn init(&mut self, ctx: &mut Context) -> GameResult<()> {
-    self.load()?;
+    self.load(ctx)?;
     self.play_song(ctx)?;
     Ok(())
   }
@@ -92,6 +92,14 @@ impl GameState {
     self.title_song = None;
   }
 
+  fn display_score_in_title(&mut self, ctx: &mut Context) -> GameResult<()> {
+    let score = self.level_manager.total_score();
+    if score.any() {
+      self.menu_manager.title.display_score(ctx, &score)?;
+    }
+    Ok(())
+  }
+
   fn update_ingame(&mut self, ctx: &mut Context) -> GameResult<()> {
     if self.level_manager.save_data.is_some() {
       self.save()?;
@@ -99,6 +107,7 @@ impl GameState {
     if self.level_manager.to_title {
       self.play_song(ctx)?;
       self.level_manager.to_title = false;
+      self.display_score_in_title(ctx)?;
       self.scene = Scene::Title;
     }
     self.level_manager.keys_pressed(ctx, self.input_manager.keys_pressed());
@@ -164,7 +173,7 @@ impl GameState {
     Ok(())
   }
 
-  fn load(&mut self) -> GameResult<()> {
+  fn load(&mut self, ctx: &mut Context) -> GameResult<()> {
     if let Ok(mut file) = fs::File::open(SAVEFILE) {
       let mut json_raw = String::new();
       file.read_to_string(&mut json_raw)?;
@@ -179,6 +188,9 @@ impl GameState {
       if data["level_manager"].is_object() {
         self.level_manager.load_level_json(&data["level_manager"]);
       }
+
+      // Display total best score
+      self.display_score_in_title(ctx);
     }
     Ok(())
   }
@@ -225,7 +237,7 @@ impl event::EventHandler for GameState {
         Keycode::Return => self.start_game(ctx).expect("Should start game"),
         Keycode::L      => self.menu_manager.show_level_select(),  // TODO: TEMPORARY!!!
         Keycode::N      => self.save().expect("Save debug"),       // TODO: TEMPORARY!!!
-        Keycode::M      => self.load().expect("Load debug"),       // TODO: TEMPORARY!!!
+        Keycode::M      => self.load(ctx).expect("Load debug"),    // TODO: TEMPORARY!!!
         _               => (),
       }
     }

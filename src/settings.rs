@@ -94,6 +94,7 @@ pub mod interactables {
 pub mod menus {
   pub const IMAGES: &str = "/images/menus/";
   pub mod title {
+    pub const TOTAL_SCORE_FONT_SIZE: u32 = 12;
     pub mod level_select {
       pub const FONT_SIZE: u32 = 24;
     }
@@ -124,7 +125,7 @@ pub mod fonts {
 
 pub mod level {
   use ggez::event::Keycode;
-  pub const FONT_SIZE: u32 = 16;
+  pub const NAME_FONT_SIZE: u32 = 12;
   pub const CENTER_KEY: Keycode = Keycode::C;
   pub const SKIP_KEY: Keycode = Keycode::N;  // TODO: Temporary! Only for debugging!
 }
@@ -168,7 +169,7 @@ pub mod level_manager {
     "ingame_4",
   ];
 
-  pub const HIGHSCORE_FONT_SIZE: u32 = 16;
+  pub const HIGHSCORE_FONT_SIZE: u32 = 12;
 
   pub mod controls {
     use ggez::event::Keycode;

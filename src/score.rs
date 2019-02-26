@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::cmp::Ordering;
+use std::fmt;
 
 use json::JsonValue;
 
@@ -85,6 +86,10 @@ impl Score {
       .collect()
   }
 
+  pub fn any(&self) -> bool {
+    self.score() > 0
+  }
+
   fn semantic_score_for(&self, times_saved: ScoreType, score_reward: ScoreType) -> String {
     let mut score = format!("{}", times_saved * score_reward);
     let score_len = score.len() as u8;
@@ -146,5 +151,11 @@ impl PartialEq for Score {
 impl PartialOrd for Score {
   fn partial_cmp(&self, other: &Score) -> Option<Ordering> {
     Some(self.score().cmp(&other.score()))
+  }
+}
+
+impl fmt::Display for Score {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "{}", self.score())
   }
 }

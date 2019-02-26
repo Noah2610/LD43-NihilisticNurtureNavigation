@@ -1,11 +1,21 @@
 mod helpers;
 
-use ggez::Context;
+use ggez::{
+  Context,
+  GameResult,
+};
 use noframe::geo::prelude::*;
+use noframe::entity::Entity;
+use noframe::color;
 
+use settings::res::fonts;
+use settings::menus::title::*;
+use settings::score::HIGHSCORE_COLOR;
 use self::helpers::*;
 use menu::prelude::*;
 use animation::Animation;
+use text_box::prelude::*;
+use score::Score;
 
 pub struct TitleMenu {
   point:             Point,
@@ -15,6 +25,7 @@ pub struct TitleMenu {
   buttons:           Vec<Button>,
   clicked:           Option<ButtonType>,
   show_level_select: bool,
+  score_text:        Option<TextBox>,
 }
 
 impl TitleMenu {
@@ -27,11 +38,31 @@ impl TitleMenu {
       buttons:           new_buttons(ctx, &size),
       clicked:           None,
       show_level_select: false,
+      score_text:        None,
     }
   }
 
   pub fn show_level_select(&mut self) {
     self.show_level_select = true;
+  }
+
+  pub fn display_score(&mut self, ctx: &mut Context, score: &Score) -> GameResult<()> {
+    let font = Font::new(ctx, fonts::DEFAULT, TOTAL_SCORE_FONT_SIZE)?;
+    self.score_text = Some(
+      TextBoxBuilder::new()
+      .point_from(8.0, 8.0)
+      .text(Text::new(ctx, &format!("Total Best Score: {}", score), &font)?)
+      .text_color(HIGHSCORE_COLOR)
+      .build()
+    );
+    Ok(())
+  }
+
+  fn draw_score(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if let Some(score) = &self.score_text {
+      score.draw(ctx)?;
+    }
+    Ok(())
   }
 }
 
@@ -43,6 +74,12 @@ impl Mask for TitleMenu {
 }
 
 impl Menu for TitleMenu {
+  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    self.draw_menu(ctx)?;
+    self.draw_score(ctx)?;
+    Ok(())
+  }
+
   fn buttons(&self) -> Vec<&Button> {
     self.buttons.iter()
       .filter( |button| if let ButtonType::TitleLevelSelect = button.button_type {

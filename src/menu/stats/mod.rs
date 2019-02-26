@@ -33,7 +33,7 @@ impl StatsMenu {
     Ok(Self {
       buttons:        new_buttons(ctx, rect.point(), rect.size(), is_final),
       clicked:        None,
-      texts:          StatsTexts::new(ctx, score, highscore, rect.point(), rect.size())?,
+      texts:          StatsTexts::new(ctx, score, highscore, rect.point(), rect.size(), is_final)?,
       final_thankyou: if is_final { Some(new_final_thankyou(ctx, &window_size)) } else { None },
       rect,
     })

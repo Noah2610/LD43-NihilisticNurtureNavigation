@@ -119,6 +119,10 @@ impl LevelManager {
     Ok(())
   }
 
+  pub fn total_score(&self) -> Score {
+    Score::from(self.scores.values().collect::<Vec<&Score>>())
+  }
+
   fn insert_level_score(&mut self) {
     let curr_level_index_opt = self.get_current_level_index();
     if let Some(level) = &mut self.level {
@@ -211,7 +215,7 @@ impl LevelManager {
       StatsMenu::new(
         ctx,
         self.window_size.clone(),
-        Score::from(self.scores.values().collect::<Vec<&Score>>()),
+        self.total_score(),
         None,  // TODO highscore
         true
       )?
