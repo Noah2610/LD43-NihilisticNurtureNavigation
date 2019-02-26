@@ -34,14 +34,25 @@ impl Score {
 
   pub fn from_json(json: &JsonValue) -> Option<Self> {
     if !json.is_object() { return None; }
+
+    let mut times_saved_children = HashMap::new();
+    let mut times_commanded_children = HashMap::new();
+
+    for (name, data) in json["children"].entries() {
+      if let Some(child) = ChildType::from_short(name) {
+        if data.has_key("saved") {     //                  vvvvvvvv         as ScoreType
+          times_saved_children.insert(child, data["saved"].as_u32().unwrap_or(0));
+        }
+        if data.has_key("commands") {  //                         vvvvvvvv  as ScoreType
+          times_commanded_children.insert(child, data["commands"].as_u32().unwrap_or(0));
+        }
+      }
+    }
+
     Some(Self {
-      commands_counter: ChildCommandsCounter::new(),  // TODO load from json
-      times_saved_player: json["player"].as_u32().unwrap_or(0),  // as ScoreType
-      times_saved_children: json["children"].entries()
-        .filter_map( |(name, times)| if let Some(child) = ChildType::from_short(name) {
-          Some((child, times.as_u32().unwrap_or(0)))  // as ScoreType
-        } else { None })
-        .collect(),
+      times_saved_player: json["player"]["saved"].as_u32().unwrap_or(0),  // as ScoreType
+      times_saved_children,
+      commands_counter: ChildCommandsCounter::with(times_commanded_children),
     })
   }
 
@@ -51,27 +62,44 @@ impl Score {
       "children" => object!{},
     };
     if self.times_saved_player > 0 {
-      data["player"] = self.times_saved_player.into();
+      data["player"] = object!{
+        "saved" => self.times_saved_player,
+      };
     }
-    for (child, &times) in &self.times_saved_children {
-      if times > 0 {
-        data["children"][child.short()] = times.into();
+    for (child, &saved) in &self.times_saved_children {
+      if saved > 0 {
+        if !data["children"][child.short()].is_object() {
+          data["children"][child.short()] = object!{};
+        }
+        data["children"][child.short()]["saved"] = saved.into();
+      }
+    }
+    for (child, &commands) in self.commands_counter.commands() {
+      if commands > 0 {
+        if !data["children"][child.short()].is_object() {
+          data["children"][child.short()] = object!{};
+        }
+        data["children"][child.short()]["commands"] = commands.into();
       }
     }
     Some(data)
   }
 
   pub fn score(&self) -> ScoreType {
-    (self.times_saved_player * PLAYER_SCORE_REWARD) +
-      (self.times_saved_children.values().sum::<ScoreType>() * CHILD_SCORE_REWARD)
+    let saved = (self.times_saved_player * PLAYER_SCORE_REWARD) +
+      (self.times_saved_children.values().sum::<ScoreType>() * CHILD_SCORE_REWARD);
+    let commands = self.commands_counter.total();
+    if saved >= commands {
+      saved - commands
+    } else { 0 }
   }
 
   pub fn semantic_score(&self) -> String {
-    format!("Score: {}", self.score())
+    format!("Score: {}", self)
   }
 
   pub fn semantic_highscore(&self) -> String {
-    format!("Highscore: {}", self.score())
+    format!("Highscore: {}", self)
   }
 
   pub fn semantic_player(&self) -> Option<String> {
@@ -79,34 +107,57 @@ impl Score {
       Some(format!(
           "{}: {}",
           player::NAME,
-          self.semantic_score_for(self.times_saved_player, PLAYER_SCORE_REWARD)
+          self.semantic_score_for(self.times_saved_player, PLAYER_SCORE_REWARD, None)
       ))
     } else { None }
   }
 
   pub fn semantic_children(&self) -> Vec<String> {
     self.times_saved_children().iter()
-      .map( |(child, &n)| format!("{}: {}", child.name(), self.semantic_score_for(n, CHILD_SCORE_REWARD)) )
-      .collect()
+      .map( |(&child, &n)| {
+        format!(
+          "{}: {}", child.name(),
+          self.semantic_score_for(n, CHILD_SCORE_REWARD, self.commands_counter.commands_for(child))
+        )
+      }).collect()
   }
 
   pub fn any(&self) -> bool {
     self.score() > 0
   }
 
-  fn semantic_score_for(&self, times_saved: ScoreType, score_reward: ScoreType) -> String {
-    let mut score = format!("{}", times_saved * score_reward);
+  fn semantic_score_for(&self, times_saved: ScoreType, score_reward: ScoreType, commands_given: Option<ScoreType>) -> String {
+    let mut score = format!("{}", times_saved * score_reward - commands_given.unwrap_or(0));
     let score_len = score.len() as u8;
     if score_len < SCORE_CHAR_LEN {
       for _i in 0 .. SCORE_CHAR_LEN - score_len {
         score.insert(0, '0');
       }
     }
+    let mut semantic = String::new();
+    let mut with_equals = false;
     if times_saved > 1 {
-      format!("{} x {} = {}", times_saved, score_reward, score)
+      with_equals = true;
+      semantic.push_str(
+        &format!("{} x {}", times_saved, score_reward)
+      );
     } else {
-      format!("+{}", score)
+      semantic.push_str(
+        &format!("{}", score_reward)
+      );
     }
+    if let Some(commands) = commands_given {
+      with_equals = true;
+      semantic.push_str(
+        &format!(" - {}", commands)
+      );
+    }
+    if with_equals {
+      semantic.push_str(
+        &format!(" = {}", score)
+      );
+    }
+    semantic
   }
 
   pub fn times_saved_player(&self) -> ScoreType {
@@ -121,6 +172,10 @@ impl Score {
     &self.times_saved_children
   }
 
+  pub fn times_saved_child(&self, child: ChildType) -> Option<ScoreType> {
+    self.times_saved_children.iter().find( |(&k, v)| k == child ).map( |o| *o.1 )
+  }
+
   pub fn saved_child(&mut self, child: ChildType) {
     *self.times_saved_children.entry(child).or_insert(0) += 1;
   }
@@ -131,6 +186,10 @@ impl Score {
 
   pub fn child_commands(&self) -> &HashMap<ChildType, ScoreType> {
     self.commands_counter.commands()
+  }
+
+  pub fn child_commands_for(&self, child: ChildType) -> Option<ScoreType> {
+    self.commands_counter.commands_for(child)
   }
 
   pub fn clear(&mut self) {

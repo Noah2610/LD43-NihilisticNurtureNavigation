@@ -76,16 +76,20 @@ impl Child {
     !self.is_not_walking()
   }
 
-  pub fn walk_right(&mut self) {
-    if let WalkDirection::Still = self.walk_direction {
-      self.walk_direction = WalkDirection::Right;
-    }
-  }
-
-  pub fn walk_left(&mut self) {
+  // Returns true if child successfully started walking left
+  pub fn try_walk_left(&mut self) -> bool {
     if let WalkDirection::Still = self.walk_direction {
       self.walk_direction = WalkDirection::Left;
-    }
+      true
+    } else { false }
+  }
+
+  // Returns true if child successfully started walking right
+  pub fn try_walk_right(&mut self) -> bool {
+    if let WalkDirection::Still = self.walk_direction {
+      self.walk_direction = WalkDirection::Right;
+      true
+    } else { false }
   }
 
   pub fn walk_direction_mult(&self) -> f32 {

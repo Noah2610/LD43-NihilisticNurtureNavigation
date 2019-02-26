@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use settings::child::{ names, shorts };
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ChildType {
   Larry,
   Bloat,

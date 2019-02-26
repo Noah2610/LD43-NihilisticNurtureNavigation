@@ -163,17 +163,12 @@ impl Level {
 
   fn add_score(&mut self) {
     if self.is_player_in_goal() {
-      // self.score.add_for(&self.player);
-      // self.score.saved_player();
       self.score.saved_player();
     }
-    // let children_score = self.children_in_goal().iter().fold(0, |acc, c| acc + c.score());
-    // self.score.add(children_score);
-    let children_types: Vec<ChildType> = self.children_in_goal().iter().map( |child| child.child_type.clone() ).collect();
+    let children_types: Vec<ChildType> = self.children_in_goal().iter().map( |child| child.child_type ).collect();
     for child_type in children_types {
       self.score.saved_child(child_type);
     }
-    // self.children_in_goal().iter().for_each( |child| self.score.saved_child(child.child_type.clone()) );
   }
 
   fn is_player_in_goal(&self) -> bool {
@@ -337,16 +332,12 @@ impl Level {
     Ok(())
   }
 
-  fn larry(&mut self) -> Option<&mut Child> {
-    self.children.iter_mut().find( |c| c.child_type == ChildType::Larry )
+  fn child(&self, child_type: ChildType) -> Option<&Child> {
+    self.children.iter().find( |c| c.child_type == child_type )
   }
 
-  fn thing(&mut self) -> Option<&mut Child> {
-    self.children.iter_mut().find( |c| c.child_type == ChildType::Thing )
-  }
-
-  fn bloat(&mut self) -> Option<&mut Child> {
-    self.children.iter_mut().find( |c| c.child_type == ChildType::Bloat )
+  fn child_mut(&mut self, child_type: ChildType) -> Option<&mut Child> {
+    self.children.iter_mut().find( |c| c.child_type == child_type )
   }
 
   fn update_player(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -390,13 +381,13 @@ impl Level {
     if let Some(button_type) = self.toolbox.get_clicked().clone() {
       match button_type {
         ButtonType::NextLevel  => self.next_level(),
-        ButtonType::LarryLeft  => if let Some(child) = self.larry() { child.walk_left()  },
-        ButtonType::LarryRight => if let Some(child) = self.larry() { child.walk_right() },
-        ButtonType::ThingLeft  => if let Some(child) = self.thing() { child.walk_left()  },
-        ButtonType::ThingRight => if let Some(child) = self.thing() { child.walk_right() },
-        ButtonType::BloatLeft  => if let Some(child) = self.bloat() { child.walk_left()  },
-        ButtonType::BloatRight => if let Some(child) = self.bloat() { child.walk_right() },
-        _                      => ()
+        ButtonType::LarryLeft  => self.child_walk_left( ChildType::Larry),
+        ButtonType::LarryRight => self.child_walk_right(ChildType::Larry),
+        ButtonType::ThingLeft  => self.child_walk_left( ChildType::Thing),
+        ButtonType::ThingRight => self.child_walk_right(ChildType::Thing),
+        ButtonType::BloatLeft  => self.child_walk_left( ChildType::Bloat),
+        ButtonType::BloatRight => self.child_walk_right(ChildType::Bloat),
+        _                      => (),
       };
     }
     if let Some(goal) = &self.interactables.goal {
@@ -404,6 +395,30 @@ impl Level {
     }
     self.toolbox.update()?;
     Ok(())
+  }
+
+  fn child_walk_left(&mut self, child_type: ChildType) {
+    let mut commanded = false;
+    if let Some(child) = self.child_mut(child_type) {
+      commanded = child.try_walk_left();
+    }
+    if commanded {
+      self.commanded_child(child_type);
+    }
+  }
+
+  fn child_walk_right(&mut self, child_type: ChildType) {
+    let mut commanded = false;
+    if let Some(child) = self.child_mut(child_type) {
+      commanded = child.try_walk_right();
+    }
+    if commanded {
+      self.commanded_child(child_type);
+    }
+  }
+
+  fn commanded_child(&mut self, child_type: ChildType) {
+    self.score.commanded_child(child_type);
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
