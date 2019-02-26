@@ -8,39 +8,39 @@ use super::Score;
 use super::ScoreType;
 
 #[derive(Debug, Clone)]
-pub struct ChildCommandsCounter {
-  commands: HashMap<ChildType, ScoreType>,
+pub struct ChildMovesCounter {
+  moves: HashMap<ChildType, ScoreType>,
 }
 
-impl ChildCommandsCounter {
+impl ChildMovesCounter {
   pub fn new() -> Self {
     Self {
-      commands: HashMap::new(),
+      moves: HashMap::new(),
     }
   }
 
-  pub fn with(commands: HashMap<ChildType, ScoreType>) -> Self {
-    Self { commands }
+  pub fn with(moves: HashMap<ChildType, ScoreType>) -> Self {
+    Self { moves }
   }
 
-  pub fn commands(&self) -> &HashMap<ChildType, ScoreType> {
-    &self.commands
+  pub fn moves(&self) -> &HashMap<ChildType, ScoreType> {
+    &self.moves
   }
 
-  pub fn commands_for(&self, child: ChildType) -> Option<ScoreType> {
-    self.commands.iter().find( |(&k, v)| k == child ).map( |o| *o.1 )
+  pub fn moves_for(&self, child: ChildType) -> Option<ScoreType> {
+    self.moves.iter().find( |(&k, v)| k == child ).map( |o| *o.1 )
   }
 
   pub fn total(&self) -> ScoreType {
-    self.commands.values().sum::<ScoreType>()
+    self.moves.values().sum::<ScoreType>()
   }
 
-  pub fn commanded(&mut self, child: ChildType) {
-    *self.commands.entry(child).or_insert(0) += 1;
+  pub fn moved(&mut self, child: ChildType) {
+    *self.moves.entry(child).or_insert(0) += 1;
   }
 
   pub fn clear(&mut self) {
-    self.commands.clear();
+    self.moves.clear();
   }
 }
 
@@ -66,18 +66,18 @@ impl ops::AddAssign<&Score> for Score {
       if let Some(other_saved) = other.times_saved_child(child) {
         *self.times_saved_children.entry(child).or_insert(0) += other_saved;
       }
-      // commands
-      self.commands_counter += &other.commands_counter;
+      // moves
+      self.moves_counter += &other.moves_counter;
     }
   }
 }
 
-impl ops::AddAssign<&ChildCommandsCounter> for ChildCommandsCounter {
-  fn add_assign(&mut self, other: &ChildCommandsCounter) {
+impl ops::AddAssign<&ChildMovesCounter> for ChildMovesCounter {
+  fn add_assign(&mut self, other: &ChildMovesCounter) {
     use self::ChildType::*;
     for &child in &[Larry, Thing, Bloat] {
-      if let Some(other_commands) = other.commands_for(child) {
-        *self.commands.entry(child).or_insert(0) += other_commands;
+      if let Some(other_moves) = other.moves_for(child) {
+        *self.moves.entry(child).or_insert(0) += other_moves;
       }
     }
   }

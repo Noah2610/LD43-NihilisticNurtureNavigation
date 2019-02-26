@@ -398,27 +398,27 @@ impl Level {
   }
 
   fn child_walk_left(&mut self, child_type: ChildType) {
-    let mut commanded = false;
+    let mut moved = false;
     if let Some(child) = self.child_mut(child_type) {
-      commanded = child.try_walk_left();
+      moved = child.try_walk_left();
     }
-    if commanded {
-      self.commanded_child(child_type);
+    if moved {
+      self.moved_child(child_type);
     }
   }
 
   fn child_walk_right(&mut self, child_type: ChildType) {
-    let mut commanded = false;
+    let mut moved = false;
     if let Some(child) = self.child_mut(child_type) {
-      commanded = child.try_walk_right();
+      moved = child.try_walk_right();
     }
-    if commanded {
-      self.commanded_child(child_type);
+    if moved {
+      self.moved_child(child_type);
     }
   }
 
-  fn commanded_child(&mut self, child_type: ChildType) {
-    self.score.commanded_child(child_type);
+  fn moved_child(&mut self, child_type: ChildType) {
+    self.score.moved_child(child_type);
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {

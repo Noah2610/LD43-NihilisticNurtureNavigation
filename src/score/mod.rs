@@ -20,7 +20,7 @@ pub mod prelude {
 pub struct Score {
   times_saved_player:   ScoreType,
   times_saved_children: HashMap<ChildType, ScoreType>,
-  commands_counter:     ChildCommandsCounter,
+  moves_counter:        ChildMovesCounter,
 }
 
 impl Score {
@@ -28,7 +28,7 @@ impl Score {
     Self {
       times_saved_player:   0,
       times_saved_children: HashMap::new(),
-      commands_counter:     ChildCommandsCounter::new(),
+      moves_counter:        ChildMovesCounter::new(),
     }
   }
 
@@ -36,15 +36,15 @@ impl Score {
     if !json.is_object() { return None; }
 
     let mut times_saved_children = HashMap::new();
-    let mut times_commanded_children = HashMap::new();
+    let mut times_moved_children = HashMap::new();
 
     for (name, data) in json["children"].entries() {
       if let Some(child) = ChildType::from_short(name) {
         if data.has_key("saved") {     //                  vvvvvvvv         as ScoreType
           times_saved_children.insert(child, data["saved"].as_u32().unwrap_or(0));
         }
-        if data.has_key("commands") {  //                         vvvvvvvv  as ScoreType
-          times_commanded_children.insert(child, data["commands"].as_u32().unwrap_or(0));
+        if data.has_key("moves") {  //                         vvvvvvvv  as ScoreType
+          times_moved_children.insert(child, data["moves"].as_u32().unwrap_or(0));
         }
       }
     }
@@ -52,7 +52,7 @@ impl Score {
     Some(Self {
       times_saved_player: json["player"]["saved"].as_u32().unwrap_or(0),  // as ScoreType
       times_saved_children,
-      commands_counter: ChildCommandsCounter::with(times_commanded_children),
+      moves_counter: ChildMovesCounter::with(times_moved_children),
     })
   }
 
@@ -74,12 +74,12 @@ impl Score {
         data["children"][child.short()]["saved"] = saved.into();
       }
     }
-    for (child, &commands) in self.commands_counter.commands() {
-      if commands > 0 {
+    for (child, &moves) in self.moves_counter.moves() {
+      if moves > 0 {
         if !data["children"][child.short()].is_object() {
           data["children"][child.short()] = object!{};
         }
-        data["children"][child.short()]["commands"] = commands.into();
+        data["children"][child.short()]["moves"] = moves.into();
       }
     }
     Some(data)
@@ -88,9 +88,9 @@ impl Score {
   pub fn score(&self) -> ScoreType {
     let saved = (self.times_saved_player * PLAYER_SCORE_REWARD) +
       (self.times_saved_children.values().sum::<ScoreType>() * CHILD_SCORE_REWARD);
-    let commands = self.commands_counter.total();
-    if saved >= commands {
-      saved - commands
+    let moves = self.moves_counter.total();
+    if saved >= moves {
+      saved - moves
     } else { 0 }
   }
 
@@ -117,7 +117,7 @@ impl Score {
       .map( |(&child, &n)| {
         format!(
           "{}: {}", child.name(),
-          self.semantic_score_for(n, CHILD_SCORE_REWARD, self.commands_counter.commands_for(child))
+          self.semantic_score_for(n, CHILD_SCORE_REWARD, self.moves_counter.moves_for(child))
         )
       }).collect()
   }
@@ -126,8 +126,8 @@ impl Score {
     self.score() > 0
   }
 
-  fn semantic_score_for(&self, times_saved: ScoreType, score_reward: ScoreType, commands_given: Option<ScoreType>) -> String {
-    let mut score = format!("{}", times_saved * score_reward - commands_given.unwrap_or(0));
+  fn semantic_score_for(&self, times_saved: ScoreType, score_reward: ScoreType, moves_given: Option<ScoreType>) -> String {
+    let mut score = format!("{}", times_saved * score_reward - moves_given.unwrap_or(0));
     let score_len = score.len() as u8;
     if score_len < SCORE_CHAR_LEN {
       for _i in 0 .. SCORE_CHAR_LEN - score_len {
@@ -146,10 +146,10 @@ impl Score {
         &format!("{}", score_reward)
       );
     }
-    if let Some(commands) = commands_given {
+    if let Some(moves) = moves_given {
       with_equals = true;
       semantic.push_str(
-        &format!(" - {}", commands)
+        &format!(" - {}", moves)
       );
     }
     if with_equals {
@@ -180,21 +180,21 @@ impl Score {
     *self.times_saved_children.entry(child).or_insert(0) += 1;
   }
 
-  pub fn commanded_child(&mut self, child: ChildType) {
-    self.commands_counter.commanded(child);
+  pub fn moved_child(&mut self, child: ChildType) {
+    self.moves_counter.moved(child);
   }
 
-  pub fn child_commands(&self) -> &HashMap<ChildType, ScoreType> {
-    self.commands_counter.commands()
+  pub fn child_moves(&self) -> &HashMap<ChildType, ScoreType> {
+    self.moves_counter.moves()
   }
 
-  pub fn child_commands_for(&self, child: ChildType) -> Option<ScoreType> {
-    self.commands_counter.commands_for(child)
+  pub fn child_moves_for(&self, child: ChildType) -> Option<ScoreType> {
+    self.moves_counter.moves_for(child)
   }
 
   pub fn clear(&mut self) {
     self.times_saved_player = 0;
     self.times_saved_children.clear();
-    self.commands_counter.clear();
+    self.moves_counter.clear();
   }
 }
