@@ -5,10 +5,10 @@ use ggez::{
 use noframe::geo::prelude::*;
 use noframe::color::{ self, Color };
 
-use super::ImageText;
+use super::TextBox;
 use super::TextOrigin;
 
-pub struct ImageTextBuilder {
+pub struct TextBoxBuilder {
   point:       Point,
   size:        Size,
   origin:      Origin,
@@ -19,7 +19,7 @@ pub struct ImageTextBuilder {
   text_origin: TextOrigin,
 }
 
-impl ImageTextBuilder {
+impl TextBoxBuilder {
   pub fn new() -> Self {
     Self {
       point:       Point::new(0.0, 0.0),
@@ -75,8 +75,8 @@ impl ImageTextBuilder {
     self
   }
 
-  pub fn build(self) -> ImageText {
-    ImageText::new(
+  pub fn build(self) -> TextBox {
+    TextBox::new(
       self.point,
       self.size,
       self.origin,

@@ -11,7 +11,7 @@ use settings::menus::pause::*;
 use menu::buttons::prelude::*;
 use animation::prelude::*;
 use color_rect::prelude::*;
-use image_text::prelude::*;
+use text_box::prelude::*;
 
 pub fn new_color_rect(window_size: &Size) -> ColorRect {
   ColorRectBuilder::new()
@@ -51,9 +51,9 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> Vec<Button> {
   btns
 }
 
-pub fn new_title(ctx: &mut Context, window_size: &Size) -> ImageText {
+pub fn new_title(ctx: &mut Context, window_size: &Size) -> TextBox {
   let font = Font::new(ctx, fonts::DEFAULT, TITLE_FONT_SIZE).expect("Create font");
-  ImageTextBuilder::new()
+  TextBoxBuilder::new()
     .point(window_size.center() - Point::new(0.0, 192.0))
     .size_from(256.0, 96.0)
     .origin(Origin::Center)

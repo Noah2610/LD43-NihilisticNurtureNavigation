@@ -17,12 +17,12 @@ use super::prelude::*;
 use animation::Animation;
 use animation::AnimationRect;
 use color_rect::ColorRect;
-use image_text::ImageText;
+use text_box::TextBox;
 
 pub struct PauseMenu {
   buttons:      Vec<Button>,
   clicked:      Option<ButtonType>,
-  title:        ImageText,
+  title:        TextBox,
   rect:         ColorRect,
 }
 

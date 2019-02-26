@@ -1,12 +1,12 @@
 pub mod builder;
 
 pub mod prelude {
-  pub use super::ImageText;
-  pub use super::ImageTextBuilder;
+  pub use super::TextBox;
+  pub use super::TextBoxBuilder;
   pub use super::TextOrigin;
 }
 
-pub use self::builder::ImageTextBuilder;
+pub use self::builder::TextBoxBuilder;
 
 use ggez::{
   Context,
@@ -48,7 +48,7 @@ impl TextOrigin {
   }
 }
 
-pub struct ImageText {
+pub struct TextBox {
   point:       Point,
   size:        Size,
   origin:      Origin,
@@ -59,7 +59,7 @@ pub struct ImageText {
   text_origin: TextOrigin,
 }
 
-impl ImageText {
+impl TextBox {
   pub fn new(
     point:       Point,
     size:        Size,
@@ -93,14 +93,14 @@ impl ImageText {
   }
 }
 
-impl Mask for ImageText {
+impl Mask for TextBox {
   fn point(&self)         -> &Point     { &self.point }
   fn point_mut(&mut self) -> &mut Point { &mut self.point }
   fn size(&self)          -> &Size      { &self.size }
   fn origin(&self)        -> &Origin    { &self.origin }
 }
 
-impl Entity for ImageText {
+impl Entity for TextBox {
   fn color(&self) -> Color {
     self.bg_color.unwrap_or(color_rect::DEFAULT_COLOR)
   }

@@ -10,7 +10,7 @@ mod frames_counter;
 mod game;
 mod gravity;
 mod id_generator;
-mod image_text;
+mod text_box;
 mod interactables;
 mod level;
 mod level_manager;
