@@ -221,7 +221,11 @@ impl Person for Player {
   fn unsolidify(&mut self) {
     self.solid = false;
   }
-  fn stop_walking(&mut self) {}
+
+  // NOTE: Bad workaround for bug that enables player to jump at the peak of a JumpPad jump
+  fn on_jump_pad(&mut self) {
+    self.is_jumping = true;
+  }
 }
 
 impl IdGenerator for Player {

@@ -100,6 +100,10 @@ impl Child {
     }
   }
 
+  pub fn stop_walking(&mut self) {
+    self.walk_direction = WalkDirection::Still;
+  }
+
   fn handle_walk(&mut self) {
     if self.is_solid() { return; }
     match self.walk_direction {
@@ -219,8 +223,8 @@ impl Person for Child {
   fn unsolidify(&mut self) {
     self.solid = false;
   }
-  fn stop_walking(&mut self) {
-    self.walk_direction = WalkDirection::Still;
+  fn on_jump_pad(&mut self) {
+    self.stop_walking();
   }
 }
 

@@ -156,7 +156,7 @@ impl Interactable for JumpPad {
         self.animations.trigger.reset();
         person.set_velocity_y(-self.strength);
         person.velocity_mut().x *= X_VELOCITY_MULT;
-        person.stop_walking();
+        person.on_jump_pad();
       }
       _ => ()
     }

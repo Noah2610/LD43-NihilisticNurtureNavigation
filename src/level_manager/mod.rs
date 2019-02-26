@@ -242,7 +242,7 @@ impl LevelManager {
             self.next_level(ctx).expect("Should load next level")
           },
         controls::TO_TITLE =>
-          if self.paused || self.stats_menu.is_some() {
+          if self.paused || self.stats_menu.is_some() || self.final_stats_menu.is_some() {
             let has_stats_menu = self.stats_menu.is_some();
             self.to_title(has_stats_menu);
           },
