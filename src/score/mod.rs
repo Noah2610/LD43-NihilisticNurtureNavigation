@@ -1,12 +1,13 @@
+mod helpers;
+
 use std::collections::HashMap;
-use std::cmp::Ordering;
-use std::fmt;
 
 use json::JsonValue;
 
 use settings::score::*;
 use settings::player;
 use persons::children::ChildType;
+use self::helpers::*;
 
 pub type ScoreType = u32;
 
@@ -19,6 +20,7 @@ pub mod prelude {
 pub struct Score {
   times_saved_player:   ScoreType,
   times_saved_children: HashMap<ChildType, ScoreType>,
+  commands_counter:     ChildCommandsCounter,
 }
 
 impl Score {
@@ -26,12 +28,14 @@ impl Score {
     Self {
       times_saved_player:   0,
       times_saved_children: HashMap::new(),
+      commands_counter:     ChildCommandsCounter::new(),
     }
   }
 
   pub fn from_json(json: &JsonValue) -> Option<Self> {
     if !json.is_object() { return None; }
     Some(Self {
+      commands_counter: ChildCommandsCounter::new(),  // TODO load from json
       times_saved_player: json["player"].as_u32().unwrap_or(0),  // as ScoreType
       times_saved_children: json["children"].entries()
         .filter_map( |(name, times)| if let Some(child) = ChildType::from_short(name) {
@@ -117,45 +121,21 @@ impl Score {
     &self.times_saved_children
   }
 
-  pub fn saved_child(&mut self, child_type: ChildType) {
-    *self.times_saved_children.entry(child_type).or_insert(0) += 1;
+  pub fn saved_child(&mut self, child: ChildType) {
+    *self.times_saved_children.entry(child).or_insert(0) += 1;
+  }
+
+  pub fn commanded_child(&mut self, child: ChildType) {
+    self.commands_counter.commanded(child);
+  }
+
+  pub fn child_commands(&self) -> &HashMap<ChildType, ScoreType> {
+    self.commands_counter.commands()
   }
 
   pub fn clear(&mut self) {
     self.times_saved_player = 0;
     self.times_saved_children.clear();
-  }
-}
-
-impl From<Vec<&Score>> for Score {
-  fn from(scores: Vec<&Score>) -> Self {
-    let mut score_acc = Score::new();
-    for score in scores {
-      (0 .. score.times_saved_player())
-        .for_each( |_i| score_acc.saved_player() );
-      for (child_type, saved) in score.times_saved_children() {
-        (0 .. *saved)
-          .for_each( |_i| score_acc.saved_child(child_type.clone()) )
-      }
-    }
-    score_acc
-  }
-}
-
-impl PartialEq for Score {
-  fn eq(&self, other: &Score) -> bool {
-    self.score() == other.score()
-  }
-}
-
-impl PartialOrd for Score {
-  fn partial_cmp(&self, other: &Score) -> Option<Ordering> {
-    Some(self.score().cmp(&other.score()))
-  }
-}
-
-impl fmt::Display for Score {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "{}", self.score())
+    self.commands_counter.clear();
   }
 }
