@@ -1,13 +1,16 @@
-mod helpers;
+mod child_moves_counter;
 
 use std::collections::HashMap;
+use std::cmp::Ordering;
+use std::fmt;
+use std::ops;
 
 use json::JsonValue;
 
 use settings::score::*;
 use settings::player;
 use persons::children::ChildType;
-use self::helpers::*;
+use self::child_moves_counter::ChildMovesCounter;
 
 pub type ScoreType = u32;
 
@@ -40,10 +43,10 @@ impl Score {
 
     for (name, data) in json["children"].entries() {
       if let Some(child) = ChildType::from_short(name) {
-        if data.has_key("saved") {     //                  vvvvvvvv         as ScoreType
+        if data.has_key("saved") {  //                     vvvvvvvv  as ScoreType
           times_saved_children.insert(child, data["saved"].as_u32().unwrap_or(0));
         }
-        if data.has_key("moves") {  //                         vvvvvvvv  as ScoreType
+        if data.has_key("moves") {  //                     vvvvvvvv  as ScoreType
           times_moved_children.insert(child, data["moves"].as_u32().unwrap_or(0));
         }
       }
@@ -103,35 +106,41 @@ impl Score {
   }
 
   pub fn semantic_player(&self) -> Option<String> {
-    if self.times_saved_player > 0 {
-      Some(format!(
-          "{}: {}",
-          player::NAME,
-          self.semantic_score_for(self.times_saved_player, PLAYER_SCORE_REWARD, None)
-      ))
+    if let Some(semantic) = self.semantic_score_for(self.times_saved_player, PLAYER_SCORE_REWARD, None) {
+      Some(format!("{}: {}", player::NAME, semantic))
     } else { None }
   }
 
   pub fn semantic_children(&self) -> Vec<String> {
-    self.times_saved_children().iter()
-      .map( |(&child, &n)| {
-        format!(
-          "{}: {}", child.name(),
-          self.semantic_score_for(n, CHILD_SCORE_REWARD, self.moves_counter.moves_for(child))
-        )
-      }).collect()
+    use self::ChildType::*;
+    let mut children = [Larry, Thing, Bloat];
+    children.sort();
+    children.iter()
+      .filter_map( |&child| {
+        let saved = self.times_saved_child(child).unwrap_or(0);
+        if let Some(semantic) = self.semantic_score_for(saved, CHILD_SCORE_REWARD, self.moves_counter.moves_for(child)) {
+          Some(format!("{}: {}", child.name(), semantic))
+        } else { None }
+      })
+    .collect()
   }
 
   pub fn any(&self) -> bool {
     self.score() > 0
   }
 
-  fn semantic_score_for(&self, times_saved: ScoreType, score_reward: ScoreType, moves_given: Option<ScoreType>) -> String {
-    let mut score = format!("{}", times_saved * score_reward - moves_given.unwrap_or(0));
-    let score_len = score.len() as u8;
+  fn semantic_score_for(&self, times_saved: ScoreType, score_reward: ScoreType, moves_given: Option<ScoreType>) -> Option<String> {
+    let score_saved   = times_saved * score_reward;
+    let moves_given_n = moves_given.unwrap_or(0);
+    if times_saved == 0 && moves_given_n == 0 {
+      return None;
+    }
+    let score = score_saved as i32 - moves_given_n as i32;
+    let mut score_str = format!("{}", score);
+    let score_len = score_str.len() as u8;
     if score_len < SCORE_CHAR_LEN {
       for _i in 0 .. SCORE_CHAR_LEN - score_len {
-        score.insert(0, '0');
+        score_str.insert(0, '0');
       }
     }
     let mut semantic = String::new();
@@ -141,10 +150,12 @@ impl Score {
       semantic.push_str(
         &format!("{} x {}", times_saved, score_reward)
       );
-    } else {
+    } else if times_saved == 1 {
       semantic.push_str(
         &format!("{}", score_reward)
       );
+    } else {
+      semantic.push('0');
     }
     if let Some(moves) = moves_given {
       with_equals = true;
@@ -154,10 +165,10 @@ impl Score {
     }
     if with_equals {
       semantic.push_str(
-        &format!(" = {}", score)
+        &format!(" = {}", score_str)
       );
     }
-    semantic
+    Some(semantic)
   }
 
   pub fn times_saved_player(&self) -> ScoreType {
@@ -173,7 +184,7 @@ impl Score {
   }
 
   pub fn times_saved_child(&self, child: ChildType) -> Option<ScoreType> {
-    self.times_saved_children.iter().find( |(&k, v)| k == child ).map( |o| *o.1 )
+    self.times_saved_children.iter().find( |(&k, _)| k == child ).map( |o| *o.1 )
   }
 
   pub fn saved_child(&mut self, child: ChildType) {
@@ -196,5 +207,51 @@ impl Score {
     self.times_saved_player = 0;
     self.times_saved_children.clear();
     self.moves_counter.clear();
+  }
+}
+
+// IMPLEMENTATIONS
+
+impl From<Vec<&Score>> for Score {
+  fn from(scores: Vec<&Score>) -> Self {
+    let mut score_acc = Score::new();
+    for score in scores {
+      score_acc += score;
+    }
+    score_acc
+  }
+}
+
+impl ops::AddAssign<&Score> for Score {
+  fn add_assign(&mut self, other: &Score) {
+    use self::ChildType::*;
+    // player
+    self.times_saved_player += other.times_saved_player();
+    for &child in &[Larry, Thing, Bloat] {
+      // children
+      if let Some(other_saved) = other.times_saved_child(child) {
+        *self.times_saved_children.entry(child).or_insert(0) += other_saved;
+      }
+      // moves
+      self.moves_counter += &other.moves_counter;
+    }
+  }
+}
+
+impl PartialEq for Score {
+  fn eq(&self, other: &Score) -> bool {
+    self.score() == other.score()
+  }
+}
+
+impl PartialOrd for Score {
+  fn partial_cmp(&self, other: &Score) -> Option<Ordering> {
+    Some(self.score().cmp(&other.score()))
+  }
+}
+
+impl fmt::Display for Score {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "{}", self.score())
   }
 }
