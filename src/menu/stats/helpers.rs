@@ -135,25 +135,25 @@ impl StatsTexts {
       None
     };
 
-     let mut saved_children = Vec::new();
-     for (i, s) in score.semantic_children().iter().enumerate() {
-       let i_plus = if saved_player.is_some() {
-         1
-       } else { 0 };
-       saved_children.push(
-         StatsText::new(
-           graphics::Text::new(ctx, &s, &font_saved)?,
-           point_saved.clone() + Point::new(
-             saved_offset.x,
-             if highscore_text.is_some() {
-               font_score.get_height() as NumType
-             } else { 0.0 } + (font_saved.get_height() as NumType + saved_offset.y) * (i + i_plus) as NumType
-           ),
-           TextOrigin::Right,
-           None
-         )
-       );
-     }
+    let mut saved_children = Vec::new();
+    for (i, s) in score.semantic_children().iter().enumerate() {
+      let i_plus = if saved_player.is_some() {
+        1
+      } else { 0 };
+      saved_children.push(
+        StatsText::new(
+          graphics::Text::new(ctx, &s, &font_saved)?,
+          point_saved.clone() + Point::new(
+            saved_offset.x,
+            if highscore_text.is_some() {
+              font_score.get_height() as NumType
+            } else { 0.0 } + (font_saved.get_height() as NumType + saved_offset.y) * (i + i_plus) as NumType
+          ),
+          TextOrigin::Right,
+          None
+        )
+      );
+    }
 
     Ok(StatsTexts {
       score:     score_text,
