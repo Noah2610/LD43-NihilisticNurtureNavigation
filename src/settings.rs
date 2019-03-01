@@ -150,23 +150,23 @@ pub mod level_manager {
     "15_fifteen",
   ];
   pub const SONG_NAMES:  [&'static str; 15] = [
-    "ingame_1.1",
-    "ingame_1.1",
-    "ingame_1.1",
+    "ingame_1.1.fl",
+    "ingame_1.1.fl",
+    "ingame_1.1.fl",
     "ingame_1.2.fl",
     "ingame_1.2.fl",
 
-    "ingame_2.5",
-    "ingame_2.5",
-    "ingame_2.5",
-    "ingame_2",
-    "ingame_2",
+    "ingame_2.5.fl",
+    "ingame_2.5.fl",
+    "ingame_2.5.fl",
+    "ingame_2.fl",
+    "ingame_2.fl",
 
+    "ingame_3",  // TODO: ingame_3.fl.ogg is missing
     "ingame_3",
     "ingame_3",
-    "ingame_3",
-    "ingame_4",
-    "ingame_4",
+    "ingame_4.fl",
+    "ingame_4.fl",
   ];
 
   pub const HIGHSCORE_FONT_SIZE: u32 = 12;
