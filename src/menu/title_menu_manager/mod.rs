@@ -47,7 +47,9 @@ impl TitleMenuManager {
   }
 
   pub fn load_thank_you(&mut self, ctx: &mut Context, window_size: &Size) -> GameResult<()> {
-    self.thank_you = Some(ThankYouMenu::new(ctx, window_size)?);
+    if self.thank_you.is_none() {
+      self.thank_you = Some(ThankYouMenu::new(ctx, window_size)?);
+    }
     self.current = MenuType::ThankYou;
     Ok(())
   }
@@ -81,11 +83,13 @@ impl TitleMenuManager {
   pub fn update(&mut self) -> GameResult<()> {
     use self::ButtonType::*;
     use self::MenuType::*;
+    let mut new_current = None;
     if let Some(clicked) = self.get_clicked().clone() {
       match clicked {
-        TitleLevelSelect    => self.current    = MenuType::LevelSelect,
-        LevelSelectBack     => self.current    = MenuType::Title,
+        TitleLevelSelect    => new_current = Some(MenuType::LevelSelect),
+        LevelSelectBack     => new_current = Some(MenuType::Title),
         LevelSelectLevel(i) => self.load_level = Some(i),
+        ThankYouBack        => new_current = Some(MenuType::Title),
         _                   => (),
       };
     }
@@ -96,6 +100,9 @@ impl TitleMenuManager {
         ty.update()?;
       },
     };
+    if let Some(new) = new_current {
+      self.current = new;
+    }
     Ok(())
   }
 

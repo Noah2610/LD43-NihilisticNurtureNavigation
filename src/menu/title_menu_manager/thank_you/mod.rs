@@ -25,7 +25,7 @@ impl ThankYouMenu {
       size:      window_size.clone(),
       origin:    Origin::TopLeft,
       animation: new_animation(ctx)?,
-      buttons:   Vec::new(),
+      buttons:   new_buttons(ctx, window_size)?,
       clicked:   None,
     })
   }
@@ -40,10 +40,14 @@ impl Mask for ThankYouMenu {
 
 impl Menu for ThankYouMenu {
   fn buttons(&self) -> Vec<&Button> {
-    self.buttons.iter().map( |button| button ).collect()
+    if self.animation.played() > 0 {
+      self.buttons.iter().map( |button| button ).collect()
+    } else { Vec::new() }
   }
   fn buttons_mut(&mut self) -> Vec<&mut Button> {
-    self.buttons.iter_mut().map( |button| button ).collect()
+    if self.animation.played() > 0 {
+      self.buttons.iter_mut().map( |button| button ).collect()
+    } else { Vec::new() }
   }
   fn animation(&self) -> Option<&Animation> {
     Some(&self.animation)

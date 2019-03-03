@@ -11,6 +11,9 @@ pub enum ButtonType {
   LevelSelectBack,
   LevelSelectLevel(usize),
 
+  // TITLE/THANK_YOU
+  ThankYouBack,
+
   // INGAME
   NextLevel,
   LarryLeft,
@@ -34,30 +37,33 @@ pub enum ButtonType {
 
 impl fmt::Display for ButtonType {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    use self::ButtonType::*;
     write!(f, "{}", match self {
-      ButtonType::TitleStart          => "TitleStart",
-      ButtonType::TitleLevelSelect    => "TitleLevelSelect",
-      ButtonType::TitleQuit           => "TitleQuit",
+      TitleStart          => String::from("TitleStart"),
+      TitleLevelSelect    => String::from("TitleLevelSelect"),
+      TitleQuit           => String::from("TitleQuit"),
 
-      ButtonType::LevelSelectBack     => "LevelSelectBack",
-      ButtonType::LevelSelectLevel(n) => "LevelSelectLevel",
+      LevelSelectBack     => String::from("LevelSelectBack"),
+      LevelSelectLevel(n) => format!("LevelSelectLevel #{}", n),
 
-      ButtonType::NextLevel           => "NextLevel",
-      ButtonType::LarryLeft           => "LarryLeft",
-      ButtonType::LarryRight          => "LarryRight",
-      ButtonType::ThingLeft           => "ThingLeft",
-      ButtonType::ThingRight          => "ThingRight",
-      ButtonType::BloatLeft           => "BloatLeft",
-      ButtonType::BloatRight          => "BloatRight",
-      ButtonType::IngamePause         => "IngamePause",
+      ThankYouBack        => String::from("ThankYouBack"),
 
-      ButtonType::PauseResume         => "PauseResume",
-      ButtonType::PauseToTitle        => "PauseToTitle",
-      ButtonType::PauseReset          => "PauseReset",
+      NextLevel           => String::from("NextLevel"),
+      LarryLeft           => String::from("LarryLeft"),
+      LarryRight          => String::from("LarryRight"),
+      ThingLeft           => String::from("ThingLeft"),
+      ThingRight          => String::from("ThingRight"),
+      BloatLeft           => String::from("BloatLeft"),
+      BloatRight          => String::from("BloatRight"),
+      IngamePause         => String::from("IngamePause"),
 
-      ButtonType::StatsNext           => "StatsNext",
-      ButtonType::StatsReset          => "StatsReset",
-      ButtonType::StatsToTitle        => "StatsToTitle",
+      PauseResume         => String::from("PauseResume"),
+      PauseToTitle        => String::from("PauseToTitle"),
+      PauseReset          => String::from("PauseReset"),
+
+      StatsNext           => String::from("StatsNext"),
+      StatsReset          => String::from("StatsReset"),
+      StatsToTitle        => String::from("StatsToTitle"),
     })
   }
 }
