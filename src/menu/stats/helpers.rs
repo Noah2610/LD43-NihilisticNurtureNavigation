@@ -206,7 +206,7 @@ pub fn new_buttons(ctx: &mut Context, point: &Point, size: &Size, is_final: bool
       .size(button_size.clone())
       .origin(Origin::BottomCenter)
       .button_type(ButtonType::StatsNext)
-      .animation_from(vec![::join_str(buttons::IMAGES, "return.png")], vec![1000])
+      .animation_from(vec![::join_str(buttons::IMAGES, "arrow_alt_3.png")], vec![1000])
       .facing(Facing::Left)
       .build().expect("Should build StatsNext Button")
     );
@@ -217,7 +217,7 @@ pub fn new_buttons(ctx: &mut Context, point: &Point, size: &Size, is_final: bool
       .size(button_size.clone())
       .origin(Origin::BottomCenter)
       .button_type(ButtonType::StatsReset)
-      .animation_from(vec![::join_str(buttons::IMAGES, "retry.png")], vec![1000])
+      .animation_from(vec![::join_str(buttons::IMAGES, "retry_alt_3.png")], vec![1000])
       .build().expect("Should build StatsReset Button")
     );
   }
@@ -232,7 +232,7 @@ pub fn new_buttons(ctx: &mut Context, point: &Point, size: &Size, is_final: bool
     .size(button_size)
     .origin(Origin::BottomCenter)
     .button_type(ButtonType::StatsToTitle)
-    .animation_from(vec![::join_str(buttons::IMAGES, "return.png")], vec![1000])
+    .animation_from(vec![::join_str(buttons::IMAGES, "arrow_alt_3.png")], vec![1000])
     .build().expect("Should build StatsToTitle Button")
   );
 

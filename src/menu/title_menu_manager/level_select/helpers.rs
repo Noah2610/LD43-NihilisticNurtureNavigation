@@ -76,7 +76,7 @@ pub fn new_buttons(ctx: &mut Context, window_size: &Size) -> GameResult<Vec<Butt
                .size(Size::new(64.0, 64.0))
                .origin(Origin::BottomLeft)
                .button_type(ButtonType::LevelSelectBack)
-               .animation_from(vec![::join_str(buttons::IMAGES, "return.png")], vec![1000])
+               .animation_from(vec![::join_str(buttons::IMAGES, "arrow.png")], vec![1000])
                .build()?);
 
   Ok(buttons)
