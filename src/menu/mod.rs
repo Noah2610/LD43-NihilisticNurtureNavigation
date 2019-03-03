@@ -77,6 +77,9 @@ pub trait Menu: Mask {
   }
 
   fn update_menu(&mut self) -> GameResult<()> {
+    if let Some(anim) = self.animation_mut() {
+      anim.update()?;
+    }
     for button in self.buttons_mut() {
       button.update()?;
     }

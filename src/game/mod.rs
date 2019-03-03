@@ -235,9 +235,10 @@ impl event::EventHandler for GameState {
     if let Scene::Title = self.scene {
       match keycode {
         Keycode::Return => self.start_game(ctx).expect("Should start game"),
-        Keycode::L      => self.menu_manager.show_level_select(),  // TODO: TEMPORARY!!!
-        Keycode::N      => self.save().expect("Save debug"),       // TODO: TEMPORARY!!!
-        Keycode::M      => self.load(ctx).expect("Load debug"),    // TODO: TEMPORARY!!!
+        Keycode::L      => self.menu_manager.show_level_select(),                                                 // TODO: TEMPORARY!!!
+        Keycode::N      => self.save().expect("Save debug"),                                                      // TODO: TEMPORARY!!!
+        Keycode::M      => self.load(ctx).expect("Load debug"),                                                   // TODO: TEMPORARY!!!
+        Keycode::T      => self.menu_manager.load_thank_you(ctx, &self.window_size).expect("Load ThankYouMenu"),  // TODO: TEMPORARY!!!
         _               => (),
       }
     }
