@@ -58,6 +58,18 @@ impl TitleMenuManager {
     self.current == MenuType::ThankYou
   }
 
+  pub fn to_title_menu(&mut self) {
+    self.current = MenuType::Title;
+  }
+
+  pub fn to_level_select_menu(&mut self) {
+    self.current = MenuType::LevelSelect;
+  }
+
+  pub fn to_thank_you_menu(&mut self) {
+    self.current = MenuType::ThankYou;
+  }
+
   pub fn load_thank_you(&mut self, ctx: &mut Context, window_size: &Size) -> GameResult<()> {
     if self.thank_you.is_none() {
       self.thank_you = Some(ThankYouMenu::new(ctx, window_size)?);
@@ -68,6 +80,10 @@ impl TitleMenuManager {
 
   pub fn show_level_select(&mut self) {
     self.title.show_level_select();
+  }
+
+  pub fn is_level_select_available(&self) -> bool {
+    self.title.is_level_select_available()
   }
 
   pub fn get_clicked(&self) -> &Option<ButtonType> {

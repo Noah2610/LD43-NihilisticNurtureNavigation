@@ -46,6 +46,10 @@ impl TitleMenu {
     self.show_level_select = true;
   }
 
+  pub fn is_level_select_available(&self) -> bool {
+    self.show_level_select
+  }
+
   pub fn display_score(&mut self, ctx: &mut Context, score: &Score) -> GameResult<()> {
     let font = Font::new(ctx, fonts::DEFAULT, TOTAL_SCORE_FONT_SIZE)?;
     self.score_text = Some(

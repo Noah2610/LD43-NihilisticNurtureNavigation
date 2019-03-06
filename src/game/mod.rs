@@ -20,6 +20,7 @@ use noframe::input_manager::InputManager;
 
 use settings::game::*;
 use settings::res;
+use settings::menus::title::controls;
 use level_manager::LevelManager;
 use menu::title_menu_manager::prelude::*;
 use menu::buttons::ButtonType;
@@ -105,11 +106,12 @@ impl GameState {
       self.save()?;
     }
     if self.level_manager.to_title {
-      self.play_song(ctx)?;
       self.level_manager.to_title = false;
+      self.play_song(ctx)?;
       self.display_score_in_title(ctx)?;
       self.scene = Scene::Title;
       if self.level_manager.to_thank_you {
+        self.level_manager.to_thank_you = false;
         self.menu_manager.load_thank_you(ctx, &self.window_size)?;
       }
     }
@@ -233,14 +235,20 @@ impl event::EventHandler for GameState {
                     repeat:  bool) {
     self.input_manager.key_down(keycode, _keymod, repeat);
     if let Keycode::Escape = keycode {
-      ctx.quit().expect("Should quit Context");
+      ctx.quit().expect("Should quit game");
     }
     if let Scene::Title = self.scene {
       match keycode {
-        Keycode::Return if self.menu_manager.in_title_menu() =>
+        controls::PLAY if self.menu_manager.in_title_menu() =>
           self.start_game(ctx).expect("Should start game"),
+        controls::BACK if self.menu_manager.in_title_menu() =>
+          ctx.quit().expect("Should quit game"),
+        controls::BACK if self.menu_manager.in_level_select_menu() || self.menu_manager.in_thank_you_menu() =>
+          self.menu_manager.to_title_menu(),
+        controls::LEVEL_SELECT if self.menu_manager.is_level_select_available() =>
+          self.menu_manager.to_level_select_menu(),
         // TODO: TEMPORARY!!!
-        Keycode::L => self.menu_manager.show_level_select(),
+        controls::LEVEL_SELECT => self.menu_manager.show_level_select(),
         Keycode::T => self.menu_manager.load_thank_you(ctx, &self.window_size).expect("Load ThankYouMenu"),
         _          => (),
       }

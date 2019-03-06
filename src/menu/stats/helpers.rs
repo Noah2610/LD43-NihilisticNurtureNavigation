@@ -240,16 +240,3 @@ pub fn new_buttons(ctx: &mut Context, point: &Point, size: &Size, is_final: bool
 
   vec
 }
-
-pub fn new_final_thankyou(ctx: &mut Context, window_size: &Size) -> AnimationRect {
-  AnimationRect::new(
-    window_size.center() - Point::new(0.0, 256.0),
-    Size::new(512.0, 128.0),
-    Origin::Center,
-    Animation::new(
-      ctx,
-      vec![MISSING_IMAGE.to_string()],
-      vec![1000]
-    )
-  )
-}

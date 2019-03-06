@@ -252,7 +252,11 @@ impl LevelManager {
           if self.paused || self.stats_menu.is_some() || self.final_stats_menu.is_some() {
             let has_stats_menu = self.stats_menu.is_some();
             let has_final_stats_menu = self.final_stats_menu.is_some();
-            self.to_title(ToTitleParams { beat_level: has_stats_menu, to_thank_you: has_final_stats_menu });
+            if has_final_stats_menu {
+              self.to_thank_you();
+            } else {
+              self.to_title(ToTitleParams { beat_level: has_stats_menu, to_thank_you: false });
+            }
           },
         _ => (),
       }
@@ -438,10 +442,14 @@ impl LevelManager {
       return Ok(());
     }
     if to_thank_you {
-      self.reset();
-      self.to_title(ToTitleParams { beat_level: false, to_thank_you: true });
+      self.to_thank_you();
     }
     Ok(())
+  }
+
+  fn to_thank_you(&mut self) {
+    self.reset();
+    self.to_title(ToTitleParams { beat_level: false, to_thank_you: true });
   }
 
   fn reset(&mut self) {

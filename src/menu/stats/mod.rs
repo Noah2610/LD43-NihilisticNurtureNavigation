@@ -24,7 +24,6 @@ pub struct StatsMenu {
   buttons:        Vec<Button>,
   clicked:        Option<ButtonType>,
   texts:          StatsTexts,
-  final_thankyou: Option<AnimationRect>,
 }
 
 impl StatsMenu {
@@ -34,7 +33,6 @@ impl StatsMenu {
       buttons:        new_buttons(ctx, rect.point(), rect.size(), is_final),
       clicked:        None,
       texts:          StatsTexts::new(ctx, score, highscore, rect.point(), rect.size(), is_final)?,
-      final_thankyou: if is_final { Some(new_final_thankyou(ctx, &window_size)) } else { None },
       rect,
     })
   }
@@ -57,18 +55,12 @@ impl Mask for StatsMenu {
 
 impl Menu for StatsMenu {
   fn update(&mut self) -> GameResult<()> {
-    if let Some(thankyou) = &mut self.final_thankyou {
-      thankyou.update()?;
-    }
     self.update_menu()?;
     Ok(())
   }
 
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     self.rect.draw(ctx)?;
-    if let Some(thankyou) = &mut self.final_thankyou {
-      thankyou.draw(ctx)?;
-    }
     self.texts.draw(ctx)?;
     self.draw_menu(ctx)?;
     Ok(())
