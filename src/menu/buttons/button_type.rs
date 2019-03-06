@@ -33,6 +33,7 @@ pub enum ButtonType {
   StatsNext,
   StatsReset,
   StatsToTitle,
+  StatsToThankYou,
 }
 
 impl fmt::Display for ButtonType {
@@ -64,6 +65,7 @@ impl fmt::Display for ButtonType {
       StatsNext           => String::from("StatsNext"),
       StatsReset          => String::from("StatsReset"),
       StatsToTitle        => String::from("StatsToTitle"),
+      StatsToThankYou     => String::from("StatsToThankYou"),
     })
   }
 }

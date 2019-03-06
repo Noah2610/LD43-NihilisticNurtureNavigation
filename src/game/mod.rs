@@ -109,6 +109,9 @@ impl GameState {
       self.level_manager.to_title = false;
       self.display_score_in_title(ctx)?;
       self.scene = Scene::Title;
+      if self.level_manager.to_thank_you {
+        self.menu_manager.load_thank_you(ctx, &self.window_size)?;
+      }
     }
     self.level_manager.keys_pressed(ctx, self.input_manager.keys_pressed());
     self.level_manager.keys_down(ctx, self.input_manager.keys_down());
@@ -234,12 +237,12 @@ impl event::EventHandler for GameState {
     }
     if let Scene::Title = self.scene {
       match keycode {
-        Keycode::Return => self.start_game(ctx).expect("Should start game"),
-        Keycode::L      => self.menu_manager.show_level_select(),                                                 // TODO: TEMPORARY!!!
-        Keycode::N      => self.save().expect("Save debug"),                                                      // TODO: TEMPORARY!!!
-        Keycode::M      => self.load(ctx).expect("Load debug"),                                                   // TODO: TEMPORARY!!!
-        Keycode::T      => self.menu_manager.load_thank_you(ctx, &self.window_size).expect("Load ThankYouMenu"),  // TODO: TEMPORARY!!!
-        _               => (),
+        Keycode::Return if self.menu_manager.in_title_menu() =>
+          self.start_game(ctx).expect("Should start game"),
+        // TODO: TEMPORARY!!!
+        Keycode::L => self.menu_manager.show_level_select(),
+        Keycode::T => self.menu_manager.load_thank_you(ctx, &self.window_size).expect("Load ThankYouMenu"),
+        _          => (),
       }
     }
   }

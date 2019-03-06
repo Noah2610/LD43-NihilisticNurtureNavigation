@@ -222,18 +222,20 @@ pub fn new_buttons(ctx: &mut Context, point: &Point, size: &Size, is_final: bool
     );
   }
 
+  let (point, button_type) = if is_final {
+    (bottom_center, ButtonType::StatsToThankYou)
+  } else {
+    (bottom_center - button_offset, ButtonType::StatsToTitle)
+  };
+
   vec.push(
     ButtonBuilder::new(ctx)
-    .point(if is_final {
-      bottom_center
-    } else {
-      bottom_center - button_offset
-    })
+    .point(point)
     .size(button_size)
     .origin(Origin::BottomCenter)
-    .button_type(ButtonType::StatsToTitle)
+    .button_type(button_type.clone())
     .animation_from(vec![::join_str(buttons::IMAGES, "arrow_alt_3.png")], vec![1000])
-    .build().expect("Should build StatsToTitle Button")
+    .build().expect(&format!("Should build {} Button", button_type.to_string()))
   );
 
   vec

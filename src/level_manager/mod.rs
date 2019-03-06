@@ -26,6 +26,11 @@ use menu::buttons::prelude::*;
 use menu::pause::prelude::*;
 use menu::stats::prelude::*;
 
+struct ToTitleParams {
+  pub beat_level:   bool,
+  pub to_thank_you: bool,
+}
+
 pub struct LevelManager {
   level_index:      usize,
   level:            Option<Level>,
@@ -43,6 +48,7 @@ pub struct LevelManager {
   highscore_font:   graphics::Font,
   highscore_text:   Option<StatsText>,
   pub to_title:     bool,
+  pub to_thank_you: bool,
   pub beat_game:    bool,
   pub save_data:    Option<JsonValue>,
   dt:               Deltatime,
@@ -67,6 +73,7 @@ impl LevelManager {
       highscore_font:   graphics::Font::new(ctx, res::fonts::DEFAULT, HIGHSCORE_FONT_SIZE).expect("New highscore font"),
       highscore_text:   None,
       to_title:         false,
+      to_thank_you:     false,
       beat_game:        false,
       save_data:        None,
       dt:               Deltatime::new(),
@@ -244,7 +251,8 @@ impl LevelManager {
         controls::TO_TITLE =>
           if self.paused || self.stats_menu.is_some() || self.final_stats_menu.is_some() {
             let has_stats_menu = self.stats_menu.is_some();
-            self.to_title(has_stats_menu);
+            let has_final_stats_menu = self.final_stats_menu.is_some();
+            self.to_title(ToTitleParams { beat_level: has_stats_menu, to_thank_you: has_final_stats_menu });
           },
         _ => (),
       }
@@ -379,7 +387,7 @@ impl LevelManager {
           self.toggle_pause();
         }
         ButtonType::PauseToTitle => {
-          self.to_title(false);
+          self.to_title(ToTitleParams { beat_level: false, to_thank_you: false });
         }
         ButtonType::PauseReset => {
           self.reset_level(ctx)?;
@@ -414,24 +422,24 @@ impl LevelManager {
       self.reset_level(ctx)?;
     }
     if to_title {
-      self.to_title(true);
+      self.to_title(ToTitleParams { beat_level: true, to_thank_you: false });
     }
     Ok(())
   }
 
   fn update_final_stats_menu(&mut self) -> GameResult<()> {
-    let mut reset_and_to_title = false;
+    let mut to_thank_you = false;
     if let Some(final_stats) = &mut self.final_stats_menu {
-      if let Some(ButtonType::StatsToTitle) = final_stats.get_clicked() {
-        reset_and_to_title = true;
+      if let Some(ButtonType::StatsToThankYou) = final_stats.get_clicked() {
+        to_thank_you = true;
       }
       final_stats.update()?;
     } else {
       return Ok(());
     }
-    if reset_and_to_title {
+    if to_thank_you {
       self.reset();
-      self.to_title(false);
+      self.to_title(ToTitleParams { beat_level: false, to_thank_you: true });
     }
     Ok(())
   }
@@ -448,8 +456,8 @@ impl LevelManager {
     self.to_title         = false;
   }
 
-  fn to_title(&mut self, beat_level: bool) {
-    if !beat_level && self.level_index > 0 {
+  fn to_title(&mut self, params: ToTitleParams) {
+    if !params.beat_level && self.level_index > 0 {
       self.level_index -= 1;
     }
     if let Some(level) = &mut self.level {
@@ -458,9 +466,13 @@ impl LevelManager {
     if let Some(song) = &mut self.song {
       song.stop();
     }
-    self.stats_menu = None;
-    self.paused     = false;
-    self.to_title   = true;
+    self.stats_menu       = None;
+    self.final_stats_menu = None;
+    self.paused           = false;
+    self.to_title         = true;
+    if params.to_thank_you {
+      self.to_thank_you = true;
+    }
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {

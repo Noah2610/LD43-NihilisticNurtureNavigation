@@ -20,7 +20,7 @@ use self::level_select::LevelSelectMenu;
 use self::thank_you::ThankYouMenu;
 use menu::prelude::*;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum MenuType {
   Title,
   LevelSelect,
@@ -44,6 +44,18 @@ impl TitleMenuManager {
       level_select:      LevelSelectMenu::new(ctx, window_size.clone())?,
       thank_you:         None,
     })
+  }
+
+  pub fn in_title_menu(&self) -> bool {
+    self.current == MenuType::Title
+  }
+
+  pub fn in_level_select_menu(&self) -> bool {
+    self.current == MenuType::LevelSelect
+  }
+
+  pub fn in_thank_you_menu(&self) -> bool {
+    self.current == MenuType::ThankYou
   }
 
   pub fn load_thank_you(&mut self, ctx: &mut Context, window_size: &Size) -> GameResult<()> {
