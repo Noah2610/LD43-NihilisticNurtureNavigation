@@ -22,7 +22,7 @@ use wall::{ Wall, Walls };
 use menu::toolbox::ToolboxMenu;
 use score::prelude::*;
 
-pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameResult<Level> {
+pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str, level_index: usize) -> GameResult<Level> {
   let font = graphics::Font::new(ctx, res::fonts::DEFAULT, NAME_FONT_SIZE)?;
   let level_name = ::semantic(filename);
   let level_name_text = graphics::Text::new(ctx, &::semantic(filename), &font)?;
@@ -43,7 +43,7 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
     Size::new(data["size"]["w"].as_f32().expect(err_msg), data["size"]["h"].as_f32().expect(err_msg))
   } else { panic!("Level JSON size (root) attribute not present") };
 
-  let (player, children, walls, interactables) = load_json(ctx, &data)?;
+  let (player, children, walls, interactables) = load_json(ctx, &data, level_index)?;
   let toolbox = ToolboxMenu::new(
     ctx,
     Point::new(0.0, window_size.h - 96.0),
@@ -53,6 +53,7 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
 
   let mut lvl = Level {
     json_data:   data,
+    level_index,
     window_rect: Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft),
     camera:      Camera::new(window_size.clone()),
     camera_rect: Rect::new(Point::new(0.0, 0.0), window_size.clone(), Origin::TopLeft),
@@ -77,10 +78,10 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str) -> GameRe
   Ok(lvl)
 }
 
-pub fn load_json(ctx: &mut Context, data: &json::JsonValue) -> GameResult<(Player, Vec<Child>, Walls, InteractablesContainer)> {
+pub fn load_json(ctx: &mut Context, data: &json::JsonValue, level_index: usize) -> GameResult<(Player, Vec<Child>, Walls, InteractablesContainer)> {
   let mut player_opt = None;
   let mut children = Vec::new();
-  let mut walls = Walls::new(ctx);
+  let mut walls = Walls::new(ctx, level_index);
   let mut interactables = InteractablesContainer::new();
 
   data["instances"].members().for_each( |data| {

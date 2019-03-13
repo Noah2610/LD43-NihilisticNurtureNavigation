@@ -54,6 +54,7 @@ impl InteractablesContainer {
 
 pub struct Level {
   json_data:       json::JsonValue,
+  level_index:     usize,
   window_rect:     Rect,
   camera:          Camera,
   camera_rect:     Rect,
@@ -73,8 +74,8 @@ pub struct Level {
 }
 
 impl Level {
-  pub fn new(ctx: &mut Context, window_size: Size, filename: &str) -> GameResult<Self> {
-    new_level(ctx, window_size, filename)
+  pub fn new(ctx: &mut Context, window_size: Size, filename: &str, level_index: usize) -> GameResult<Self> {
+    new_level(ctx, window_size, filename, level_index)
   }
 
   pub fn reset(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -83,7 +84,7 @@ impl Level {
       children,
       walls,
       interactables
-    ) = load_json(ctx, &self.json_data)?;
+    ) = load_json(ctx, &self.json_data, self.level_index)?;
     self.player        = player;
     self.children      = children;
     self.walls         = walls;

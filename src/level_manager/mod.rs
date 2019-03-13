@@ -159,7 +159,7 @@ impl LevelManager {
 
     // Load the next level
     if let Some(level_name) = self.level_names.get(self.level_index) {
-      self.level = Some( Level::new(ctx, self.window_size.clone(), level_name)? );
+      self.level = Some( Level::new(ctx, self.window_size.clone(), level_name, self.level_index)? );
     } else {
       self.level = None;
     }
