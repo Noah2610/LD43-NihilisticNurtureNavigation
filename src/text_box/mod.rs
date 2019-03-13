@@ -119,7 +119,7 @@ impl Entity for TextBox {
       graphics::draw_ex(ctx, image, param)?;
 
     // COLOR
-    } else if let Some(color) = &self.bg_color {
+    } else if self.bg_color.is_some() {
       let prev_color = graphics::get_color(ctx);
       let point = self.top_left();
       let size  = self.size();

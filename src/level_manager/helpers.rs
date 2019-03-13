@@ -1,7 +1,7 @@
 use ggez::Context;
 use noframe::geo::prelude::*;
 
-use settings::res::{ MISSING_IMAGE, BACKGROUND_IMAGES };
+use settings::res::BACKGROUND_IMAGES;
 use settings::buttons;
 use animation::prelude::*;
 use menu::buttons::prelude::*;

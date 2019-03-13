@@ -15,7 +15,6 @@ use noframe::entity::Entity;
 use self::helpers::*;
 use super::prelude::*;
 use animation::Animation;
-use animation::AnimationRect;
 use color_rect::ColorRect;
 use text_box::TextBox;
 

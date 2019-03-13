@@ -5,7 +5,6 @@ pub mod prelude {
 }
 
 use std::time::{ Instant, Duration };
-use std::cmp;
 
 use ggez::{
   GameResult,

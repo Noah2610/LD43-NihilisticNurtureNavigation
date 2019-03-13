@@ -11,7 +11,6 @@ use noframe::geo::prelude::*;
 use noframe::camera::Camera;
 
 use super::Level;
-use super::InteractablesContainer;
 use settings::level::*;
 use settings::res;
 use id_generator::IdType;
@@ -21,6 +20,32 @@ use persons::children::{ Child, ChildType };
 use wall::{ Wall, Walls };
 use menu::toolbox::ToolboxMenu;
 use score::prelude::*;
+
+pub struct InteractablesContainer {
+  pub jump_pads:   Vec<JumpPad>,
+  pub switches:    Vec<Switch>,
+  pub doors:       Vec<Door>,
+  pub one_ways:    Vec<OneWay>,
+  pub solidifiers: Vec<Solidifier>,
+  pub goal:        Option<Goal>
+}
+
+impl InteractablesContainer {
+  pub fn new() -> Self {
+    Self {
+      jump_pads:   Vec::new(),
+      switches:    Vec::new(),
+      doors:       Vec::new(),
+      one_ways:    Vec::new(),
+      solidifiers: Vec::new(),
+      goal:        None
+    }
+  }
+
+  pub fn solid_doors(&self) -> Vec<&Door> {
+    self.doors.iter().filter( |door| door.is_solid() ).collect()
+  }
+}
 
 pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str, level_index: usize) -> GameResult<Level> {
   let font = graphics::Font::new(ctx, res::fonts::DEFAULT, NAME_FONT_SIZE)?;
@@ -37,11 +62,6 @@ pub fn new_level(ctx: &mut Context, window_size: Size, filename: &str, level_ind
     Ok(d)  => d,
     Err(e) => return Err(ggez::GameError::from(e.to_string()))
   };
-
-  let size = if data.has_key("size") {
-    let err_msg = "Couldn't load level JSON data: size (root)";
-    Size::new(data["size"]["w"].as_f32().expect(err_msg), data["size"]["h"].as_f32().expect(err_msg))
-  } else { panic!("Level JSON size (root) attribute not present") };
 
   let (player, children, walls, interactables) = load_json(ctx, &data, level_index)?;
   let toolbox = ToolboxMenu::new(

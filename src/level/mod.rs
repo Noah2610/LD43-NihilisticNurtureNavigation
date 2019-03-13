@@ -18,39 +18,13 @@ use settings::level::*;
 use persons::Person;
 use persons::player::Player;
 use persons::children::{ Child, ChildType };
-use wall::{ Wall, Walls };
+use wall::Walls;
 use interactables::prelude::*;
 use id_generator::prelude::*;
 use menu::Menu;
 use menu::buttons::ButtonType;
 use menu::toolbox::ToolboxMenu;
 use score::prelude::*;
-
-pub struct InteractablesContainer {
-  pub jump_pads:   Vec<JumpPad>,
-  pub switches:    Vec<Switch>,
-  pub doors:       Vec<Door>,
-  pub one_ways:    Vec<OneWay>,
-  pub solidifiers: Vec<Solidifier>,
-  pub goal:        Option<Goal>
-}
-
-impl InteractablesContainer {
-  pub fn new() -> Self {
-    Self {
-      jump_pads:   Vec::new(),
-      switches:    Vec::new(),
-      doors:       Vec::new(),
-      one_ways:    Vec::new(),
-      solidifiers: Vec::new(),
-      goal:        None
-    }
-  }
-
-  pub fn solid_doors(&self) -> Vec<&Door> {
-    self.doors.iter().filter( |door| door.is_solid() ).collect()
-  }
-}
 
 pub struct Level {
   json_data:       json::JsonValue,
@@ -115,7 +89,7 @@ impl Level {
     self.player.keys_pressed(keycodes);
   }
 
-  pub fn keys_down(&mut self, keycodes: &Vec<Keycode>, dt: &Deltatime) {
+  pub fn keys_down(&mut self, keycodes: &Vec<Keycode>, _dt: &Deltatime) {
     for &key in keycodes {
       self.player.key_down(&key);
       match key {
@@ -126,7 +100,7 @@ impl Level {
     }
   }
 
-  pub fn keys_up(&mut self, keycodes: &Vec<Keycode>, dt: &Deltatime) {
+  pub fn keys_up(&mut self, keycodes: &Vec<Keycode>, _dt: &Deltatime) {
     for key in keycodes {
       self.player.key_up(key);
     }
@@ -190,7 +164,7 @@ impl Level {
     }
   }
 
-  pub fn update(&mut self, ctx: &mut Context, dt: &Deltatime) -> GameResult<()> {
+  pub fn update(&mut self, ctx: &mut Context, _dt: &Deltatime) -> GameResult<()> {
     self.update_interactables(ctx)?;
     self.update_children(ctx)?;
     self.update_player(ctx)?;

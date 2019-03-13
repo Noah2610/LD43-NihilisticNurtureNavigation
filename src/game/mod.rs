@@ -195,7 +195,7 @@ impl GameState {
       }
 
       // Display total best score
-      self.display_score_in_title(ctx);
+      self.display_score_in_title(ctx)?;
     }
     Ok(())
   }

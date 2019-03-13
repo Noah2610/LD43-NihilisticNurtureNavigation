@@ -6,7 +6,6 @@ use ggez::{
 };
 use noframe::geo::prelude::*;
 use noframe::entity::Entity;
-use noframe::color;
 
 use settings::res::fonts;
 use settings::menus::title::*;

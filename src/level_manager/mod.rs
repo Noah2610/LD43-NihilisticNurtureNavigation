@@ -9,7 +9,7 @@ use ggez::{
   event::Keycode,
   audio,
 };
-use json::{ self, JsonValue };
+use json::JsonValue;
 use noframe::geo::prelude::*;
 use noframe::deltatime::Deltatime;
 

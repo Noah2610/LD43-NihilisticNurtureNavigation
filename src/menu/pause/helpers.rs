@@ -5,11 +5,9 @@ use ggez::{
 use noframe::geo::prelude::*;
 
 use settings::res::*;
-use settings::menus;
 use settings::buttons;
 use settings::menus::pause::*;
 use menu::buttons::prelude::*;
-use animation::prelude::*;
 use color_rect::prelude::*;
 use text_box::prelude::*;
 

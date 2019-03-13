@@ -1,9 +1,6 @@
-use ggez::{
-  GameResult,
-  graphics::{ self, Image, Text, FilterMode },
-};
+use ggez::graphics::{ Image, Text, FilterMode };
 use noframe::geo::prelude::*;
-use noframe::color::{ self, Color };
+use noframe::color::Color;
 
 use super::TextBox;
 use super::TextOrigin;
