@@ -34,7 +34,7 @@ pub mod camera {
 }
 
 pub mod player {
-  pub const NAME: &str = "Player";
+  pub const NAME: &str = "The Dude";
   pub const IMAGES: &str = "/images/player/";
   pub const SPEED_INCREASE: f32 = 600.0;
   pub const SPEED_DECREASE_X: f32 = 600.0;

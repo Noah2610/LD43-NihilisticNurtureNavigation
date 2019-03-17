@@ -98,7 +98,53 @@ impl Score {
   }
 
   pub fn semantic_score(&self) -> String {
-    format!("Score: {}", self)
+    let mut semantic = "Saved".to_string();
+    // Player
+    self.append_semantic_score_for_player(&mut semantic);
+    // Children
+    self.append_semantic_score_for_children(&mut semantic);
+    // Remove/replace trailing comma
+    if let Some(last) = semantic.pop() {
+      if last == ',' {
+        semantic.push('!');
+      } else {
+        semantic.push(last);
+      }
+    }
+    // Replace final comma with semantic ", and"
+    if let Some(index) = semantic.rfind(',') {
+      let mut last = semantic.split_off(index);
+      last.remove(0);
+      semantic.push_str(&format!(", and {}", last));
+    }
+    semantic
+  }
+
+  fn append_semantic_score_for_player(&self, semantic: &mut String) {
+    use settings::player::NAME;
+    let s;
+    if self.times_saved_player == 1 {
+      s = format!(" {},", NAME);
+    } else if self.times_saved_player > 1 {
+      s = format!(" {} {} times,", NAME, self.times_saved_player);
+    } else {
+      s = "".to_string();
+    }
+    semantic.push_str(&s);
+  }
+
+  fn append_semantic_score_for_children(&self, semantic: &mut String) {
+    for (child, &times) in &self.times_saved_children {
+      let s;
+      if times == 1 {
+        s = format!(" {},", child.name());
+      } else if times > 1 {
+        s = format!(" {} {} times,", child.name(), times);
+      } else {
+        s = "".to_string();
+      }
+      semantic.push_str(&s);
+    }
   }
 
   pub fn semantic_highscore(&self) -> String {
